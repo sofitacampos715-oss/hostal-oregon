@@ -1,0 +1,2087 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<title>Hostal Oregon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+/* Layout: una columna móvil; cada pieza es una ficha con su placa esmaltada (el código que también va en la puerta). */
+:root {
+  --bg: #eef2f2;
+  --surface: #ffffff;
+  --sunk: #e3e9ea;
+  --ink: #16212c;
+  --muted: #566572;
+  --line: #d3dcdf;
+  --sea: #1d5c78;
+  --sea-ink: #ffffff;
+  --placeres: #c9851a;
+  --pocuro: #2c6a5c;
+  --house: var(--placeres);
+  --plate: #1e3b5c;
+  --plate-ink: #f4f7fa;
+  --ok: #2b7a4b;
+  --ok-bg: #dcefe3;
+  --soon: #94600f;
+  --soon-bg: #f6e8cc;
+  --busy: #9b3527;
+  --busy-bg: #f4dcd7;
+  --hill: #c9d5d8;
+  --wa: #1f8f4e;
+  --shadow: 0 1px 2px rgba(22,33,44,.06), 0 6px 20px rgba(22,33,44,.06);
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e151c; --surface: #16202a; --sunk: #1c2833; --ink: #e5ecef; --muted: #9aa9b4; --line: #27343f;
+    --sea: #5aaccc; --sea-ink: #0b1a22; --placeres: #e3a945; --pocuro: #5fb19e; --plate: #2a5078; --plate-ink: #f4f7fa;
+    --ok: #66c98f; --ok-bg: #173527; --soon: #e6b25a; --soon-bg: #3a2c12; --busy: #ec8574; --busy-bg: #3d1d19;
+    --hill: #1d2a35; --wa: #37b56b; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e151c; --surface: #16202a; --sunk: #1c2833; --ink: #e5ecef; --muted: #9aa9b4; --line: #27343f;
+  --sea: #5aaccc; --sea-ink: #0b1a22; --placeres: #e3a945; --pocuro: #5fb19e; --plate: #2a5078; --plate-ink: #f4f7fa;
+  --ok: #66c98f; --ok-bg: #173527; --soon: #e6b25a; --soon-bg: #3a2c12; --busy: #ec8574; --busy-bg: #3d1d19;
+  --hill: #1d2a35; --wa: #37b56b; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+body[data-house="pocuro"] { --house: var(--pocuro); }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5;
+  padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h2 { font-size: clamp(1.5rem, 3.6vw, 2.1rem); font-weight: 800; letter-spacing: -.01em; }
+h3 { font-size: 1.2rem; font-weight: 600; }
+p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--sea); outline-offset: 2px; }
+.eyebrow { font-family: var(--f-mono); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+.demo-bar { background: var(--ink); color: var(--bg); font-size: .82rem; }
+.demo-bar .wrap { padding-block: 7px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; }
+.demo-bar button { background: none; border: 1px solid currentColor; border-radius: 99px; padding: 1px 10px; font-size: .78rem; }
+
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 10px; }
+.brand { font-family: var(--f-display); font-weight: 800; font-size: 1.25rem; letter-spacing: -.02em; }
+.brand span { color: var(--house); }
+.switch { display: inline-flex; background: var(--sunk); border-radius: 99px; padding: 3px; }
+.switch button { border: 0; background: none; padding: 6px 14px; border-radius: 99px; font-weight: 600; font-size: .92rem; color: var(--muted); }
+.switch button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+
+.hero { padding-block: 28px 0; }
+.hero-grid { display: grid; gap: 18px; }
+.hero h1 { font-size: clamp(2rem, 7vw, 3.6rem); font-weight: 800; letter-spacing: -.025em; }
+.hero h1 em { font-style: normal; color: var(--house); }
+.hero .lead { font-size: 1.08rem; color: var(--muted); max-width: 56ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.facts li { font-family: var(--f-mono); font-size: .8rem; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 9px; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px; padding: 12px 18px; font-weight: 700; text-decoration: none; border: 1px solid transparent; }
+.btn-main { background: var(--sea); color: var(--sea-ink); }
+.btn-ghost { background: var(--surface); border-color: var(--line); color: var(--ink); }
+.btn-wa { background: var(--wa); color: #fff; }
+.btn-sm { padding: 8px 12px; font-size: .92rem; border-radius: 8px; }
+.skyline { display: block; width: 100%; height: 120px; margin-top: 22px; }
+
+.avail { background: var(--surface); border-block: 1px solid var(--line); }
+.avail .wrap { padding-block: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.avail strong { font-family: var(--f-display); font-size: 1.15rem; }
+.mode { display: inline-flex; background: var(--sunk); border-radius: 8px; padding: 3px; }
+.mode button { border: 0; background: none; padding: 5px 11px; border-radius: 6px; font-size: .88rem; font-weight: 600; color: var(--muted); }
+.mode button[aria-pressed="true"] { background: var(--surface); color: var(--ink); }
+
+section.block { padding-block: 40px 8px; }
+.block-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 10px; margin-bottom: 18px; }
+.block-head p { color: var(--muted); max-width: 60ch; }
+
+.rooms { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.room { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); }
+.room.is-busy .thumb canvas { filter: grayscale(.6); opacity: .8; }
+.thumb { position: relative; display: block; width: 100%; border: 0; padding: 0; background: var(--sunk); aspect-ratio: 16 / 9; }
+.thumb canvas, .thumb img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.thumb .tag360 { position: absolute; left: 10px; bottom: 10px; background: rgba(10,18,26,.78); color: #fff; font-size: .8rem; font-weight: 600; border-radius: 99px; padding: 4px 10px; }
+.plate { position: absolute; top: 10px; left: 10px; font-family: var(--f-mono); font-weight: 700; font-size: .95rem; letter-spacing: .04em; background: var(--plate); color: var(--plate-ink); border: 2px solid var(--plate-ink); outline: 2px solid var(--plate); border-radius: 6px; padding: 2px 9px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 700; border-radius: 99px; padding: 3px 10px; white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.ok { color: var(--ok); background: var(--ok-bg); }
+.pill.soon { color: var(--soon); background: var(--soon-bg); }
+.pill.busy { color: var(--busy); background: var(--busy-bg); }
+.thumb .pill { position: absolute; top: 12px; right: 10px; }
+.room-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.specs { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.specs li { font-size: .82rem; color: var(--muted); background: var(--sunk); border-radius: 5px; padding: 2px 8px; }
+.price { font-family: var(--f-display); font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.price small { font-family: var(--f-body); font-size: .82rem; font-weight: 500; color: var(--muted); }
+.room-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+.room-actions .btn { flex: 1 1 auto; }
+.alt { font-size: .86rem; color: var(--muted); }
+.alt button { background: none; border: 0; padding: 0; color: var(--sea); font-weight: 700; text-decoration: underline; }
+
+.commons { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); }
+.common { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; overflow: hidden; padding: 0; text-align: left; }
+.common .thumb { border-radius: 0; }
+.common span.label { display: block; padding: 10px 12px; font-weight: 700; }
+
+.steps { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); list-style: none; padding: 0; margin: 0; counter-reset: s; }
+.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.steps li::before { content: "Paso " counter(s); display: block; font-family: var(--f-mono); font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--house); margin-bottom: 4px; }
+.steps strong { display: block; font-family: var(--f-display); font-size: 1.05rem; }
+.steps p { color: var(--muted); font-size: .94rem; }
+
+.two { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.panel ul { margin: 10px 0 0; padding-left: 1.1em; display: grid; gap: 6px; }
+.host { display: flex; gap: 16px; align-items: center; }
+.avatar { flex: none; width: 76px; height: 76px; border-radius: 50%; background: var(--sunk); border: 2px dashed var(--line); display: grid; place-items: center; font-size: .7rem; color: var(--muted); text-align: center; }
+
+footer { margin-top: 48px; border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 22px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; color: var(--muted); font-size: .9rem; }
+
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--surface); border-top: 1px solid var(--line); padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.dock-in { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+.dock-in p { flex: 1; min-width: 0; font-size: .88rem; color: var(--muted); line-height: 1.3; }
+.dock-in p b { color: var(--ink); display: block; }
+
+/* Hoja de consulta */
+.overlay { position: fixed; inset: 0; z-index: 50; background: rgba(8,14,20,.55); display: flex; align-items: flex-end; justify-content: center; }
+.sheet { background: var(--surface); width: 100%; max-width: 580px; max-height: 94%; overflow: auto; border-radius: 18px 18px 0 0; padding: 18px max(18px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); display: grid; gap: 18px; }
+@media (min-width: 640px) { .overlay { align-items: center; } .sheet { border-radius: 18px; max-height: 90%; } }
+.sheet-head { display: flex; justify-content: space-between; align-items: start; gap: 10px; }
+.x { border: 0; background: var(--sunk); width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; line-height: 1; flex: none; }
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; min-width: 0; }
+legend { font-weight: 700; padding: 0; margin-bottom: 8px; }
+legend small { font-weight: 400; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chip span { display: inline-block; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 8px 12px; font-size: .93rem; font-weight: 600; }
+.chip input:checked + span { border-color: var(--sea); background: var(--sea); color: var(--sea-ink); }
+.chip input:focus-visible + span { outline: 3px solid var(--sea); outline-offset: 2px; }
+.chip input:disabled + span { opacity: .45; text-decoration: line-through; }
+.chip.big span { padding: 12px 14px; }
+.chip.big span small { display: block; font-weight: 400; font-size: .8rem; opacity: .85; }
+.day { font-size: .82rem; color: var(--muted); font-family: var(--f-mono); margin-top: 4px; }
+.field { width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 10px 12px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row2 label { font-size: .85rem; color: var(--muted); display: grid; gap: 4px; }
+.msg { background: var(--sunk); border-radius: 12px; padding: 12px 14px; white-space: pre-wrap; font-size: .92rem; overflow-wrap: anywhere; }
+.msg-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.note { font-size: .82rem; color: var(--muted); }
+.send-row { display: grid; gap: 8px; }
+
+/* Visor 360 */
+.viewer { position: fixed; inset: 0; z-index: 60; background: #05090d; display: flex; flex-direction: column; color: #eef3f6; }
+.viewer-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); }
+.viewer-bar .x { background: rgba(255,255,255,.14); color: #fff; }
+.stage { flex: 1; position: relative; touch-action: none; cursor: grab; overflow: hidden; }
+.stage canvas { display: block; width: 100%; height: 100%; }
+.stage .hint { position: absolute; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: rgba(0,0,0,.6); border-radius: 99px; padding: 6px 14px; font-size: .85rem; pointer-events: none; white-space: nowrap; }
+.viewer-foot { display: flex; gap: 8px; padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); overflow-x: auto; }
+.viewer-foot button { flex: none; border: 1px solid rgba(255,255,255,.25); background: none; color: #fff; border-radius: 99px; padding: 6px 12px; font-size: .88rem; }
+.viewer-foot button[aria-pressed="true"] { background: #fff; color: #05090d; }
+
+/* Panel de la dueña */
+.owner { background: var(--sunk); border-top: 1px solid var(--line); margin-top: 40px; }
+.owner .wrap { padding-block: 30px 40px; display: grid; gap: 16px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 12px; font-weight: 600; }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.sheet-like { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.sheet-like table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 620px; }
+.sheet-like th, .sheet-like td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: middle; }
+.sheet-like th { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+.sheet-like td.code { font-family: var(--f-mono); font-weight: 700; }
+.sheet-like select, .sheet-like input { border: 1px solid var(--line); background: var(--bg); border-radius: 6px; padding: 4px 6px; font-size: .85rem; }
+.empty { padding: 18px; color: var(--muted); }
+
+/* Recorrido virtual (fotos 360 reales, Photo Sphere Viewer) */
+.tour { position: fixed; inset: 0; z-index: 60; background: #05090d; display: flex; flex-direction: column; color: #eef3f6; }
+.tour-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px)); }
+.tour-bar .x { background: rgba(255,255,255,.14); color: #fff; }
+.tour-head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.tour-back { flex: none; border: 0; background: #fff; color: #05090d; border-radius: 99px; padding: 7px 14px; font-weight: 700; font-size: .92rem; }
+.tour-tabs { display: flex; gap: 8px; padding: 0 max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); overflow-x: auto; scrollbar-width: none; }
+.tour-tabs button { flex: none; border: 1px solid rgba(255,255,255,.25); background: none; color: #fff; border-radius: 99px; padding: 7px 14px; font-size: .9rem; font-weight: 600; }
+.tour-tabs button[aria-pressed="true"] { background: #fff; color: #05090d; border-color: #fff; }
+.tour-stage { flex: 1; position: relative; min-height: 0; }
+.tour-stage .psv-container { background: #05090d; }
+.tour-hint { position: absolute; left: 50%; top: 12px; max-width: calc(100% - 24px); white-space: normal !important; text-align: center; transform: translateX(-50%); z-index: 90; background: rgba(0,0,0,.62); border-radius: 99px; padding: 6px 14px; font-size: .85rem; pointer-events: none; white-space: nowrap; transition: opacity .4s; }
+.tour-card { position: absolute; z-index: 95; left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); max-width: 420px; background: var(--surface); color: var(--ink); border-radius: 14px; padding: 14px 16px; box-shadow: 0 10px 30px rgba(0,0,0,.4); display: grid; gap: 6px; }
+.tour-card h3 { font-size: 1.05rem; padding-right: 36px; }
+.tour-card p { color: var(--muted); font-size: .93rem; }
+.tour-card .x { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; font-size: 1rem; }
+.hs { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.92); color: #16212c; font: 700 17px/1 var(--f-display); box-shadow: 0 0 0 4px rgba(255,255,255,.3), 0 4px 12px rgba(0,0,0,.4); cursor: pointer; animation: hs-pulse 2.4s ease-out infinite; }
+@keyframes hs-pulse { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,.55), 0 4px 12px rgba(0,0,0,.4); } 70% { box-shadow: 0 0 0 14px rgba(255,255,255,0), 0 4px 12px rgba(0,0,0,.4); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0), 0 4px 12px rgba(0,0,0,.4); } }
+.psv-virtual-tour-link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+.tl-ico { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.94); color: #16212c; font: 800 22px/1 var(--f-display); box-shadow: 0 4px 14px rgba(0,0,0,.45); transition: transform .15s; }
+.tl-lbl { max-width: 132px; background: rgba(5,9,13,.78); color: #fff; font-size: .78rem; font-weight: 700; line-height: 1.2; text-align: center; border-radius: 99px; padding: 3px 9px; }
+.psv-virtual-tour-link:hover .tl-ico { transform: scale(1.12); }
+.tour-pick { position: absolute; z-index: 96; top: 10px; left: 50%; transform: translateX(-50%); background: #ffd84d; color: #16212c; border-radius: 8px; padding: 6px 12px; font: 600 .85rem var(--f-mono); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } .hs { animation: none; } }
+</style>
+<style id="psv-css">
+/*!
+ * Photo Sphere Viewer 5.15.1
+ * @copyright 2014-2015 Jérémy Heleine
+ * @copyright 2015-2026 Damien "Mistic" Sorel
+ * @licence MIT (https://opensource.org/licenses/MIT)
+ */
+/* src/styles/index.scss */
+.psv-container {
+  --psv-core-loaded: true;
+  container-name: psv-container;
+  container-type: size;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  background:
+    radial-gradient(
+      #fff 0%,
+      #fdfdfd 16%,
+      #fbfbfb 33%,
+      #f8f8f8 49%,
+      #efefef 66%,
+      #dfdfdf 82%,
+      #bfbfbf 100%);
+  overflow: hidden;
+}
+.psv-container * {
+  box-sizing: content-box;
+}
+.psv-canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  transition: opacity linear 100ms;
+}
+.psv-fullscreen-emulation {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 9999;
+}
+.psv-loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 80;
+}
+.psv-loader {
+  --psv-loader-border: 3px;
+  --psv-loader-tickness: 10px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  width: 150px;
+  height: 150px;
+}
+.psv-loader-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: rgba(61, 61, 61, 0.5);
+  z-index: -1;
+}
+.psv-loader-text {
+  font: 600 16px sans-serif;
+  text-align: center;
+}
+.psv-loader--undefined .psv-loader-canvas {
+  animation: psv-loader 2s cubic-bezier(0.75, 0.25, 0.25, 0.75) infinite;
+}
+@keyframes psv-loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.psv-navbar {
+  display: flex;
+  position: absolute;
+  z-index: 90;
+  bottom: -40px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: rgba(61, 61, 61, 0.5);
+  transition: bottom ease-in-out 0.1s;
+  font: 16px sans-serif;
+  cursor: default;
+}
+.psv-navbar--open {
+  bottom: 0;
+}
+.psv-navbar,
+.psv-navbar * {
+  box-sizing: content-box;
+}
+.psv-button {
+  flex: 0 0 auto;
+  padding: 10px;
+  position: relative;
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+}
+.psv-button--active {
+  background: rgba(255, 255, 255, 0.2);
+}
+.psv-button--disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.psv-button-svg {
+  width: 100%;
+  transform: scale(1);
+  transition: transform 200ms ease;
+  vertical-align: initial;
+}
+.psv-button:not(.psv-button--disabled):focus-visible {
+  outline: 2px solid #007cff;
+  outline-offset: -2px;
+}
+.psv-container:not(.psv--is-touch) .psv-button--hover-scale:not(.psv-button--disabled):hover .psv-button-svg {
+  transform: scale(1.2);
+}
+.psv-move-button + .psv-move-button {
+  margin-left: -10px;
+}
+.psv-download-button {
+  color: rgba(255, 255, 255, 0.7) !important;
+  text-decoration: none !important;
+}
+.psv-download-button::before,
+.psv-download-button::after {
+  display: none !important;
+}
+.psv-custom-button {
+  width: auto;
+  min-width: 20px;
+}
+.psv-custom-button--no-padding {
+  padding: 0;
+  height: 100%;
+}
+.psv-caption {
+  flex: 1 1 100%;
+  color: rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+  text-align: center;
+  cursor: unset;
+  padding: unset;
+  height: unset;
+  width: unset;
+}
+.psv-caption-content {
+  display: inline-block;
+  padding: 10px;
+  white-space: nowrap;
+}
+.psv-zoom-range.psv-button {
+  width: 80px;
+  height: 1px;
+  margin: 10px 0;
+  padding: 9.5px 0;
+  max-width: 600px;
+}
+.psv-zoom-range-line {
+  position: relative;
+  width: 80px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+}
+.psv-zoom-range-handle {
+  position: absolute;
+  border-radius: 50%;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+.psv-zoom-range:not(.psv-button--disabled):hover .psv-zoom-range-line {
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.7);
+}
+.psv-zoom-range:not(.psv-button--disabled):hover .psv-zoom-range-handle {
+  transform: scale(1.3);
+}
+.psv-notification {
+  position: absolute;
+  z-index: 100;
+  bottom: -40px;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 2em;
+  opacity: 0;
+  transition-property: opacity, bottom;
+  transition-timing-function: ease-in-out;
+  transition-duration: 200ms;
+}
+.psv-notification-content {
+  max-width: 50em;
+  background: rgba(61, 61, 61, 0.8);
+  border-radius: 4px;
+  padding: 0.5em 1em;
+  font: 14px sans-serif;
+  color: rgb(255, 255, 255);
+}
+.psv-notification--visible {
+  opacity: 100;
+  bottom: 80px;
+}
+.psv-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  z-index: 110;
+  inset: 0;
+  background:
+    radial-gradient(
+      #fff 0%,
+      #fdfdfd 16%,
+      #fbfbfb 33%,
+      #f8f8f8 49%,
+      #efefef 66%,
+      #dfdfdf 82%,
+      #bfbfbf 100%);
+  opacity: 0.8;
+  cursor: default;
+}
+.psv-overlay-image {
+  width: 100%;
+  text-align: center;
+  color: rgb(48, 48, 48);
+}
+.psv-overlay-image svg {
+  width: 50%;
+}
+@container psv-container (orientation: landscape) {
+  .psv-overlay-image svg {
+    width: 33%;
+  }
+}
+.psv-overlay-title {
+  color: black;
+  margin-top: 1em;
+  font: 30px sans-serif;
+  text-align: center;
+}
+.psv-overlay-text {
+  color: rgba(0, 0, 0, 0.8);
+  font: 20px sans-serif;
+  opacity: 0.8;
+  text-align: center;
+}
+.psv-panel {
+  position: absolute;
+  z-index: 90;
+  right: 0;
+  height: 100%;
+  width: 400px;
+  max-width: calc(100% - 9px);
+  background: rgba(10, 10, 10, 0.7);
+  transform: translate3d(100%, 0, 0);
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-timing-function: ease-in-out;
+  transition-duration: 100ms;
+  cursor: default;
+  margin-left: 9px;
+}
+.psv--has-navbar .psv-panel {
+  height: calc(100% - 40px);
+}
+.psv-panel-close-button {
+  display: none;
+  position: absolute;
+  top: -1px;
+  right: 0;
+  width: 19.2px;
+  height: 19.2px;
+  padding: 6.4px;
+  background: transparent;
+  color: #fff;
+  transition: background 300ms ease-in-out;
+  cursor: pointer;
+}
+.psv-panel-close-button svg {
+  transition: transform 300ms ease-in-out;
+}
+.psv-panel-close-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+.psv-panel-close-button:hover svg {
+  transform: scale(-1);
+}
+.psv-panel-resizer {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: -9px;
+  width: 9px;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  cursor: col-resize;
+}
+.psv-panel-resizer::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 5.5px;
+  margin-top: -14.5px;
+  width: 1px;
+  height: 1px;
+  box-shadow:
+    1px 0 #fff,
+    3px 0px #fff,
+    5px 0px #fff,
+    1px 2px #fff,
+    3px 2px #fff,
+    5px 2px #fff,
+    1px 4px #fff,
+    3px 4px #fff,
+    5px 4px #fff,
+    1px 6px #fff,
+    3px 6px #fff,
+    5px 6px #fff,
+    1px 8px #fff,
+    3px 8px #fff,
+    5px 8px #fff,
+    1px 10px #fff,
+    3px 10px #fff,
+    5px 10px #fff,
+    1px 12px #fff,
+    3px 12px #fff,
+    5px 12px #fff,
+    1px 14px #fff,
+    3px 14px #fff,
+    5px 14px #fff,
+    1px 16px #fff,
+    3px 16px #fff,
+    5px 16px #fff,
+    1px 18px #fff,
+    3px 18px #fff,
+    5px 18px #fff,
+    1px 20px #fff,
+    3px 20px #fff,
+    5px 20px #fff,
+    1px 22px #fff,
+    3px 22px #fff,
+    5px 22px #fff,
+    1px 24px #fff,
+    3px 24px #fff,
+    5px 24px #fff,
+    1px 26px #fff,
+    3px 26px #fff,
+    5px 26px #fff,
+    1px 28px #fff,
+    3px 28px #fff,
+    5px 28px #fff;
+  background: transparent;
+}
+.psv-panel-content {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  color: rgb(220, 220, 220);
+  font: 16px sans-serif;
+  overflow: auto;
+}
+.psv-panel-content:not(.psv-panel-content--no-margin) {
+  padding: 1em;
+}
+.psv-panel-content--no-interaction {
+  user-select: none;
+  pointer-events: none;
+}
+.psv-panel--open {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  transition-duration: 0.2s;
+}
+.psv-panel--open .psv-panel-close-button,
+.psv-panel--open .psv-panel-resizer {
+  display: block;
+}
+@container psv-container (max-width: 400px) {
+  .psv-panel {
+    width: 100% !important;
+    max-width: none;
+  }
+  .psv-panel-resizer {
+    display: none !important;
+  }
+}
+.psv-panel-menu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.psv-panel-menu-title {
+  flex: none;
+  display: flex;
+  align-items: center;
+  font: 24px sans-serif;
+  margin: 24px 12px;
+}
+.psv-panel-menu-title svg {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+}
+.psv-panel-menu-list {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.psv-panel-menu-item {
+  min-height: 1.5em;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition: background 0.1s ease-in-out;
+}
+.psv-panel-menu-item--active {
+  outline: 1px solid currentcolor;
+  outline-offset: -1px;
+}
+.psv-panel-menu-item-icon {
+  flex: none;
+  height: 1.5em;
+  width: 1.5em;
+  margin-right: 0.5em;
+}
+.psv-panel-menu-item-icon img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.psv-panel-menu-item-icon {
+}
+.psv-panel-menu-item-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.psv-panel-menu-item:focus-visible {
+  outline: 2px solid #007cff;
+  outline-offset: -2px;
+}
+.psv-panel-menu--stripped .psv-panel-menu-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.psv-panel-menu--stripped .psv-panel-menu-item:nth-child(odd),
+.psv-panel-menu--stripped .psv-panel-menu-item:nth-child(odd)::before {
+  background: rgba(255, 255, 255, 0.1);
+}
+.psv-panel-menu--stripped .psv-panel-menu-item:nth-child(even),
+.psv-panel-menu--stripped .psv-panel-menu-item:nth-child(even)::before {
+  background: transparent;
+}
+.psv-container:not(.psv--is-touch) .psv-panel-menu-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.psv-tooltip {
+  position: absolute;
+  z-index: 50;
+  box-sizing: border-box;
+  max-width: 200px;
+  background: rgba(61, 61, 61, 0.8);
+  border-radius: 4px;
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-timing-function: ease-in-out;
+  transition-duration: 100ms;
+  cursor: default;
+}
+.psv-tooltip-content {
+  color: rgb(255, 255, 255);
+  font: 14px sans-serif;
+  text-shadow: 0 1px #000;
+  padding: 0.5em 1em;
+}
+.psv-tooltip-arrow {
+  position: absolute;
+  height: 0;
+  width: 0;
+  border: 7px solid transparent;
+}
+.psv-tooltip--top-left,
+.psv-tooltip--top-center,
+.psv-tooltip--top-right {
+  transform: translate3d(0, 5px, 0);
+}
+.psv-tooltip--top-left .psv-tooltip-arrow,
+.psv-tooltip--top-center .psv-tooltip-arrow,
+.psv-tooltip--top-right .psv-tooltip-arrow {
+  border-top-color: rgba(61, 61, 61, 0.8);
+}
+.psv-tooltip--bottom-left,
+.psv-tooltip--bottom-center,
+.psv-tooltip--bottom-right {
+  transform: translate3d(0, -5px, 0);
+}
+.psv-tooltip--bottom-left .psv-tooltip-arrow,
+.psv-tooltip--bottom-center .psv-tooltip-arrow,
+.psv-tooltip--bottom-right .psv-tooltip-arrow {
+  border-bottom-color: rgba(61, 61, 61, 0.8);
+}
+.psv-tooltip--left-top,
+.psv-tooltip--center-left,
+.psv-tooltip--left-bottom {
+  transform: translate3d(5px, 0, 0);
+}
+.psv-tooltip--left-top .psv-tooltip-arrow,
+.psv-tooltip--center-left .psv-tooltip-arrow,
+.psv-tooltip--left-bottom .psv-tooltip-arrow {
+  border-left-color: rgba(61, 61, 61, 0.8);
+}
+.psv-tooltip--right-top,
+.psv-tooltip--center-right,
+.psv-tooltip--right-bottom {
+  transform: translate3d(-5px, 0, 0);
+}
+.psv-tooltip--right-top .psv-tooltip-arrow,
+.psv-tooltip--center-right .psv-tooltip-arrow,
+.psv-tooltip--right-bottom .psv-tooltip-arrow {
+  border-right-color: rgba(61, 61, 61, 0.8);
+}
+.psv-tooltip--left-top,
+.psv-tooltip--top-left {
+  box-shadow: -3px -3px 0 rgba(90, 90, 90, 0.7);
+}
+.psv-tooltip--top-center {
+  box-shadow: 0 -3px 0 rgba(90, 90, 90, 0.7);
+}
+.psv-tooltip--right-top,
+.psv-tooltip--top-right {
+  box-shadow: 3px -3px 0 rgba(90, 90, 90, 0.7);
+}
+.psv-tooltip--left-bottom,
+.psv-tooltip--bottom-left {
+  box-shadow: -3px 3px 0 rgba(90, 90, 90, 0.7);
+}
+.psv-tooltip--bottom-center {
+  box-shadow: 0 3px 0 rgba(90, 90, 90, 0.7);
+}
+.psv-tooltip--right-bottom,
+.psv-tooltip--bottom-right {
+  box-shadow: 3px 3px 0 rgba(90, 90, 90, 0.7);
+}
+.psv-tooltip--center-left {
+  box-shadow: -3px 0 0 rgba(90, 90, 90, 0.7);
+}
+.psv-tooltip--center-right {
+  box-shadow: 3px 0 0 rgba(90, 90, 90, 0.7);
+}
+.psv-tooltip--visible {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+/*!
+ * Photo Sphere Viewer / Markers Plugin 5.15.1
+ * @copyright 2015-2026 Damien "Mistic" Sorel
+ * @licence MIT (https://opensource.org/licenses/MIT)
+ */
+/* src/styles/index.scss */
+.psv-container {
+  --psv-markers-plugin-loaded: true;
+}
+.psv-markers {
+  pointer-events: none;
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+.psv-markers-svg-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+}
+.psv-markers-css3d-container {
+  position: absolute;
+  z-index: 21;
+}
+.psv-marker {
+  display: none;
+  pointer-events: auto;
+}
+.psv-marker--normal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  overflow: visible;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.psv-marker--css3d {
+  display: block;
+}
+.psv-marker--transparent {
+  display: block;
+  opacity: 0;
+}
+.psv-marker--visible {
+  display: block;
+}
+.psv-marker--has-tooltip,
+.psv-marker--has-content {
+  cursor: pointer;
+}
+/*!
+ * Photo Sphere Viewer / Virtual Tour Plugin 5.15.1
+ * @copyright 2015-2026 Damien "Mistic" Sorel
+ * @licence MIT (https://opensource.org/licenses/MIT)
+ */
+/* src/styles/index.scss */
+.psv-container {
+  --psv-virtual-tour-plugin-loaded: true;
+}
+.psv-virtual-tour-tooltip h3 {
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+}
+.psv-virtual-tour-tooltip h3:not(:last-child) {
+  margin-bottom: 0.5em;
+}
+.psv-virtual-tour-tooltip img {
+  display: block;
+  width: 200px;
+  margin: 0 -1em;
+}
+.psv-virtual-tour-tooltip img:first-child {
+  border-radius: 4px 4px 0 0;
+}
+.psv-virtual-tour-tooltip img:last-child {
+  border-radius: 0 0 4px 4px;
+}
+.psv-virtual-tour-tooltip img:not(:last-child) {
+  margin-bottom: 0.5em;
+}
+.psv-virtual-tour-tooltip p {
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+}
+.psv-virtual-tour-link {
+  cursor: pointer;
+  transform-origin: center;
+}
+.psv-virtual-tour-arrows {
+  position: absolute;
+  overflow: visible !important;
+  z-index: 11;
+  bottom: 0;
+  left: 0;
+  filter: drop-shadow(0 10px 2px rgba(0, 0, 0, 0.7));
+  pointer-events: none;
+  transition: margin ease-in-out 0.3s;
+}
+.psv-virtual-tour-arrows .psv-virtual-tour-link {
+  transition: opacity linear 0.2s;
+}
+.psv-virtual-tour-arrows .psv-virtual-tour-link:hover {
+  opacity: 1 !important;
+}
+.psv-virtual-tour-arrow {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+}
+.psv-virtual-tour-arrow:hover {
+  animation: psv-virtual-tour-link-button-in 1s ease-out forwards;
+}
+.psv-virtual-tour-loader {
+  display: block;
+  position: relative;
+  width: 40px;
+  height: 30px;
+  margin: 0 40px;
+}
+.psv-virtual-tour-loader div {
+  display: inline-block;
+  position: absolute;
+  left: 10%;
+  width: 20%;
+  background: #fff;
+  animation: psv-virtual-tour-loader 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.psv-virtual-tour-loader div:nth-child(1) {
+  left: 10%;
+  animation-delay: -0.24s;
+}
+.psv-virtual-tour-loader div:nth-child(2) {
+  left: 40%;
+  animation-delay: -0.12s;
+}
+.psv-virtual-tour-loader div:nth-child(3) {
+  left: 70%;
+  animation-delay: 0;
+}
+@keyframes psv-virtual-tour-loader {
+  0% {
+    top: 10%;
+    height: 80%;
+  }
+  50%, 100% {
+    top: 30%;
+    height: 40%;
+  }
+}
+@keyframes psv-virtual-tour-link-button-in {
+  0% {
+    box-shadow: 0 0 0 0 rgba(97, 170, 242, 0);
+  }
+  20% {
+    box-shadow: 0 0 0 5px #61aaf2;
+  }
+  100% {
+    box-shadow: 0 0 0 20px rgba(97, 170, 242, 0);
+  }
+}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+  "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.15.1/index.module.js",
+  "@photo-sphere-viewer/markers-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.15.1/index.module.js",
+  "@photo-sphere-viewer/virtual-tour-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/virtual-tour-plugin@5.15.1/index.module.js"
+} }
+</script>
+
+<div class="demo-bar"><div class="wrap">
+  <span>Prototipo para revisar: fotos, precios, distancias y textos son de ejemplo.</span>
+  <button type="button" id="openOwner">Ver planilla de la dueña ↓</button>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <div class="brand">Hostal <span>Oregon</span></div>
+  <div class="switch" role="group" aria-label="Elegir casa">
+    <button type="button" data-house="placeres" aria-pressed="true">Placeres</button>
+    <button type="button" data-house="pocuro" aria-pressed="false">Pocuro</button>
+  </div>
+</div></header>
+
+<main>
+  <section class="hero"><div class="wrap">
+    <div class="hero-grid">
+      <p class="eyebrow" id="heroEyebrow"></p>
+      <h1 id="heroTitle"></h1>
+      <p class="lead" id="heroLead"></p>
+      <ul class="facts" id="heroFacts"></ul>
+      <div class="cta-row">
+        <button class="btn btn-main" type="button" data-consult="" data-intent="visita">Agendar una visita</button>
+        <button class="btn btn-ghost" type="button" id="heroTour">Recorrer la casa en 360°</button>
+      </div>
+    </div>
+  </div>
+  <canvas class="skyline" id="skyline" aria-hidden="true"></canvas>
+  </section>
+
+  <div class="avail"><div class="wrap">
+    <div><strong id="availText"></strong><div class="note" id="availSub"></div></div>
+    <div class="mode" id="modeSwitch" role="group" aria-label="Tipo de estadía" hidden>
+      <button type="button" data-mode="mes" aria-pressed="true">Por mes</button>
+      <button type="button" data-mode="noche" aria-pressed="false">Verano y Año Nuevo</button>
+    </div>
+  </div></div>
+
+  <section class="block" id="piezas"><div class="wrap">
+    <div class="block-head">
+      <div><p class="eyebrow">Piezas</p><h2>Elige una pieza y ven a verla</h2></div>
+      <p>Cada pieza tiene un código, el mismo que está en su puerta. Así la dueña sabe al tiro cuál te interesa.</p>
+    </div>
+    <div class="rooms" id="rooms"></div>
+  </div></section>
+
+  <section class="block"><div class="wrap">
+    <div class="block-head">
+      <div><p class="eyebrow">Espacios comunes</p><h2>Recorre la casa antes de venir</h2></div>
+      <p>Lo que más se pregunta en las visitas. Toca un espacio y camina por la casa en 360°.</p>
+    </div>
+    <div class="commons" id="commons"></div>
+  </div></section>
+
+  <section class="block"><div class="wrap">
+    <div class="block-head"><div><p class="eyebrow">Cómo se arrienda</p><h2>Primero la ves, después decides</h2></div></div>
+    <ol class="steps">
+      <li><strong>Mira las piezas</strong><p>Fotos, recorrido 360° y precio con gastos incluidos.</p></li>
+      <li><strong>Agenda una visita</strong><p>Elige un horario. Si vives fuera de Valparaíso, puede ser por videollamada.</p></li>
+      <li><strong>Conoce la casa</strong><p>Puedes venir con tu familia. Revisa la cocina, los baños y el barrio.</p></li>
+      <li><strong>Reserva</strong><p>Con un mes de garantía y los documentos de la lista de abajo.</p></li>
+    </ol>
+  </div></section>
+
+  <section class="block"><div class="wrap two">
+    <div class="panel">
+      <p class="eyebrow">Antes de escribir</p>
+      <h3>Requisitos para arrendar</h3>
+      <ul id="reqList"></ul>
+    </div>
+    <div class="panel">
+      <p class="eyebrow">Convivencia</p>
+      <h3>Reglas de la casa</h3>
+      <ul id="rulesList"></ul>
+    </div>
+    <div class="panel host">
+      <div class="avatar">foto de la dueña</div>
+      <div>
+        <p class="eyebrow">Quién te recibe</p>
+        <h3 id="ownerName"></h3>
+        <p class="note" style="font-size:.95rem">Vive en la casa y te muestra cada espacio en la visita. Responde por WhatsApp.</p>
+      </div>
+    </div>
+  </div></section>
+</main>
+
+<section class="owner" id="owner" hidden><div class="wrap">
+  <div>
+    <p class="eyebrow">Solo para la dueña · demo</p>
+    <h2>Así se ve su planilla</h2>
+    <p class="note" style="font-size:.95rem;max-width:68ch">En la versión real esto es una planilla de Google que ella edita desde el celular. Si cambia el estado de una pieza aquí, la página de arriba se actualiza sola. Cada consulta que se envía por WhatsApp queda anotada en “Interesados”.</p>
+  </div>
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" data-tab="piezas" aria-selected="true">Piezas</button>
+    <button type="button" role="tab" data-tab="visitas" aria-selected="false">Visitas</button>
+    <button type="button" role="tab" data-tab="interesados" aria-selected="false">Interesados</button>
+    <button type="button" role="tab" data-tab="textos" aria-selected="false">Reglas y requisitos</button>
+  </div>
+  <div class="sheet-like" id="ownerTable"></div>
+  <div class="row2" style="max-width:520px">
+    <label>Simular que la persona llegó desde
+      <select class="field" id="srcSim">
+        <option value="web">La página directa</option>
+        <option value="qr-usm">QR en la Santa María</option>
+        <option value="qr-enf">QR en Enfermería UV</option>
+        <option value="ig">Instagram</option>
+        <option value="google">Google Maps</option>
+      </select>
+    </label>
+    <label>&nbsp;<button type="button" class="btn btn-ghost btn-sm" id="resetDemo">Borrar consultas de prueba</button></label>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>Hostal Oregon · Cerro Placeres y sector Pocuro, Valparaíso</span>
+  <span>WhatsApp: <span id="waShown"></span></span>
+</div></footer>
+
+<div class="dock"><div class="dock-in">
+  <p><b>¿Quieres verla en persona?</b>Elige un horario y escríbele directo a la dueña.</p>
+  <button class="btn btn-wa" type="button" data-consult="" data-intent="visita">Agendar visita</button>
+</div></div>
+
+<div class="overlay" id="sheetWrap" hidden>
+  <form class="sheet" id="sheet" aria-labelledby="sheetTitle">
+    <div class="sheet-head">
+      <div><p class="eyebrow" id="sheetHouse"></p><h2 id="sheetTitle" style="font-size:1.45rem">Escríbele a la dueña</h2></div>
+      <button type="button" class="x" data-close aria-label="Cerrar">×</button>
+    </div>
+
+    <label><span class="eyebrow">Pieza</span>
+      <select class="field" id="fRoom"></select>
+    </label>
+
+    <fieldset>
+      <legend>¿Qué te gustaría hacer?</legend>
+      <div class="chips" id="fIntent"></div>
+    </fieldset>
+
+    <fieldset id="gSlot">
+      <legend id="slotLegend">Elige un horario</legend>
+      <div id="fSlots"></div>
+    </fieldset>
+
+    <fieldset id="gWith">
+      <legend>¿Vienes con alguien? <small>(opcional)</small></legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="with" value="" checked><span>Solo/a</span></label>
+        <label class="chip"><input type="radio" name="with" value="mi familia"><span>Con mi familia</span></label>
+        <label class="chip"><input type="radio" name="with" value="un amigo/a"><span>Con un amigo/a</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset id="gDoubt">
+      <legend>Tu consulta</legend>
+      <textarea class="field" id="fDoubt" rows="2" placeholder="Ej: ¿se puede llevar bicicleta?"></textarea>
+    </fieldset>
+
+    <fieldset>
+      <legend>¿Quién eres? <small>(opcional)</small></legend>
+      <div class="chips" id="fProfile">
+        <label class="chip"><input type="radio" name="profile" value="estudiante"><span>Estudiante</span></label>
+        <label class="chip"><input type="radio" name="profile" value="trabajo"><span>Trabajo en la zona</span></label>
+        <label class="chip"><input type="radio" name="profile" value="vacaciones"><span>Vengo de vacaciones</span></label>
+      </div>
+      <select class="field" id="fUni" hidden>
+        <option value="">¿Qué universidad?</option>
+        <option>USM</option><option>PUCV</option><option>UV</option><option>UPLA</option><option value="otra">Otra</option>
+      </select>
+    </fieldset>
+
+    <fieldset id="gWhen">
+      <legend>¿Para cuándo más o menos? <small>(opcional)</small></legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="when" value="marzo"><span>Marzo</span></label>
+        <label class="chip"><input type="radio" name="when" value="mes"><span>Este mes</span></label>
+        <label class="chip"><input type="radio" name="when" value="nose"><span>Aún no sé, estoy mirando</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset id="gDates" hidden>
+      <legend>¿Qué fechas?</legend>
+      <div class="row2">
+        <label>Llegada<input class="field" type="date" id="fIn"></label>
+        <label>Salida<input class="field" type="date" id="fOut"></label>
+      </div>
+      <label class="note">Personas
+        <select class="field" id="fPeople"><option>1</option><option>2</option></select>
+      </label>
+    </fieldset>
+
+    <label><span class="eyebrow">Tu nombre</span>
+      <input class="field" id="fName" autocomplete="given-name" placeholder="Ej: Camila">
+    </label>
+
+    <div>
+      <div class="msg-head"><span class="eyebrow">Mensaje que le llega a la dueña</span>
+        <button type="button" class="btn btn-ghost btn-sm" id="copyMsg">Copiar</button></div>
+      <div class="msg" id="msgPreview"></div>
+    </div>
+
+    <div class="send-row">
+      <a class="btn btn-wa" id="sendWa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+      <p class="note">Se abre WhatsApp con el mensaje listo. Solo tienes que tocar enviar.</p>
+    </div>
+  </form>
+</div>
+
+<div class="viewer" id="viewer" hidden>
+  <div class="viewer-bar">
+    <div><p class="eyebrow" style="color:#9fb3c1">Recorrido 360° · imagen de ejemplo</p><strong id="viewerTitle"></strong></div>
+    <button type="button" class="x" id="viewerClose" aria-label="Cerrar recorrido">×</button>
+  </div>
+  <div class="stage" id="stage"><div class="hint">Arrastra para mirar alrededor</div></div>
+  <div class="viewer-foot" id="viewerFoot"></div>
+</div>
+
+<div class="tour" id="tour" hidden role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+  <div class="tour-bar">
+    <div class="tour-head">
+      <button type="button" class="tour-back" id="tourBack" hidden aria-label="Volver a la foto anterior">←<span> Volver</span></button>
+      <div><p class="eyebrow" style="color:#9fb3c1" id="tourEyebrow">Recorrido virtual</p><strong id="tourTitle"></strong></div>
+    </div>
+    <button type="button" class="x" id="tourClose" aria-label="Cerrar recorrido">×</button>
+  </div>
+  <div class="tour-tabs" id="tourTabs" role="group" aria-label="Ir a un lugar de la casa"></div>
+  <div class="tour-stage" id="tourStage">
+    <div class="tour-hint" id="tourHint">Arrastra para mirar · toca las flechas para avanzar · toca ⓘ para saber más</div>
+    <div class="tour-card" id="tourCard" hidden><button type="button" class="x" id="tourCardClose" aria-label="Cerrar">×</button><h3 id="tourCardTitle"></h3><p id="tourCardText"></p></div>
+    <div class="tour-pick" id="tourPick" hidden></div>
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+  whatsapp: "56900000000",
+  // Enlaces de "Publicar en la web" (formato CSV) de cada pestaña de la planilla de Google.
+  // Si están vacíos, la página usa los datos de ejemplo de más abajo.
+  sheetPiezas: "",
+  sheetTextos: ""
+};
+
+const DEFAULT_TEXTS = {
+  owner: "[Nombre de la dueña]",
+  requisitos: [
+    "Cédula de identidad.",
+    "Ingresos de al menos 2 veces el arriendo, o un apoderado que los tenga.",
+    "Un mes de garantía.",
+    "Contrato por semestre o año. En verano también por noches (Casa Pocuro)."
+  ],
+  reglas: [
+    "Sin fiestas y sin visitas que se queden a dormir.",
+    "No se fuma ni se vapea dentro de la casa.",
+    "Lavadora con horario por pieza."
+  ]
+};
+
+const HOUSES = {
+  placeres: {
+    id: "placeres", name: "Casa Placeres", code: "PL",
+    eyebrow: "Cerro Placeres · Valparaíso",
+    title: "Tu pieza a pasos de la <em>Santa María</em>",
+    lead: "Piezas amobladas para estudiantes que vienen de fuera de Valparaíso. Internet, luz, agua y gas incluidos. Ven a conocerla antes de decidir.",
+    facts: ["≈ 8 min a pie · USM Casa Central", "Gastos incluidos", "Dueña vive en la casa"],
+    blocks: [{ dow: 2, times: ["18:00", "18:30", "19:00"] }, { dow: 4, times: ["18:00", "18:30", "19:00"] }, { dow: 6, times: ["11:00", "11:30", "12:00", "12:30"] }],
+    commons: [["cocina", "Cocina"], ["comedor", "Comedor"], ["patio", "Patio techado"], ["lavanderia", "Lavandería"], ["segundo", "Escalera y 2º piso"], ["pasillo-2", "Ala del patio"]],
+    tour: true,
+    seasonal: false
+  },
+  pocuro: {
+    id: "pocuro", name: "Casa Pocuro", code: "PO",
+    eyebrow: "Sector Pocuro · Valparaíso",
+    title: "Una casa tranquila cerca de <em>Enfermería UV</em>",
+    lead: "Piezas amplias con baño privado para estudiantes, profesionales y visitas de verano. Para Año Nuevo, terraza con vista a la bahía.",
+    facts: ["≈ 6 min a pie · Enfermería UV", "Baño privado", "Por mes o por noches"],
+    blocks: [{ dow: 3, times: ["18:00", "18:30", "19:00"] }, { dow: 6, times: ["15:00", "15:30", "16:00", "16:30"] }],
+    commons: [["cocina", "Cocina"], ["comedor", "Living"], ["terraza", "Terraza con vista"]],
+    seasonal: true
+  }
+};
+
+const DEFAULT_ROOMS = [
+  { code: "PL-01", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "9 m²", "Escritorio"], price: 210000, status: "ocupada", from: "", wall: "#d6dde3" },
+  { code: "PL-02", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "10 m²", "Escritorio", "Ventana al cerro"], price: 220000, status: "libre", from: "", wall: "#dfe4d5" },
+  { code: "PL-03", house: "placeres", name: "Individual con baño privado", specs: ["Baño privado", "12 m²", "Escritorio"], price: 250000, status: "pronto", from: "2027-03-01", wall: "#e6dccd" },
+  { code: "PL-04", house: "placeres", name: "Individual grande", specs: ["Baño privado", "15 m²", "Escritorio doble", "Clóset"], price: 290000, status: "libre", from: "", wall: "#d3e0e2" },
+  { code: "PO-01", house: "pocuro", name: "Suite con baño privado", specs: ["Baño privado", "16 m²", "Cama 2 plazas"], price: 320000, night: 45000, status: "libre", from: "", wall: "#e4ddd3" },
+  { code: "PO-02", house: "pocuro", name: "Habitación doble", specs: ["Baño privado", "18 m²", "2 camas"], price: 420000, night: 60000, status: "ocupada", from: "", wall: "#d9e2dc" },
+  { code: "PO-03", house: "pocuro", name: "Individual vista al mar", specs: ["Baño privado", "13 m²", "Vista a la bahía"], price: 340000, night: 50000, status: "pronto", from: "2026-12-15", wall: "#dde2ea" }
+];
+
+const SOURCES = { web: "página web", "qr-usm": "QR Santa María", "qr-enf": "QR Enfermería UV", ig: "Instagram", google: "Google Maps" };
+const INTENTS = {
+  visita: ["Ir a verla", "en persona"],
+  video: ["Videollamada", "si vives lejos"],
+  duda: ["Tengo una duda", ""],
+  reservar: ["Quiero reservar", "ya me decidí"],
+  espera: ["Avísame si se libera", "lista de espera"]
+};
+const INTENT_LOG = { visita: "Visita", video: "Videollamada", duda: "Duda", reservar: "Reservar", espera: "Lista de espera" };
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("casasvalpo:" + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("casasvalpo:" + k, JSON.stringify(v)); } catch (e) {} }
+};
+
+let rooms = store.get("rooms", null) || DEFAULT_ROOMS.map(r => ({ ...r }));
+let texts = store.get("texts", null) || JSON.parse(JSON.stringify(DEFAULT_TEXTS));
+let fromSheet = false;
+let leads = store.get("leads", null);
+let house = "placeres";
+let mode = "mes";
+let source = "web";
+const hashSrc = (location.hash || "").slice(1);
+if (SOURCES[hashSrc]) source = hashSrc;
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const money = n => "$" + n.toLocaleString("es-CL");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmtDate = (iso, opts = { day: "numeric", month: "short" }) => iso ? new Date(iso + "T12:00:00").toLocaleDateString("es-CL", opts).replace(".", "") : "";
+
+function statusInfo(r) {
+  if (r.status === "libre") return { cls: "ok", text: "Disponible" };
+  if (r.status === "pronto") return { cls: "soon", text: r.from ? "Se libera el " + fmtDate(r.from) : "Se libera pronto" };
+  return { cls: "busy", text: "Arrendada" };
+}
+function priceText(r) {
+  return mode === "noche" && r.night ? money(r.night) + "/noche" : money(r.price) + "/mes";
+}
+
+/* ---------- Visitas: bloques fijos ---------- */
+function slotsFor(h) {
+  const out = [], now = new Date();
+  for (let d = 0; d < 15 && out.length < 10; d++) {
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d);
+    for (const b of HOUSES[h].blocks) if (b.dow === day.getDay()) for (const t of b.times) {
+      const [hh, mm] = t.split(":").map(Number);
+      const dt = new Date(day); dt.setHours(hh, mm, 0, 0);
+      if (dt - now < 3 * 3600e3) continue;
+      const dayLabel = dt.toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "short" }).replace(",", "").replace(".", "");
+      out.push({ key: h + "|" + dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate() + "|" + t, day: dayLabel, time: t, label: dayLabel + " a las " + t });
+    }
+  }
+  return out;
+}
+function takenSlots() { return new Set((leads || []).filter(l => l.slotKey).map(l => l.slotKey)); }
+
+if (!leads) {
+  const pl = slotsFor("placeres"), po = slotsFor("pocuro");
+  const ago = h => Date.now() - h * 3600e3;
+  leads = [
+    { t: ago(30), code: "PL-02", intent: "visita", slot: pl[2] && pl[2].label, slotKey: pl[2] && pl[2].key, who: "Estudiante USM", when: "Marzo", name: "Camila (ejemplo)", src: "QR Santa María", note: "Con mi familia" },
+    { t: ago(20), code: "PO-01", intent: "reservar", who: "Vacaciones · 2 personas", when: "28 dic → 2 ene", name: "Diego (ejemplo)", src: "Instagram" },
+    { t: ago(6), code: "PL-03", intent: "video", slot: pl[0] && pl[0].label, slotKey: pl[0] && pl[0].key, who: "Estudiante USM", when: "Marzo", name: "Valentina (ejemplo)", src: "Instagram" },
+    { t: ago(2), code: "PO-02", intent: "espera", who: "Trabajo en la zona", when: "Aún no sé", name: "Jorge (ejemplo)", src: "Google Maps" }
+  ];
+  void po;
+}
+
+/* ---------- Imágenes 360 de ejemplo (se reemplazan por fotos reales) ---------- */
+function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hashStr(s) { let h = 2166136261; for (const c of s) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; }
+function mix(hex, to, t) {
+  const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const a = p(hex), b = p(to);
+  return "rgb(" + a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(",") + ")";
+}
+const HOUSE_COLORS = ["#e4572e", "#f3a712", "#2a3d66", "#5e9bc2", "#9dc183", "#d64d5f", "#f1e3c8", "#3e8e7e", "#f28f3b", "#7a5c99"];
+function drawHouses(x, x0, x1, yTop, yBot, rand, scale = 1) {
+  let cx = x0;
+  while (cx < x1) {
+    const w = (26 + rand() * 40) * scale, h = (20 + rand() * 46) * scale;
+    const base = yBot - rand() * (yBot - yTop) * .7;
+    x.fillStyle = HOUSE_COLORS[Math.floor(rand() * HOUSE_COLORS.length)];
+    x.fillRect(cx, base - h, w, h);
+    x.fillStyle = "rgba(255,255,255,.75)";
+    for (let wy = base - h + 6 * scale; wy < base - 8 * scale; wy += 12 * scale)
+      for (let wx = cx + 5 * scale; wx < cx + w - 8 * scale; wx += 11 * scale) x.fillRect(wx, wy, 4 * scale, 5 * scale);
+    x.fillStyle = "rgba(0,0,0,.25)"; x.fillRect(cx, base - h - 3 * scale, w, 3 * scale);
+    cx += w + rand() * 6 * scale;
+  }
+}
+function drawWindow(x, x0, w, y0, h, rand) {
+  x.fillStyle = "#f6f7f8"; x.fillRect(x0 - 10, y0 - 10, w + 20, h + 20);
+  const g = x.createLinearGradient(0, y0, 0, y0 + h); g.addColorStop(0, "#8cc4e6"); g.addColorStop(1, "#d8ecf6");
+  x.fillStyle = g; x.fillRect(x0, y0, w, h);
+  x.fillStyle = "#2b6c8a"; x.fillRect(x0, y0 + h * .78, w, h * .22);
+  x.save(); x.beginPath(); x.rect(x0, y0, w, h); x.clip();
+  drawHouses(x, x0 - 10, x0 + w + 10, y0 + h * .35, y0 + h * .8, rand, .8); x.restore();
+  x.fillStyle = "#f6f7f8"; x.fillRect(x0 + w / 2 - 4, y0, 8, h);
+}
+const panoCache = {};
+function pano(kind, wall, seedStr) {
+  const key = kind + wall + seedStr;
+  if (panoCache[key]) return panoCache[key];
+  const W = 2048, H = 1024, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d"), r = rng(hashStr(seedStr));
+  if (kind === "terraza") {
+    const g = x.createLinearGradient(0, 0, 0, H * .55); g.addColorStop(0, "#3d7fb8"); g.addColorStop(1, "#cfe6f2");
+    x.fillStyle = g; x.fillRect(0, 0, W, H * .55);
+    x.fillStyle = "#24607e"; x.fillRect(0, H * .5, W, H * .1);
+    drawHouses(x, 900, W, H * .36, H * .56, r, 1.3);
+    drawHouses(x, 0, 300, H * .4, H * .55, r, 1.1);
+    x.fillStyle = "#b07a4c"; x.fillRect(0, H * .6, W, H * .4);
+    x.fillStyle = "rgba(0,0,0,.12)"; for (let i = 0; i < W; i += 46) x.fillRect(i, H * .6, 3, H * .4);
+    x.fillStyle = "#30363b"; x.fillRect(0, H * .555, W, 7); x.fillRect(0, H * .6, W, 5);
+    for (let i = 0; i < W; i += 38) x.fillRect(i, H * .555, 4, H * .05);
+    x.fillStyle = "#4f8a3c"; [[420, .6], [1500, .62]].forEach(([px]) => { x.beginPath(); x.arc(px, H * .6, 40, 0, Math.PI * 2); x.fill(); });
+    x.fillStyle = "rgba(255,255,255,.85)"; x.font = "600 30px sans-serif"; x.fillText("Imagen 360° de ejemplo", 560, H * .3);
+    return panoCache[key] = c;
+  }
+  const yC = H * .36, yF = H * .7;
+  x.fillStyle = "#eef1f2"; x.fillRect(0, 0, W, yC);
+  for (let i = 0; i < 4; i++) { x.fillStyle = i % 2 ? mix(wall, "#000000", .06) : wall; x.fillRect(i * 512, yC, 512, yF - yC); }
+  x.fillStyle = "rgba(0,0,0,.12)"; for (let i = 0; i <= 4; i++) x.fillRect(i * 512 - 2, yC, 4, yF - yC);
+  if (kind === "bano") {
+    x.fillStyle = "#cdd6da"; x.fillRect(0, yF, W, H - yF);
+    x.fillStyle = "#e9f0f2"; x.fillRect(0, H * .5, W, yF - H * .5);
+    x.strokeStyle = "rgba(0,0,0,.08)"; x.lineWidth = 2;
+    for (let i = 0; i < W; i += 36) { x.beginPath(); x.moveTo(i, H * .5); x.lineTo(i, yF); x.stroke(); }
+    for (let j = H * .5; j < yF; j += 36) { x.beginPath(); x.moveTo(0, j); x.lineTo(W, j); x.stroke(); }
+    for (let i = 0; i < W; i += 60) { x.beginPath(); x.moveTo(i, yF); x.lineTo(i, H); x.stroke(); }
+  } else {
+    x.fillStyle = "#a8794f"; x.fillRect(0, yF, W, H - yF);
+    for (let i = 0; i < W; i += 34) { x.fillStyle = r() > .5 ? "rgba(0,0,0,.06)" : "rgba(255,255,255,.05)"; x.fillRect(i, yF, 34, H - yF); }
+  }
+  x.fillStyle = "rgba(0,0,0,.2)"; x.fillRect(0, yF - 8, W, 8);
+  const label = () => { x.fillStyle = "rgba(20,30,40,.45)"; x.font = "600 26px sans-serif"; x.fillText("Imagen 360° de ejemplo", 1130, H * .44); };
+  if (kind === "pieza") {
+    drawWindow(x, 170, 240, H * .4, H * .17, r);
+    const blanket = ["#2a3d66", "#c9851a", "#3e8e7e", "#d64d5f", "#5e9bc2"][Math.floor(r() * 5)];
+    x.fillStyle = "#6b4f36"; x.fillRect(575, H * .5, 22, yF - H * .5);
+    x.fillStyle = "#f3f3f1"; x.fillRect(597, H * .6, 400, H * .055);
+    x.fillStyle = blanket; x.fillRect(680, H * .615, 317, H * .07);
+    x.fillStyle = "#ffffff"; x.fillRect(610, H * .585, 90, H * .035);
+    x.fillStyle = "#8a6a4a"; x.fillRect(1120, H * .575, 270, 14); x.fillRect(1130, H * .575, 10, yF - H * .575); x.fillRect(1370, H * .575, 10, yF - H * .575);
+    x.fillStyle = "#30363b"; x.fillRect(1180, H * .52, 70, 50);
+    x.fillStyle = "#f3a712"; x.beginPath(); x.moveTo(1330, H * .5); x.lineTo(1360, H * .54); x.lineTo(1300, H * .54); x.fill();
+    x.fillStyle = "#3b4650"; x.fillRect(1220, H * .6, 60, H * .1);
+    x.fillStyle = "#ece7df"; x.fillRect(1560, H * .38, 200, yF - H * .38);
+    x.fillStyle = "rgba(0,0,0,.15)"; x.fillRect(1658, H * .38, 4, yF - H * .38);
+    x.fillStyle = "#b88d62"; x.fillRect(1850, H * .4, 130, yF - H * .4);
+    x.fillStyle = "#f4f7fa"; x.fillRect(1882, H * .45, 66, 26);
+    x.fillStyle = "#1e3b5c"; x.font = "700 18px monospace"; x.fillText(seedStr, 1886, H * .45 + 19);
+    label();
+  } else if (kind === "cocina") {
+    x.fillStyle = "#f2f2ef"; x.fillRect(40, H * .38, 940, H * .1);
+    x.fillStyle = "rgba(0,0,0,.1)"; for (let i = 40; i < 980; i += 118) x.fillRect(i, H * .38, 3, H * .1);
+    x.fillStyle = "#3a3f44"; x.fillRect(0, H * .585, 1000, 16);
+    x.fillStyle = "#f2f2ef"; x.fillRect(0, H * .6, 1000, yF - H * .6);
+    x.fillStyle = "rgba(0,0,0,.1)"; for (let i = 0; i < 1000; i += 125) x.fillRect(i, H * .6, 3, yF - H * .6);
+    x.fillStyle = "#1c1f22"; x.fillRect(300, H * .565, 140, 20);
+    x.fillStyle = "#dfe3e6"; x.fillRect(1050, H * .36, 140, yF - H * .36);
+    drawWindow(x, 1250, 200, H * .4, H * .14, r);
+    x.fillStyle = "#8a6a4a"; x.fillRect(1560, H * .6, 300, 14);
+    x.fillStyle = "#5c4a3a"; x.fillRect(1580, H * .6, 10, yF - H * .6); x.fillRect(1830, H * .6, 10, yF - H * .6);
+    label();
+  } else if (kind === "bano") {
+    x.fillStyle = "#bcd3dc"; x.fillRect(200, H * .4, 170, H * .11);
+    x.fillStyle = "#ffffff"; x.fillRect(180, H * .56, 210, 26);
+    x.fillStyle = "#ffffff"; x.fillRect(720, H * .6, 90, yF - H * .6); x.fillRect(715, H * .53, 100, 40);
+    x.fillStyle = "rgba(170,205,222,.45)"; x.fillRect(1100, H * .36, 360, yF - H * .36);
+    x.fillStyle = "#9aa6ad"; x.fillRect(1100, H * .36, 6, yF - H * .36); x.fillRect(1100, H * .36, 360, 6);
+    x.fillStyle = "#3e8e7e"; x.fillRect(1650, H * .48, 90, 120);
+    label();
+  } else {
+    drawWindow(x, 640, 260, H * .4, H * .16, r);
+    x.fillStyle = "#8a6a4a"; x.fillRect(150, H * .6, 380, 14);
+    x.fillStyle = "#5c4a3a"; x.fillRect(170, H * .6, 10, yF - H * .6); x.fillRect(500, H * .6, 10, yF - H * .6);
+    x.fillStyle = "#5b6f7c"; x.fillRect(1100, H * .58, 400, yF - H * .58); x.fillRect(1090, H * .53, 420, 40);
+    x.fillStyle = "#c9851a"; x.fillRect(1150, H * .555, 60, 40);
+    x.fillStyle = "#2b2f33"; x.fillRect(1620, H * .44, 200, 110);
+    label();
+  }
+  return panoCache[key] = c;
+}
+function sceneFor(code) { const r = rooms.find(x => x.code === code); return pano("pieza", r.wall, r.code); }
+function commonScene(kind, h) { return pano(kind, h === "pocuro" ? "#dfe3dd" : "#e1e5e8", kind + h); }
+function thumbFrom(src, kind) {
+  const c = document.createElement("canvas"); c.width = 640; c.height = 360;
+  const sx = kind === "terraza" ? 1000 : kind === "pieza" ? 120 : 60, sy = 300, sw = 960, sh = 540;
+  c.getContext("2d").drawImage(src, sx, sy, sw, sh, 0, 0, 640, 360);
+  return c;
+}
+
+/* ---------- Render público ---------- */
+function render() {
+  const h = HOUSES[house];
+  document.body.dataset.house = house;
+  $$(".switch button").forEach(b => b.setAttribute("aria-pressed", b.dataset.house === house));
+  $("#heroEyebrow").textContent = h.eyebrow;
+  $("#heroTitle").innerHTML = h.title;
+  $("#heroLead").textContent = h.lead;
+  $("#heroFacts").innerHTML = h.facts.map(f => "<li>" + esc(f) + "</li>").join("");
+  $("#modeSwitch").hidden = !h.seasonal;
+  if (!h.seasonal) mode = "mes";
+  $$("#modeSwitch button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode));
+
+  const list = rooms.filter(r => r.house === house);
+  const free = list.filter(r => r.status === "libre").length;
+  const soon = list.filter(r => r.status === "pronto").length;
+  $("#availText").textContent = free + " de " + list.length + " piezas disponibles hoy";
+  $("#availSub").textContent = (soon ? soon + (soon > 1 ? " se liberan" : " se libera") + " pronto · " : "") + (fromSheet ? "actualizado desde la planilla de la dueña" : "actualizado por la dueña");
+  $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
+  $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
+  $("#ownerName").textContent = texts.owner;
+  $("#waShown").textContent = "+" + CONFIG.whatsapp.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, "$1 $2 $3 $4");
+
+  $("#rooms").innerHTML = list.map(r => {
+    const s = statusInfo(r), busy = r.status === "ocupada";
+    const alt = busy && list.find(o => o.status === "libre");
+    return `<article class="room${busy ? " is-busy" : ""}">
+      <button class="thumb" type="button" data-tour="${r.code}" aria-label="Recorrer ${r.code} en 360°">
+        <span class="plate">${r.code}</span><span class="pill ${s.cls}">${esc(s.text)}</span>
+        <span class="tag360">↻ Ver en 360°</span>
+      </button>
+      <div class="room-body">
+        <h3>${esc(r.name)}</h3>
+        <ul class="specs">${r.specs.map(x => "<li>" + esc(x) + "</li>").join("")}</ul>
+        <div class="price">${priceText(r).replace(/\/(mes|noche)/, " <small>/$1" + (mode === "mes" ? " · gastos incluidos" : "") + "</small>")}</div>
+        <div class="room-actions">
+          ${busy
+            ? `<button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="espera">Avísame si se libera</button>
+               <button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="visita">Ver la casa igual</button>`
+            : `<button class="btn btn-main btn-sm" type="button" data-consult="${r.code}" data-intent="visita">Quiero verla</button>
+               <button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="${mode === "noche" ? "reservar" : "duda"}">${mode === "noche" ? "Consultar fechas" : "Preguntar"}</button>`}
+        </div>
+        ${alt ? `<p class="alt">Parecida y disponible: <button type="button" data-consult="${alt.code}" data-intent="visita">${alt.code} · ${money(alt.price)}</button></p>` : ""}
+      </div>
+    </article>`;
+  }).join("");
+  $$("#rooms .thumb").forEach(btn => btn.prepend(thumbFrom(sceneFor(btn.dataset.tour), "pieza")));
+
+  $("#commons").innerHTML = h.commons.map(([k, label]) =>
+    `<button class="common" type="button" data-common="${k}"><span class="thumb"><span class="tag360">↻ 360°</span></span><span class="label">${esc(label)}</span></button>`).join("");
+  $$("#commons .common").forEach(btn => {
+    const k = btn.dataset.common;
+    if (h.tour) { const img = new Image(); img.src = "recorrido/" + house + "/mini/" + k + ".jpg"; img.alt = ""; img.loading = "lazy"; $(".thumb", btn).prepend(img); }
+    else $(".thumb", btn).prepend(thumbFrom(commonScene(k, house), k));
+  });
+
+  drawSkyline();
+  renderOwner();
+}
+
+function drawSkyline() {
+  const c = $("#skyline"), w = c.clientWidth || 800, hgt = 120, dpr = Math.min(2, window.devicePixelRatio || 1);
+  c.width = w * dpr; c.height = hgt * dpr;
+  const x = c.getContext("2d"); x.scale(dpr, dpr);
+  const hill = getComputedStyle(document.documentElement).getPropertyValue("--hill").trim() || "#c9d5d8";
+  x.fillStyle = hill;
+  x.beginPath(); x.moveTo(0, hgt);
+  for (let i = 0; i <= w; i += 10) x.lineTo(i, 60 + Math.sin(i / 140 + (house === "pocuro" ? 2 : 0)) * 22 + Math.sin(i / 47) * 6);
+  x.lineTo(w, hgt); x.fill();
+  const r = rng(house === "pocuro" ? 7 : 3);
+  for (let row = 0; row < 3; row++) drawHouses(x, -10 + row * 13, w, 50 + row * 18, 82 + row * 16, r, .55 + row * .08);
+}
+
+/* ---------- Hoja de consulta ---------- */
+const sheetWrap = $("#sheetWrap"), sheet = $("#sheet");
+let lastFocus = null;
+function openSheet(code, intent) {
+  lastFocus = document.activeElement;
+  const list = rooms.filter(r => r.house === house);
+  const pick = code || (list.find(r => r.status === "libre") || list[0]).code;
+  $("#fRoom").innerHTML = list.map(r => `<option value="${r.code}">${r.code} · ${esc(r.name)} · ${statusInfo(r).text}</option>`).join("");
+  $("#fRoom").value = pick;
+  $("#sheetHouse").textContent = HOUSES[house].name;
+  if (mode === "noche") { const v = $('input[name="profile"][value="vacaciones"]'); v.checked = true; }
+  buildIntents(intent);
+  buildSlots();
+  sync();
+  sheetWrap.hidden = false;
+  document.documentElement.style.overflow = "hidden";
+  setTimeout(() => $("#fRoom").focus(), 30);
+}
+function closeSheet() { sheetWrap.hidden = true; document.documentElement.style.overflow = ""; if (lastFocus) lastFocus.focus(); }
+function currentRoom() { return rooms.find(r => r.code === $("#fRoom").value); }
+function buildIntents(pref) {
+  const r = currentRoom();
+  const keys = r.status === "ocupada" ? ["visita", "video", "duda", "espera"] : ["visita", "video", "duda", "reservar"];
+  const prev = pref || ($('input[name="intent"]:checked') || {}).value;
+  const sel = keys.includes(prev) ? prev : "visita";
+  $("#fIntent").innerHTML = keys.map(k => `<label class="chip big"><input type="radio" name="intent" value="${k}"${k === sel ? " checked" : ""}><span>${INTENTS[k][0]}${INTENTS[k][1] ? "<small>" + INTENTS[k][1] + "</small>" : ""}</span></label>`).join("");
+}
+function buildSlots() {
+  const prev = ($('input[name="slot"]:checked') || {}).value;
+  const taken = takenSlots();
+  const slots = slotsFor(house);
+  let html = "", lastDay = "";
+  slots.forEach(s => {
+    if (s.day !== lastDay) { if (lastDay) html += "</div>"; html += `<div class="day">${esc(s.day)}</div><div class="chips">`; lastDay = s.day; }
+    const t = taken.has(s.key);
+    html += `<label class="chip"><input type="radio" name="slot" value="${s.key}" data-label="${esc(s.label)}"${t ? " disabled" : ""}${s.key === prev ? " checked" : ""}><span>${s.time}${t ? " · tomado" : ""}</span></label>`;
+  });
+  if (lastDay) html += "</div>";
+  html += `<div class="chips" style="margin-top:8px"><label class="chip"><input type="radio" name="slot" value=""${!prev ? " checked" : ""}><span>Ninguno me acomoda</span></label></div>`;
+  $("#fSlots").innerHTML = html;
+}
+function val(name) { const el = $(`input[name="${name}"]:checked`); return el ? el.value : ""; }
+function formState() {
+  const r = currentRoom(), slotEl = $('input[name="slot"]:checked');
+  return {
+    r, h: HOUSES[r.house], intent: val("intent"),
+    slotKey: slotEl ? slotEl.value : "", slot: slotEl && slotEl.value ? slotEl.dataset.label : "",
+    with: val("with"), doubt: $("#fDoubt").value.trim(), profile: val("profile"), uni: $("#fUni").value,
+    when: val("when"), dIn: $("#fIn").value, dOut: $("#fOut").value, people: $("#fPeople").value,
+    name: $("#fName").value.trim()
+  };
+}
+function whoText(s) {
+  if (s.profile === "estudiante") return "Estudiante" + (s.uni && s.uni !== "otra" ? " " + s.uni : "");
+  if (s.profile === "trabajo") return "Trabajo en la zona";
+  if (s.profile === "vacaciones") return "Vacaciones · " + s.people + (s.people === "1" ? " persona" : " personas");
+  return "";
+}
+function whenText(s) {
+  if (s.profile === "vacaciones") return s.dIn ? fmtDate(s.dIn) + (s.dOut ? " → " + fmtDate(s.dOut) : "") : "";
+  return { marzo: "Marzo", mes: "Este mes", nose: "Aún no sé" }[s.when] || "";
+}
+function buildMsg(s) {
+  const d = `*${s.r.code}* (${s.r.name}, ${priceText(s.r)}) en ${s.h.name}`;
+  const L = [];
+  L.push({
+    visita: `Hola, quiero *ir a ver* la pieza ${d}.`,
+    video: `Hola, me gustaría ver la pieza ${d} *por videollamada*.`,
+    duda: `Hola, tengo una consulta sobre la pieza ${d}.`,
+    reservar: `Hola, quiero *reservar* la pieza ${d}.`,
+    espera: `Hola, me interesa la pieza ${d}, que ahora está arrendada. ¿Me avisa cuando se libere?`
+  }[s.intent]);
+  if (s.intent === "visita" || s.intent === "video") L.push(s.slot ? `¿Puede ser el *${s.slot}*?` : "¿Qué horarios tiene disponibles?");
+  if (s.intent === "visita" && s.with) L.push(`Iría con ${s.with}.`);
+  if (s.intent === "duda" && s.doubt) L.push("Mi consulta: " + s.doubt);
+  if (s.profile === "estudiante") L.push("Soy estudiante" + (s.uni && s.uni !== "otra" ? " de la " + s.uni : "") + ".");
+  if (s.profile === "trabajo") L.push("Trabajo en la zona.");
+  if (s.profile === "vacaciones") L.push("Vengo de vacaciones" + (s.dIn ? `: del ${fmtDate(s.dIn, { day: "numeric", month: "long" })}` + (s.dOut ? ` al ${fmtDate(s.dOut, { day: "numeric", month: "long" })}` : "") : "") + `, ${s.people} ${s.people === "1" ? "persona" : "personas"}.`);
+  if (s.profile !== "vacaciones") L.push({ marzo: "Sería para marzo.", mes: "Sería para este mes.", nose: "Todavía estoy viendo opciones." }[s.when] || "");
+  if (s.name) L.push(`Mi nombre es ${s.name}.`);
+  L.push(`(vía ${SOURCES[source]})`);
+  return L.filter(Boolean).join("\n");
+}
+function sync() {
+  const s = formState();
+  const showSlot = s.intent === "visita" || s.intent === "video";
+  $("#gSlot").hidden = !showSlot;
+  $("#slotLegend").textContent = s.intent === "video" ? "Elige un horario para la videollamada" : "Elige un horario de visita";
+  $("#gWith").hidden = s.intent !== "visita";
+  $("#gDoubt").hidden = s.intent !== "duda";
+  $("#fUni").hidden = s.profile !== "estudiante";
+  $("#gWhen").hidden = s.profile === "vacaciones";
+  $("#gDates").hidden = s.profile !== "vacaciones";
+  const text = buildMsg(s);
+  $("#msgPreview").textContent = text;
+  $("#sendWa").href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(text);
+  $("#sendWa").textContent = { visita: "Pedir visita por WhatsApp", video: "Pedir videollamada por WhatsApp", duda: "Enviar consulta por WhatsApp", reservar: "Reservar por WhatsApp", espera: "Anotarme por WhatsApp" }[s.intent];
+}
+sheet.addEventListener("change", e => {
+  if (e.target.id === "fRoom") buildIntents();
+  sync();
+});
+sheet.addEventListener("input", sync);
+sheet.addEventListener("submit", e => e.preventDefault());
+sheetWrap.addEventListener("click", e => { if (e.target === sheetWrap || e.target.closest("[data-close]")) closeSheet(); });
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (!$("#viewer").hidden) closeViewer(); else if (!sheetWrap.hidden) closeSheet();
+});
+$("#sendWa").addEventListener("click", () => {
+  const s = formState();
+  leads.push({
+    t: Date.now(), code: s.r.code, intent: s.intent,
+    slot: (s.intent === "visita" || s.intent === "video") ? s.slot : "", slotKey: (s.intent === "visita" || s.intent === "video") ? s.slotKey : "",
+    who: whoText(s), when: whenText(s), name: s.name || "(sin nombre)", src: SOURCES[source], note: s.intent === "visita" && s.with ? "Con " + s.with : (s.doubt || "")
+  });
+  store.set("leads", leads);
+  renderOwner();
+  setTimeout(() => { buildSlots(); sync(); }, 300);
+});
+$("#copyMsg").addEventListener("click", async e => {
+  const btn = e.currentTarget;
+  try { await navigator.clipboard.writeText($("#msgPreview").textContent); btn.textContent = "Copiado"; }
+  catch (err) { const range = document.createRange(); range.selectNodeContents($("#msgPreview")); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range); btn.textContent = "Seleccionado"; }
+  setTimeout(() => btn.textContent = "Copiar", 1600);
+});
+
+/* ---------- Visor 360 ---------- */
+const V = { lon: 0, lat: 0, fov: 75, drag: null, auto: true, raf: 0 };
+function viewerScenes() {
+  const list = rooms.filter(r => r.house === house).map(r => ({ id: r.code, label: r.code, canvas: () => sceneFor(r.code) }));
+  return list.concat(HOUSES[house].commons.map(([k, label]) => ({ id: k, label, canvas: () => commonScene(k, house) })));
+}
+function openViewer(id) {
+  const scenes = viewerScenes();
+  const sc = scenes.find(s => s.id === id) || scenes[0];
+  $("#viewer").hidden = false;
+  document.documentElement.style.overflow = "hidden";
+  $("#viewerTitle").textContent = rooms.find(r => r.code === sc.id) ? sc.id + " · " + rooms.find(r => r.code === sc.id).name : sc.label + " · " + HOUSES[house].name;
+  $("#viewerFoot").innerHTML = scenes.map(s => `<button type="button" data-scene="${s.id}" aria-pressed="${s.id === sc.id}">${esc(s.label)}</button>`).join("");
+  showScene(sc.canvas());
+  $("#viewerClose").focus();
+}
+function closeViewer() { $("#viewer").hidden = true; document.documentElement.style.overflow = ""; cancelAnimationFrame(V.raf); }
+function showScene(canvas) {
+  const stage = $("#stage");
+  V.lon = 0; V.lat = 0; V.fov = 75; V.auto = true;
+  if (!window.THREE) {
+    stage.querySelectorAll("canvas").forEach(c => c.remove());
+    const flat = document.createElement("canvas"); flat.width = canvas.width; flat.height = canvas.height;
+    flat.getContext("2d").drawImage(canvas, 0, 0); flat.style.cssText = "height:100%;width:auto";
+    stage.style.overflowX = "auto"; stage.prepend(flat); return;
+  }
+  if (!V.renderer) {
+    V.renderer = new THREE.WebGLRenderer({ antialias: true });
+    V.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    stage.prepend(V.renderer.domElement);
+    V.scene = new THREE.Scene();
+    V.camera = new THREE.PerspectiveCamera(75, 1, 1, 1100);
+    const geo = new THREE.SphereGeometry(500, 60, 40); geo.scale(-1, 1, 1);
+    V.mat = new THREE.MeshBasicMaterial();
+    V.scene.add(new THREE.Mesh(geo, V.mat));
+    stage.addEventListener("pointerdown", e => { V.drag = { x: e.clientX, y: e.clientY, lon: V.lon, lat: V.lat }; V.auto = false; stage.setPointerCapture(e.pointerId); stage.style.cursor = "grabbing"; });
+    stage.addEventListener("pointermove", e => { if (!V.drag) return; V.lon = V.drag.lon - (e.clientX - V.drag.x) * .15; V.lat = Math.max(-80, Math.min(80, V.drag.lat + (e.clientY - V.drag.y) * .15)); });
+    const end = () => { V.drag = null; stage.style.cursor = ""; };
+    stage.addEventListener("pointerup", end); stage.addEventListener("pointercancel", end);
+    stage.addEventListener("wheel", e => { e.preventDefault(); V.fov = Math.max(40, Math.min(95, V.fov + e.deltaY * .05)); }, { passive: false });
+  }
+  if (V.mat.map) V.mat.map.dispose();
+  V.mat.map = new THREE.CanvasTexture(canvas); V.mat.needsUpdate = true;
+  cancelAnimationFrame(V.raf);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const loop = () => {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    if (V.renderer.domElement.width !== Math.round(w * V.renderer.getPixelRatio())) V.renderer.setSize(w, h, false);
+    V.camera.aspect = w / h; V.camera.fov = V.fov; V.camera.updateProjectionMatrix();
+    if (V.auto && !reduce) V.lon += .04;
+    const phi = THREE.MathUtils.degToRad(90 - V.lat), th = THREE.MathUtils.degToRad(V.lon);
+    V.camera.lookAt(500 * Math.sin(phi) * Math.cos(th), 500 * Math.cos(phi), 500 * Math.sin(phi) * Math.sin(th));
+    V.renderer.render(V.scene, V.camera);
+    V.raf = requestAnimationFrame(loop);
+  };
+  loop();
+}
+$("#viewerClose").addEventListener("click", closeViewer);
+$("#viewerFoot").addEventListener("click", e => {
+  const b = e.target.closest("[data-scene]"); if (!b) return;
+  const sc = viewerScenes().find(s => s.id === b.dataset.scene);
+  $$("#viewerFoot button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  const r = rooms.find(x => x.code === sc.id);
+  $("#viewerTitle").textContent = r ? r.code + " · " + r.name : sc.label + " · " + HOUSES[house].name;
+  showScene(sc.canvas());
+});
+
+/* ---------- Planilla de la dueña ---------- */
+let ownerTab = "piezas";
+function renderOwner() {
+  const box = $("#ownerTable");
+  if (ownerTab === "textos") {
+    box.innerHTML = `<div style="padding:14px;display:grid;gap:12px">
+      <p class="note">Una línea por regla o requisito. En la planilla real, cada una es una fila de la pestaña “Textos”.</p>
+      <label class="note">Requisitos<textarea class="field" id="tReq" rows="5">${esc(texts.requisitos.join("\n"))}</textarea></label>
+      <label class="note">Reglas de la casa<textarea class="field" id="tRules" rows="4">${esc(texts.reglas.join("\n"))}</textarea></label>
+      <label class="note">Nombre de la dueña<input class="field" id="tOwner" value="${esc(texts.owner)}"></label>
+    </div>`;
+    return;
+  }
+  if (ownerTab === "piezas") {
+    box.innerHTML = `<table><thead><tr><th>Código</th><th>Casa</th><th>Pieza</th><th>Precio</th><th>Estado</th><th>Se libera</th></tr></thead><tbody>${
+      rooms.map(r => `<tr><td class="code">${r.code}</td><td>${HOUSES[r.house].name}</td><td>${esc(r.name)}</td><td>${money(r.price)}</td>
+        <td><select data-status="${r.code}" aria-label="Estado de ${r.code}">${[["libre", "Disponible"], ["pronto", "Se libera"], ["ocupada", "Arrendada"]].map(([v, t]) => `<option value="${v}"${r.status === v ? " selected" : ""}>${t}</option>`).join("")}</select></td>
+        <td><input type="date" data-from="${r.code}" value="${r.from}" aria-label="Fecha en que se libera ${r.code}"${r.status === "pronto" ? "" : " disabled"}></td></tr>`).join("")
+    }</tbody></table>`;
+  } else {
+    const rows = (ownerTab === "visitas" ? leads.filter(l => l.slot) : leads.slice().reverse());
+    if (!rows.length) { box.innerHTML = `<p class="empty">Todavía no hay ${ownerTab === "visitas" ? "visitas agendadas" : "consultas"}.</p>`; return; }
+    box.innerHTML = ownerTab === "visitas"
+      ? `<table><thead><tr><th>Horario</th><th>Tipo</th><th>Pieza</th><th>Nombre</th><th>Quién es</th><th>Nota</th></tr></thead><tbody>${
+          rows.map(l => `<tr><td>${esc(l.slot)}</td><td>${INTENT_LOG[l.intent]}</td><td class="code">${l.code}</td><td>${esc(l.name)}</td><td>${esc(l.who || "—")}</td><td>${esc(l.note || "")}</td></tr>`).join("")}</tbody></table>`
+      : `<table><thead><tr><th>Fecha</th><th>Pieza</th><th>Quiere</th><th>Nombre</th><th>Quién es</th><th>Para cuándo</th><th>Llegó por</th></tr></thead><tbody>${
+          rows.map(l => `<tr><td>${new Date(l.t).toLocaleDateString("es-CL", { day: "numeric", month: "short" }).replace(".", "")} ${new Date(l.t).toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })}</td><td class="code">${l.code}</td><td>${INTENT_LOG[l.intent]}</td><td>${esc(l.name)}</td><td>${esc(l.who || "—")}</td><td>${esc(l.when || "—")}</td><td>${esc(l.src)}</td></tr>`).join("")}</tbody></table>`;
+  }
+}
+$("#ownerTable").addEventListener("input", e => {
+  if (!["tReq", "tRules", "tOwner"].includes(e.target.id)) return;
+  const lines = id => $("#" + id).value.split("\n").map(s => s.trim()).filter(Boolean);
+  texts = { requisitos: lines("tReq"), reglas: lines("tRules"), owner: $("#tOwner").value.trim() || DEFAULT_TEXTS.owner };
+  store.set("texts", texts);
+  $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
+  $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
+  $("#ownerName").textContent = texts.owner;
+});
+$("#ownerTable").addEventListener("change", e => {
+  const st = e.target.dataset.status, fr = e.target.dataset.from;
+  const r = rooms.find(x => x.code === (st || fr)); if (!r) return;
+  if (st) { r.status = e.target.value; if (r.status === "pronto" && !r.from) r.from = "2027-03-01"; if (r.status !== "pronto") r.from = ""; }
+  if (fr) r.from = e.target.value;
+  store.set("rooms", rooms);
+  render();
+});
+$$(".tabs button").forEach(b => b.addEventListener("click", () => {
+  ownerTab = b.dataset.tab;
+  $$(".tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
+  renderOwner();
+}));
+$("#srcSim").value = source;
+$("#srcSim").addEventListener("change", e => { source = e.target.value; });
+$("#resetDemo").addEventListener("click", () => {
+  leads = leads.filter(l => / \(ejemplo\)$/.test(l.name));
+  rooms = DEFAULT_ROOMS.map(r => ({ ...r }));
+  texts = JSON.parse(JSON.stringify(DEFAULT_TEXTS));
+  store.set("leads", leads); store.set("rooms", rooms); store.set("texts", texts);
+  render();
+});
+$("#openOwner").addEventListener("click", () => { $("#owner").hidden = false; $("#owner").scrollIntoView({ behavior: "smooth" }); });
+
+/* ---------- Eventos generales ---------- */
+document.addEventListener("click", e => {
+  const c = e.target.closest("[data-consult]");
+  if (c) { openSheet(c.dataset.consult, c.dataset.intent); return; }
+  const t = e.target.closest("[data-tour]");
+  if (t) { openViewer(t.dataset.tour); return; }
+  const cm = e.target.closest("[data-common]");
+  if (cm) { if (HOUSES[house].tour && window.openTour) window.openTour(cm.dataset.common); else openViewer(cm.dataset.common); }
+});
+$("#heroTour").addEventListener("click", () => { if (HOUSES[house].tour && window.openTour) window.openTour(); else openViewer(HOUSES[house].commons[0][0]); });
+$$(".switch button").forEach(b => b.addEventListener("click", () => { house = b.dataset.house; render(); }));
+$$("#modeSwitch button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.mode; render(); }));
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawSkyline, 150); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawSkyline);
+new MutationObserver(drawSkyline).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+if (location.hash === "#duena") $("#owner").hidden = false;
+
+/* ---------- Planilla de Google real ---------- */
+const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+function parseCSV(text) {
+  const rows = []; let row = [], cell = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if (ch === '"') q = true;
+    else if (ch === ",") { row.push(cell); cell = ""; }
+    else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+    else if (ch !== "\r") cell += ch;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(c => c.trim()));
+}
+function csvObjects(text) {
+  const [head, ...rest] = parseCSV(text);
+  const keys = head.map(norm);
+  return rest.map(r => Object.fromEntries(keys.map((k, i) => [k, (r[i] || "").trim()])));
+}
+function parseDate(s) {
+  s = String(s || "").trim();
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (m) return `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}`;
+  m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if (m) return `${m[3].length === 2 ? "20" + m[3] : m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}`;
+  return "";
+}
+const WALLS = ["#d6dde3", "#dfe4d5", "#e6dccd", "#d3e0e2", "#e4ddd3", "#d9e2dc", "#dde2ea"];
+function applyPiezasCSV(text) {
+  const today = new Date().toISOString().slice(0, 10);
+  const list = csvObjects(text).filter(o => o.codigo).map(o => {
+    const estado = norm(o.estado), from = parseDate(o["se libera"]);
+    let status = "ocupada";
+    if (estado.startsWith("disp") || estado === "libre") status = "libre";
+    else if (estado.includes("libera") || (from && from > today)) status = "pronto";
+    const num = s => Number(String(s || "").replace(/\D/g, "")) || 0;
+    return {
+      code: o.codigo.toUpperCase(), house: norm(o.casa).includes("poc") ? "pocuro" : "placeres",
+      name: o.tipo || "Pieza", specs: (o.detalles || "").split(",").map(s => s.trim()).filter(Boolean),
+      price: num(o["precio mes"]), night: num(o["precio noche"]) || undefined,
+      status, from: status === "pronto" ? from : "", wall: WALLS[hashStr(o.codigo) % WALLS.length]
+    };
+  });
+  if (list.length) rooms = list;
+}
+function applyTextosCSV(text) {
+  const t = { owner: texts.owner, requisitos: [], reglas: [] };
+  csvObjects(text).forEach(o => {
+    const sec = norm(o.seccion), val = o.texto;
+    if (!val) return;
+    if (sec.startsWith("requis")) t.requisitos.push(val);
+    else if (sec.startsWith("regla")) t.reglas.push(val);
+    else if (sec.includes("nombre") || sec.includes("duena")) t.owner = val;
+    else if (sec.includes("whatsapp")) CONFIG.whatsapp = val.replace(/\D/g, "");
+  });
+  if (t.requisitos.length) texts.requisitos = t.requisitos;
+  if (t.reglas.length) texts.reglas = t.reglas;
+  texts.owner = t.owner;
+}
+async function loadSheets() {
+  if (!CONFIG.sheetPiezas && !CONFIG.sheetTextos) return;
+  try {
+    const get = url => fetch(url + (url.includes("?") ? "&" : "?") + "t=" + Date.now()).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+    const [p, t] = await Promise.all([CONFIG.sheetPiezas ? get(CONFIG.sheetPiezas) : null, CONFIG.sheetTextos ? get(CONFIG.sheetTextos) : null]);
+    if (p) applyPiezasCSV(p);
+    if (t) applyTextosCSV(t);
+    fromSheet = true;
+    $("#openOwner").hidden = true;
+    render();
+  } catch (err) {
+    console.warn("No se pudo leer la planilla; se muestran los datos guardados.", err);
+  }
+}
+
+render();
+loadSheets();
+</script>
+
+<script type="module">
+/* ---------- Recorrido virtual Casa Placeres (fotos 360 reales, Insta360 X4) ----------
+   Ángulos en grados: yaw = izquierda/derecha (0 = centro de la foto), pitch = arriba/abajo.
+   Para ubicar un punto nuevo: abrir la página con #editar al final del link y tocar la foto. */
+import { Viewer } from "@photo-sphere-viewer/core";
+import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
+import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
+
+const DIR = "recorrido/placeres/";
+// Flecha sobre la puerta o pasillo que lleva a otra foto: yaw y pitch en grados
+const L = (nodeId, yaw, pitch = -8) => ({ nodeId, position: { yaw: yaw + "deg", pitch: pitch + "deg" } });
+const I = (id, yaw, pitch, title, text) => ({ id, yaw, pitch, title, text });
+const TABS = [["Afuera", "plaza"], ["Entrada", "hall"], ["Cocina", "cocina"], ["Comedor", "comedor"], ["Patio", "patio"], ["Lavandería", "lavanderia"], ["2º piso", "segundo"], ["3er piso", "tercero"], ["Ala del patio", "pasillo-2"]];
+const NODES = [
+  { id: "plaza", name: "Plaza frente al hostal", tab: "Afuera", links: [L("calle", -6, -4)],
+    info: [I("hostal", -6, 9, "Hostal Oregon", "La casa del portón amarillo, cruzando la calle."),
+           I("plaza", 140, 4, "La plaza", "Plaza con pérgola, palmeras y pasto, justo al frente del hostal.")] },
+  { id: "calle", name: "La calle", tab: "Afuera", links: [L("antejardin", -2, -10), L("plaza", -170, -10)], info: [] },
+  { id: "antejardin", name: "Antejardín", tab: "Afuera", links: [L("calle", 175, -10), L("hall", 1, -4), L("jardin", 75, -15)],
+    info: [I("mural", -35, 15, "Fachada con mural", "La casa está pintada con un mural de Valparaíso."),
+           I("mesa", 85, 2, "Mesa en el antejardín", "Mesa y sillas al aire libre, junto a la entrada.")] },
+  { id: "jardin", name: "Jardín", tab: "Afuera", links: [L("antejardin", 105, -12), L("acceso", -130, -15)], info: [] },
+  { id: "acceso", name: "Acceso al patio", tab: "Afuera", links: [L("patio", -20, -5), L("jardin", -100, -15)], info: [] },
+
+  { id: "hall", name: "Hall de entrada", tab: "Entrada", links: [L("antejardin", 5, -5), L("sala", 160, -34), L("segundo", -112, -5)],
+    info: [I("hall", 0, 18, "Hall de entrada", "Desde aquí se llega a las piezas del primer piso y a la escalera.")] },
+  { id: "sala", name: "Sala del primer piso", tab: "Entrada", links: [L("hall", -114, -10), L("patio", 92, -8)], info: [] },
+
+  { id: "cocina", name: "Cocina", tab: "Cocina", links: [L("comedor", 79, -5), L("refrigeradores", -98, -8)],
+    info: [I("cocinas", 22, -8, "Dos cocinas, 10 platos", "Dos cocinas de 5 platos cada una, con una campana industrial que cubre las dos."),
+           I("lavaplatos", -35, -10, "Dos lavaplatos", "Dos lavaplatos dobles para lavar sin esperar turno."),
+           I("micro", -150, 0, "Microondas y horno", "Microondas y horno eléctrico."),
+           I("muebles", 140, 12, "Muebles y loza", "Muebles de cocina para 30 personas y loza para 25.")] },
+  { id: "refrigeradores", name: "Refrigeradores", tab: "Cocina", links: [L("cocina", 35, -8)],
+    info: [I("refris", 100, 0, "4 refrigeradores", "La cocina tiene 4 refrigeradores para los arrendatarios."),
+           I("casilleros", -60, 5, "Casilleros", "Casilleros metálicos en la cocina.")] },
+  { id: "comedor", name: "Comedor", tab: "Comedor", links: [L("patio", -120, -10), L("cocina", -50, -5)],
+    info: [I("tv", 12, 30, "TV de 42 pulgadas", "Televisor LG de 42\" en el comedor."),
+           I("mesas", -25, -25, "Mesas del comedor", "Para comer y conversar con el resto de la casa.")] },
+
+  { id: "patio", name: "Patio techado", tab: "Patio", links: [L("acceso", -4, -5), L("comedor", -60, -8), L("patio-techado", 92, -8), L("terraza", 125, 8)],
+    info: [I("mural", 45, 10, "Mural del patio", "Mural pintado en el patio central."),
+           I("seguridad", 148, 0, "Seguridad", "Extintores, red húmeda y red seca.")] },
+  { id: "patio-techado", name: "Patio interior", tab: "Patio", links: [L("patio", -25, -8), L("patio-servicio", 140, -10)], info: [] },
+  { id: "patio-servicio", name: "Patio de servicio", tab: "Patio", links: [L("patio-techado", -165, -10), L("lavanderia", -61, -10), L("calefones", -12, -12), L("pasillo-banos", 92, -8)],
+    info: [I("agua", 15, 32, "Agua", "Estanque de agua con hidropack.")] },
+  { id: "calefones", name: "Sala de calefones", tab: "Patio", links: [L("patio-servicio", 178, -10)],
+    info: [I("calefones", 25, 10, "Agua caliente", "Batería de 8 calefones y 2 termos de 200 litros.")] },
+  { id: "pasillo-banos", name: "Pasillo de los baños", tab: "Patio", links: [L("patio-servicio", 92, -10), L("despensa", -95, -5)],
+    info: [I("banos1", -150, 5, "Baños compartidos", "Baños para las piezas que no tienen baño privado."),
+           I("banos2", 152, 5, "Baños compartidos", "Baños para las piezas que no tienen baño privado.")] },
+  { id: "despensa", name: "Pasillo de la despensa", tab: "Patio", links: [L("pasillo-banos", 95, -5), L("pasillo-atras", -88, -5)],
+    info: [I("despensa", 142, 8, "Despensa", "Despensa de la casa.")] },
+  { id: "pasillo-atras", name: "Pasillo del primer piso", tab: "Patio", links: [L("despensa", 60, -5)], info: [] },
+
+  { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("patio-servicio", 178, -10)],
+    info: [I("lavadoras", -105, -20, "Lavadoras", "Lavadoras y lavadero. La casa también tiene lavadora y secadora Maytag de 13 kilos, con fichas.")] },
+
+  { id: "segundo", name: "Hall del 2º piso", tab: "2º piso", links: [L("hall", 148, -28), L("pasillo", 42, -5), L("escalera-3", 128, 18)],
+    info: [I("fumar", 18, 5, "No se fuma", "No se fuma dentro de la casa.")] },
+  { id: "pasillo", name: "Pasillo del 2º piso", tab: "2º piso", links: [L("segundo", 40, -14), L("terraza", -8, -2), L("escalera-3", 46, 14)], info: [] },
+  { id: "escalera-3", name: "Escalera al 3er piso", tab: "3er piso", links: [L("segundo", -172, -18), L("tercero", -115, 8)], info: [] },
+  { id: "tercero", name: "Llegada al 3er piso", tab: "3er piso", links: [L("escalera-3", 45, -35), L("pasillo-3", -70, -5)], info: [] },
+  { id: "pasillo-3", name: "Pasillo del 3er piso", tab: "3er piso", links: [L("tercero", -58, -15)], info: [] },
+
+  { id: "terraza", name: "Pasarela del patio", tab: "Ala del patio", links: [L("patio", -140, -28), L("pasillo", 0, -6), L("pasillo-2", 168, -5), L("ala-12", -168, -5)], info: [] },
+  { id: "pasillo-2", name: "Ala del patio", tab: "Ala del patio", links: [L("terraza", 60, -5), L("ala-14", -45, -5), L("ala-12", 152, -5)], info: [] },
+  { id: "ala-12", name: "Pasillo piezas 11 a 13", tab: "Ala del patio", links: [L("terraza", -170, -5), L("pasillo-2", 170, -5)], info: [] },
+  { id: "ala-14", name: "Pasillo piezas 14 y 15", tab: "Ala del patio", links: [L("pasillo-2", 125, -5), L("ala-16", -60, -5)], info: [] },
+  { id: "ala-16", name: "Pasillo pieza 16", tab: "Ala del patio", links: [L("ala-14", 12, -5), L("ventana", -88, -5)], info: [] },
+  { id: "ventana", name: "Ventana del pasillo", tab: "Ala del patio", links: [L("ala-16", -135, -5)],
+    info: [I("vista", 35, 5, "Vista", "Vista al cerro desde el pasillo.")] }
+];
+
+const $ = s => document.querySelector(s);
+const EDIT = /editar/.test(location.hash);
+const NAMES = Object.fromEntries(NODES.map(n => [n.id, n.name]));
+let viewer, tour, marks, current = null, goingBack = false;
+const visited = [];
+
+const nodes = NODES.map(n => ({
+  id: n.id, panorama: DIR + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab },
+  markers: n.info.map(m => ({
+    id: n.id + "-" + m.id, position: { yaw: m.yaw + "deg", pitch: m.pitch + "deg" },
+    html: '<span class="hs" aria-hidden="true">i</span>', size: { width: 34, height: 34 }, anchor: "center center",
+    tooltip: { content: m.title, position: "top center" }, data: m
+  }))
+}));
+
+function setTabs(node) {
+  $("#tourTitle").textContent = node.name + " · Casa Placeres";
+  $("#tourTabs").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === node.data.tab));
+}
+function showCard(m) { $("#tourCardTitle").textContent = m.title; $("#tourCardText").textContent = m.text; $("#tourCard").hidden = false; }
+function hideCard() { $("#tourCard").hidden = true; }
+
+function build(start) {
+  viewer = new Viewer({
+    container: $("#tourStage"),
+    navbar: ["zoom", "fullscreen"],
+    defaultZoomLvl: 20,
+    touchmoveTwoFingers: false,
+    mousewheelCtrlKey: false,
+    loadingTxt: "Cargando…",
+    lang: { zoom: "Zoom", zoomOut: "Alejar", zoomIn: "Acercar", fullscreen: "Pantalla completa", loadError: "No se pudo cargar la foto", menu: "Menú", close: "Cerrar" },
+    plugins: [
+      [MarkersPlugin, {}],
+      [VirtualTourPlugin, { positionMode: "manual", renderMode: "2d", nodes, startNodeId: start,
+        // Cada flecha queda sobre su puerta, con el nombre del lugar al que lleva
+        arrowStyle: { size: { width: 132, height: 70 }, element: link => {
+          const el = document.createElement("div");
+          el.innerHTML = '<span class="tl-ico" aria-hidden="true">↑</span><span class="tl-lbl"></span>';
+          el.querySelector(".tl-lbl").textContent = NAMES[link.nodeId] || "";
+          return el;
+        } },
+        showLinkTooltip: false,
+        transitionOptions: { showLoader: true, speed: "20rpm", effect: "fade", rotation: true } }]
+    ]
+  });
+  tour = viewer.getPlugin(VirtualTourPlugin);
+  marks = viewer.getPlugin(MarkersPlugin);
+  tour.addEventListener("node-changed", ({ node }) => {
+    // Historial para el botón "Volver": cada foto nueva guarda la anterior
+    if (current && !goingBack) visited.push(current);
+    current = node.id; goingBack = false;
+    $("#tourBack").hidden = !visited.length;
+    setTabs(node); hideCard();
+  });
+  marks.addEventListener("select-marker", ({ marker }) => showCard(marker.data));
+  const fade = () => { $("#tourHint").style.opacity = "0"; };
+  viewer.addEventListener("click", ({ data }) => {
+    fade();
+    if (!EDIT) return;
+    const deg = r => Math.round(r * 180 / Math.PI);
+    const txt = "yaw " + deg(data.yaw > Math.PI ? data.yaw - 2 * Math.PI : data.yaw) + ", pitch " + deg(data.pitch);
+    $("#tourPick").textContent = tour.getCurrentNode().id + " · " + txt; $("#tourPick").hidden = false;
+    try { navigator.clipboard.writeText(txt); } catch (e) {}
+  });
+  setTimeout(fade, 6000);
+}
+
+window.openTour = function (id) {
+  const start = NODES.some(n => n.id === id) ? id : "plaza";
+  $("#tour").hidden = false;
+  document.documentElement.style.overflow = "hidden";
+  if (!viewer) build(start);
+  else if (tour.getCurrentNode()?.id !== start) tour.setCurrentNode(start);
+  $("#tourClose").focus();
+};
+function closeTour() { $("#tour").hidden = true; document.documentElement.style.overflow = ""; hideCard(); }
+
+$("#tourTabs").innerHTML = TABS.map(([t, id]) => `<button type="button" data-tab="${t}" data-node="${id}" aria-pressed="false">${t}</button>`).join("");
+$("#tourTabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-node]"); if (!b) return;
+  if (tour.getCurrentNode()?.id !== b.dataset.node) tour.setCurrentNode(b.dataset.node);
+});
+$("#tourBack").addEventListener("click", () => {
+  if (!visited.length) return;
+  goingBack = true;
+  tour.setCurrentNode(visited.pop());
+});
+$("#tourClose").addEventListener("click", closeTour);
+$("#tourCardClose").addEventListener("click", hideCard);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#tour").hidden) closeTour(); });
+</script>
+
+</body>
+</html>
