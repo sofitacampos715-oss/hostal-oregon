@@ -1995,14 +1995,14 @@ const NODES = [
 const POCURO_START = "entrada";
 const POCURO_TABS = [["Entrada", "entrada"], ["Pasillos", "pasillo"], ["Comedor", "comedor"], ["Cocina", "cocina"], ["Lavandería", "lavanderia"], ["Balcón", "balcon"]];
 const POCURO_NODES = [
-  { id: "entrada", name: "Hall de entrada", tab: "Entrada", look: -10, links: [L("pasillo", -8, -6), L("colibri", 160, -6)],
+  { id: "entrada", name: "Hall de entrada", tab: "Entrada", look: -10, links: [L("pasillo", -8, -6), L("pasillo-balcon", 160, -6)],
     info: [I("puerta", -78, 5, "Entrada principal", "Puerta de entrada desde la calle."),
            I("recepcion", 38, -22, "Recepción", "Escritorio de recepción, donde te reciben al llegar.")] },
-  { id: "pasillo", name: "Pasillo del primer piso", tab: "Pasillos", links: [L("entrada", 178, -6), L("casilleros", 4, -2)],
+  { id: "pasillo", name: "Pasillo del primer piso", tab: "Pasillos", links: [L("entrada", 178, -6), L("comedor", 4, -2)],
     info: [I("silencio", -75, 8, "Tranquilidad", "Se pide mantener silencio en los pasillos: hay gente estudiando.")] },
   { id: "casilleros", name: "Hall de los casilleros", tab: "Pasillos", links: [L("pasillo", -150, -32), L("comedor", -122, -6), L("lavanderia", 140, -12)],
     info: [I("casilleros", 60, 5, "Casilleros", "Casilleros para guardar tus cosas.")] },
-  { id: "comedor", name: "Comedor", tab: "Comedor", links: [L("casilleros", -78, -6), L("pasillo-balcon", -42, -22), L("cocina", -162, -8)],
+  { id: "comedor", name: "Comedor", tab: "Comedor", links: [L("casilleros", -78, -6), L("pasillo", -42, -22), L("cocina", -162, -8)],
     info: [I("refris", 90, 0, "4 refrigeradores", "Refrigeradores en el comedor para los arrendatarios."),
            I("tv", 42, 8, "TV", "Televisor en el comedor."),
            I("mural", -20, 14, "Mural", "Mural pintado en el comedor.")] },
@@ -2012,7 +2012,7 @@ const POCURO_NODES = [
            I("micro", 115, -10, "Microondas y horno", "Microondas y horno eléctrico, junto a la ventana hacia el comedor.")] },
   { id: "colibri", name: "Pasillo del picaflor", tab: "Pasillos", links: [L("cocina", 0, -3), L("pasillo-balcon", 178, -5)],
     info: [I("picaflor", -95, 10, "Mural del picaflor", "Pasillo con techo de vidrio y un mural de picaflor.")] },
-  { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("colibri", 165, -5), L("comedor", -105, -22)], info: [] },
+  { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("colibri", 165, -5), L("entrada", -105, -22)], info: [] },
   { id: "balcon", name: "Balcón a la calle", tab: "Balcón", links: [L("pasillo-balcon", 160, -5)],
     info: [I("vista", 0, 10, "Vista a la calle", "Balcón con vista al barrio de Pocuro.")] },
   { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("casilleros", 100, -8)],
