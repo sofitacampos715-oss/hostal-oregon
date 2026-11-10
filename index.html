@@ -2013,6 +2013,15 @@ function setTabs(node) {
 function showCard(m) { $("#tourCardTitle").textContent = m.title; $("#tourCardText").textContent = m.text; $("#tourCard").hidden = false; }
 function hideCard() { $("#tourCard").hidden = true; }
 
+// Cada foto 360 tiene su propio "norte". Al llegar a una foto se mira de espaldas a la
+// puerta por donde se entró (la flecha que vuelve a la foto anterior), o sea, hacia adelante.
+function lookForward(node, fromNode) {
+  const back = fromNode && node.links.find(l => l.nodeId === fromNode.id);
+  const yaw = back ? parseFloat(back.position.yaw) + 180 : (node.data.look ?? 0);
+  return { showLoader: true, speed: "20rpm", effect: "fade", rotation: false,
+    rotateTo: { yaw: yaw + "deg", pitch: "0deg" }, zoomTo: viewer.getZoomLevel() };
+}
+
 function build(start) {
   viewer = new Viewer({
     container: $("#tourStage"),
@@ -2033,7 +2042,7 @@ function build(start) {
           return el;
         } },
         showLinkTooltip: false,
-        transitionOptions: { showLoader: true, speed: "20rpm", effect: "fade", rotation: true } }]
+        transitionOptions: lookForward }]
     ]
   });
   tour = viewer.getPlugin(VirtualTourPlugin);
