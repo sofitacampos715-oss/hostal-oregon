@@ -1929,7 +1929,7 @@ import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
 // Flecha sobre la puerta o pasillo que lleva a otra foto: yaw y pitch en grados
 const L = (nodeId, yaw, pitch = -8) => ({ nodeId, position: { yaw: yaw + "deg", pitch: pitch + "deg" } });
 const I = (id, yaw, pitch, title, text) => ({ id, yaw, pitch, title, text });
-const TABS = [["Afuera", "plaza"], ["Entrada", "hall"], ["Cocina", "cocina"], ["Comedor", "comedor"], ["Patio", "patio"], ["Lavandería", "lavanderia"], ["2º piso", "segundo"], ["3er piso", "tercero"], ["Ala del patio", "pasillo-2"]];
+const TABS = [["Afuera", "plaza"], ["Entrada", "hall"], ["Cocina", "cocina"], ["Comedor", "comedor"], ["Patio", "patio"], ["Lavandería", "lavanderia"], ["2º piso", "hall-2"], ["3er piso", "tercero"], ["Ala del patio", "pasillo-2"]];
 const NODES = [
   { id: "plaza", name: "Plaza frente al hostal", tab: "Afuera", links: [L("calle", -6, -4)],
     info: [I("hostal", -6, 9, "Hostal Oregon", "La casa del portón amarillo, cruzando la calle."),
@@ -1975,9 +1975,11 @@ const NODES = [
   { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("patio-servicio", 178, -10)],
     info: [I("lavadoras", -105, -20, "Lavadoras", "Lavadoras y lavadero. La casa también tiene lavadora y secadora Maytag de 13 kilos, con fichas.")] },
 
-  { id: "segundo", name: "Hall del 2º piso", tab: "2º piso", links: [L("hall", 148, -28), L("pasillo", 42, -5), L("escalera-3", 128, 18)],
+  { id: "segundo", name: "Escalera del 2º piso", tab: "2º piso", links: [L("hall", 148, -28), L("pasillo", 42, -5), L("escalera-3", 128, 18), L("hall-2", -20, -25)],
     info: [I("fumar", 18, 5, "No se fuma", "No se fuma dentro de la casa.")] },
-  { id: "pasillo", name: "Pasillo del 2º piso", tab: "2º piso", links: [L("segundo", 40, -14), L("terraza", -8, -2), L("escalera-3", 46, 14)], info: [] },
+  { id: "pasillo", name: "Pasillo de la pieza 7", tab: "2º piso", links: [L("segundo", 40, -14), L("terraza", -8, -2), L("escalera-3", 46, 14), L("hall-2", -28, -16)], info: [] },
+  { id: "hall-2", name: "Hall del 2º piso", tab: "2º piso", links: [L("pasillo", -175, -8), L("terraza", -5, -6), L("segundo", 70, -28), L("escalera-3", 48, 12)],
+    info: [I("mesones", -125, -20, "Mesones", "Mesones en el hall del segundo piso.")] },
   { id: "escalera-3", name: "Escalera al 3er piso", tab: "3er piso", links: [L("segundo", -172, -18), L("tercero", -115, 8)], info: [] },
   { id: "tercero", name: "Llegada al 3er piso", tab: "3er piso", links: [L("escalera-3", 45, -35), L("pasillo-3", -70, -5)], info: [] },
   { id: "pasillo-3", name: "Pasillo del 3er piso", tab: "3er piso", links: [L("tercero", -58, -15)], info: [] },
