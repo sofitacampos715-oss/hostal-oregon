@@ -1282,7 +1282,8 @@ const HOUSES = {
     lead: "Piezas amplias con baño privado para estudiantes, profesionales y visitas de verano. Para Año Nuevo, terraza con vista a la bahía.",
     facts: ["≈ 6 min a pie · Enfermería UV", "Baño privado", "Por mes o por noches"],
     blocks: [{ dow: 3, times: ["18:00", "18:30", "19:00"] }, { dow: 6, times: ["15:00", "15:30", "16:00", "16:30"] }],
-    commons: [["cocina", "Cocina"], ["comedor", "Living"], ["terraza", "Terraza con vista"]],
+    commons: [["comedor", "Comedor"], ["cocina", "Cocina"], ["lavanderia", "Lavandería"], ["colibri", "Pasillo del picaflor"], ["balcon", "Balcón a la calle"]],
+    tour: true,
     seasonal: true
   }
 };
@@ -1828,9 +1829,9 @@ document.addEventListener("click", e => {
   const t = e.target.closest("[data-tour]");
   if (t) { openViewer(t.dataset.tour); return; }
   const cm = e.target.closest("[data-common]");
-  if (cm) { if (HOUSES[house].tour && window.openTour) window.openTour(cm.dataset.common); else openViewer(cm.dataset.common); }
+  if (cm) { if (HOUSES[house].tour && window.openTour) window.openTour(cm.dataset.common, house); else openViewer(cm.dataset.common); }
 });
-$("#heroTour").addEventListener("click", () => { if (HOUSES[house].tour && window.openTour) window.openTour(); else openViewer(HOUSES[house].commons[0][0]); });
+$("#heroTour").addEventListener("click", () => { if (HOUSES[house].tour && window.openTour) window.openTour(undefined, house); else openViewer(HOUSES[house].commons[0][0]); });
 $$(".switch button").forEach(b => b.addEventListener("click", () => { house = b.dataset.house; render(); }));
 $$("#modeSwitch button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.mode; render(); }));
 let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawSkyline, 150); });
@@ -1918,14 +1919,13 @@ loadSheets();
 </script>
 
 <script type="module">
-/* ---------- Recorrido virtual Casa Placeres (fotos 360 reales, Insta360 X4) ----------
+/* ---------- Recorridos virtuales de las dos casas (fotos 360 reales, Insta360 X4) ----------
    Ángulos en grados: yaw = izquierda/derecha (0 = centro de la foto), pitch = arriba/abajo.
    Para ubicar un punto nuevo: abrir la página con #editar al final del link y tocar la foto. */
 import { Viewer } from "@photo-sphere-viewer/core";
 import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
 import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
 
-const DIR = "recorrido/placeres/";
 // Flecha sobre la puerta o pasillo que lleva a otra foto: yaw y pitch en grados
 const L = (nodeId, yaw, pitch = -8) => ({ nodeId, position: { yaw: yaw + "deg", pitch: pitch + "deg" } });
 const I = (id, yaw, pitch, title, text) => ({ id, yaw, pitch, title, text });
@@ -1991,14 +1991,47 @@ const NODES = [
     info: [I("vista", 35, 5, "Vista", "Vista al cerro desde el pasillo.")] }
 ];
 
+/* Casa Pocuro: solo casa y espacios comunes (sin piezas ni baños) */
+const POCURO_START = "entrada";
+const POCURO_TABS = [["Entrada", "entrada"], ["Pasillos", "pasillo"], ["Comedor", "comedor"], ["Cocina", "cocina"], ["Lavandería", "lavanderia"], ["Balcón", "balcon"]];
+const POCURO_NODES = [
+  { id: "entrada", name: "Hall de entrada", tab: "Entrada", look: -10, links: [L("pasillo", -8, -6)],
+    info: [I("puerta", -165, 5, "Entrada principal", "Puerta de entrada a la casa."),
+           I("recepcion", 38, -22, "Recepción", "Escritorio de recepción, donde te reciben al llegar.")] },
+  { id: "pasillo", name: "Pasillo del primer piso", tab: "Pasillos", links: [L("entrada", 178, -6), L("casilleros", 4, -2)],
+    info: [I("silencio", -75, 8, "Tranquilidad", "Se pide mantener silencio en los pasillos: hay gente estudiando.")] },
+  { id: "casilleros", name: "Hall de los casilleros", tab: "Pasillos", links: [L("pasillo", -150, -32), L("comedor", -122, -6), L("lavanderia", 140, -12)],
+    info: [I("casilleros", 60, 5, "Casilleros", "Casilleros para guardar tus cosas.")] },
+  { id: "comedor", name: "Comedor", tab: "Comedor", links: [L("casilleros", -72, -6), L("cocina", -162, -8)],
+    info: [I("refris", 90, 0, "4 refrigeradores", "Refrigeradores en el comedor para los arrendatarios."),
+           I("tv", 42, 8, "TV", "Televisor en el comedor."),
+           I("mural", -20, 14, "Mural", "Mural pintado en el comedor.")] },
+  { id: "cocina", name: "Cocina", tab: "Cocina", links: [L("comedor", 178, -8), L("colibri", -145, -8)],
+    info: [I("cocinas", 22, -15, "Dos cocinas", "Dos cocinas con horno y campana."),
+           I("lavaplatos", 62, -14, "Lavaplatos", "Lavaplatos con mueble."),
+           I("micro", 115, -10, "Microondas y horno", "Microondas y horno eléctrico, junto a la ventana hacia el comedor.")] },
+  { id: "colibri", name: "Pasillo del picaflor", tab: "Pasillos", links: [L("cocina", 0, -3), L("pasillo-balcon", 178, -5)],
+    info: [I("picaflor", -95, 10, "Mural del picaflor", "Pasillo con techo de vidrio y un mural de picaflor.")] },
+  { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("colibri", 165, -5), L("pasillo", -105, -22)], info: [] },
+  { id: "balcon", name: "Balcón a la calle", tab: "Balcón", links: [L("pasillo-balcon", 160, -5)],
+    info: [I("vista", 0, 10, "Vista a la calle", "Balcón con vista al barrio de Pocuro.")] },
+  { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("casilleros", 100, -8)],
+    info: [I("lavadoras", -80, -20, "Lavadora y secadora", "Lavadora, secadora y lavadero."),
+           I("planchar", -165, -20, "Tabla de planchar", "Tabla para planchar la ropa.")] }
+];
+
+const TOURS = {
+  placeres: { name: "Casa Placeres", dir: "recorrido/placeres/", start: "plaza", tabs: TABS, nodes: NODES },
+  pocuro: { name: "Casa Pocuro", dir: "recorrido/pocuro/", start: POCURO_START, tabs: POCURO_TABS, nodes: POCURO_NODES }
+};
+
 const $ = s => document.querySelector(s);
 const EDIT = /editar/.test(location.hash);
-const NAMES = Object.fromEntries(NODES.map(n => [n.id, n.name]));
-let viewer, tour, marks, current = null, goingBack = false;
+let T, names, viewer, tour, marks, current = null, goingBack = false;
 const visited = [];
 
-const nodes = NODES.map(n => ({
-  id: n.id, panorama: DIR + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab },
+const toPsv = t => t.nodes.map(n => ({
+  id: n.id, panorama: t.dir + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab, look: n.look },
   markers: n.info.map(m => ({
     id: n.id + "-" + m.id, position: { yaw: m.yaw + "deg", pitch: m.pitch + "deg" },
     html: '<span class="hs" aria-hidden="true">i</span>', size: { width: 34, height: 34 }, anchor: "center center",
@@ -2007,7 +2040,7 @@ const nodes = NODES.map(n => ({
 }));
 
 function setTabs(node) {
-  $("#tourTitle").textContent = node.name + " · Casa Placeres";
+  $("#tourTitle").textContent = node.name + " · " + T.name;
   $("#tourTabs").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === node.data.tab));
 }
 function showCard(m) { $("#tourCardTitle").textContent = m.title; $("#tourCardText").textContent = m.text; $("#tourCard").hidden = false; }
@@ -2023,22 +2056,24 @@ function lookForward(node, fromNode) {
 }
 
 function build(start) {
+  const first = T.nodes.find(n => n.id === start);
   viewer = new Viewer({
     container: $("#tourStage"),
     navbar: ["zoom", "fullscreen"],
     defaultZoomLvl: 20,
+    defaultYaw: (first.look ?? 0) + "deg",
     touchmoveTwoFingers: false,
     mousewheelCtrlKey: false,
     loadingTxt: "Cargando…",
     lang: { zoom: "Zoom", zoomOut: "Alejar", zoomIn: "Acercar", fullscreen: "Pantalla completa", loadError: "No se pudo cargar la foto", menu: "Menú", close: "Cerrar" },
     plugins: [
       [MarkersPlugin, {}],
-      [VirtualTourPlugin, { positionMode: "manual", renderMode: "2d", nodes, startNodeId: start,
+      [VirtualTourPlugin, { positionMode: "manual", renderMode: "2d", nodes: toPsv(T), startNodeId: start,
         // Cada flecha queda sobre su puerta, con el nombre del lugar al que lleva
         arrowStyle: { size: { width: 132, height: 70 }, element: link => {
           const el = document.createElement("div");
           el.innerHTML = '<span class="tl-ico" aria-hidden="true">↑</span><span class="tl-lbl"></span>';
-          el.querySelector(".tl-lbl").textContent = NAMES[link.nodeId] || "";
+          el.querySelector(".tl-lbl").textContent = names[link.nodeId] || "";
           return el;
         } },
         showLinkTooltip: false,
@@ -2067,8 +2102,18 @@ function build(start) {
   setTimeout(fade, 6000);
 }
 
-window.openTour = function (id) {
-  const start = NODES.some(n => n.id === id) ? id : "plaza";
+// Cambiar de casa: se arma un visor nuevo con las fotos y pestañas de esa casa
+function useTour(key) {
+  if (T === TOURS[key]) return;
+  if (viewer) { viewer.destroy(); viewer = null; }
+  T = TOURS[key]; names = Object.fromEntries(T.nodes.map(n => [n.id, n.name]));
+  current = null; visited.length = 0; $("#tourBack").hidden = true;
+  $("#tourTabs").innerHTML = T.tabs.map(([t, id]) => `<button type="button" data-tab="${t}" data-node="${id}" aria-pressed="false">${t}</button>`).join("");
+}
+
+window.openTour = function (id, house = "placeres") {
+  useTour(TOURS[house] ? house : "placeres");
+  const start = T.nodes.some(n => n.id === id) ? id : T.start;
   $("#tour").hidden = false;
   document.documentElement.style.overflow = "hidden";
   if (!viewer) build(start);
@@ -2077,7 +2122,6 @@ window.openTour = function (id) {
 };
 function closeTour() { $("#tour").hidden = true; document.documentElement.style.overflow = ""; hideCard(); }
 
-$("#tourTabs").innerHTML = TABS.map(([t, id]) => `<button type="button" data-tab="${t}" data-node="${id}" aria-pressed="false">${t}</button>`).join("");
 $("#tourTabs").addEventListener("click", e => {
   const b = e.target.closest("button[data-node]"); if (!b) return;
   if (tour.getCurrentNode()?.id !== b.dataset.node) tour.setCurrentNode(b.dataset.node);
