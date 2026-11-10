@@ -1995,9 +1995,11 @@ const NODES = [
 const POCURO_START = "entrada";
 const POCURO_TABS = [["Entrada", "entrada"], ["Pasillos", "pasillo"], ["Comedor", "comedor"], ["Cocina", "cocina"], ["Lavandería", "lavanderia"], ["Balcón", "balcon"]];
 const POCURO_NODES = [
-  { id: "entrada", name: "Hall de entrada", tab: "Entrada", look: -10, links: [L("pasillo", -8, -6), L("pasillo-balcon", 160, -6)],
+  { id: "entrada", name: "Hall de entrada", tab: "Entrada", look: -10, links: [L("pasillo", -8, -6), L("pasillo-balcon", 160, -6), L("recepcion", 75, -28)],
     info: [I("puerta", -78, 5, "Entrada principal", "Puerta de entrada desde la calle."),
            I("recepcion", 38, -22, "Recepción", "Escritorio de recepción, donde te reciben al llegar.")] },
+  { id: "recepcion", name: "Recepción", tab: "Entrada", links: [L("entrada", -150, -28), L("pasillo-balcon", 58, -6), L("pasillo", -115, -6)],
+    info: [I("escritorio", -75, -25, "Recepción", "Escritorio de recepción, junto a la entrada.")] },
   { id: "pasillo", name: "Pasillo del primer piso", tab: "Pasillos", links: [L("entrada", 178, -6), L("comedor", 4, -2)],
     info: [I("silencio", -75, 8, "Tranquilidad", "Se pide mantener silencio en los pasillos: hay gente estudiando.")] },
   { id: "casilleros", name: "Hall de los casilleros", tab: "Pasillos", links: [L("pasillo", -150, -32), L("comedor", -122, -6), L("lavanderia", 140, -12)],
