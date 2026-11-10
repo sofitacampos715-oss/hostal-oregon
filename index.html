@@ -1271,7 +1271,7 @@ const HOUSES = {
     lead: "Piezas amobladas para estudiantes que vienen de fuera de Valparaíso. Internet, luz, agua y gas incluidos. Ven a conocerla antes de decidir.",
     facts: ["≈ 8 min a pie · USM Casa Central", "Gastos incluidos", "Dueña vive en la casa"],
     blocks: [{ dow: 2, times: ["18:00", "18:30", "19:00"] }, { dow: 4, times: ["18:00", "18:30", "19:00"] }, { dow: 6, times: ["11:00", "11:30", "12:00", "12:30"] }],
-    commons: [["cocina", "Cocina"], ["comedor", "Comedor"], ["patio", "Patio techado"], ["lavanderia", "Lavandería"], ["segundo", "Escalera y 2º piso"], ["pasillo-2", "Ala del patio"]],
+    commons: [["cocina", "Cocina"], ["comedor", "Comedor"], ["patio", "Patio techado"], ["lavanderia", "Lavandería"], ["hall-2", "2º piso"], ["pasillo-2", "Ala del patio"]],
     tour: true,
     seasonal: false
   },
@@ -1927,7 +1927,7 @@ import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
 import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
 
 // Flecha sobre la puerta o pasillo que lleva a otra foto: yaw y pitch en grados
-const L = (nodeId, yaw, pitch = -8) => ({ nodeId, position: { yaw: yaw + "deg", pitch: pitch + "deg" } });
+const L = (nodeId, yaw, pitch = -8, label) => ({ nodeId, position: { yaw: yaw + "deg", pitch: pitch + "deg" }, data: { label } });
 const I = (id, yaw, pitch, title, text) => ({ id, yaw, pitch, title, text });
 const TABS = [["Afuera", "plaza"], ["Entrada", "hall"], ["Cocina", "cocina"], ["Comedor", "comedor"], ["Patio", "patio"], ["Lavandería", "lavanderia"], ["2º piso", "hall-2"], ["3er piso", "tercero"], ["Ala del patio", "pasillo-2"]];
 const NODES = [
@@ -1941,7 +1941,7 @@ const NODES = [
   { id: "jardin", name: "Jardín", tab: "Afuera", links: [L("antejardin", 105, -12), L("acceso", -130, -15)], info: [] },
   { id: "acceso", name: "Acceso al patio", tab: "Afuera", links: [L("patio", -20, -5), L("jardin", -100, -15)], info: [] },
 
-  { id: "hall", name: "Hall de entrada", tab: "Entrada", links: [L("antejardin", 5, -5), L("sala", 160, -34), L("segundo", -112, -5)],
+  { id: "hall", name: "Hall de entrada", tab: "Entrada", links: [L("antejardin", 5, -5), L("sala", 160, -34), L("hall-2", -112, -5, "Subir al 2º piso")],
     info: [I("hall", 0, 18, "Hall de entrada", "Desde aquí se llega a las piezas del primer piso y a la escalera.")] },
   { id: "sala", name: "Sala del primer piso", tab: "Entrada", links: [L("hall", -114, -10), L("patio", 92, -8)], info: [] },
 
@@ -1975,12 +1975,10 @@ const NODES = [
   { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("patio-servicio", 178, -10)],
     info: [I("lavadoras", -105, -20, "Lavadoras", "Lavadoras y lavadero. La casa también tiene lavadora y secadora Maytag de 13 kilos, con fichas.")] },
 
-  { id: "segundo", name: "Escalera del 2º piso", tab: "2º piso", links: [L("hall", 148, -28), L("pasillo", 42, -5), L("escalera-3", 128, 18), L("hall-2", -20, -25)],
-    info: [I("fumar", 18, 5, "No se fuma", "No se fuma dentro de la casa.")] },
-  { id: "pasillo", name: "Pasillo de habitaciones", tab: "2º piso", links: [L("segundo", 40, -14), L("terraza", -8, -2), L("escalera-3", 46, 14), L("hall-2", -28, -16)], info: [] },
-  { id: "hall-2", name: "Hall del 2º piso", tab: "2º piso", links: [L("pasillo", -175, -8), L("terraza", -5, -6), L("segundo", 70, -28), L("escalera-3", 48, 12)],
+  { id: "pasillo", name: "Pasillo de habitaciones", tab: "2º piso", links: [L("terraza", -8, -2), L("escalera-3", 46, 14), L("hall-2", -28, -16)], info: [] },
+  { id: "hall-2", name: "Hall del 2º piso", tab: "2º piso", links: [L("pasillo", -175, -8), L("terraza", -5, -6), L("hall", 70, -28, "Bajar al 1er piso"), L("escalera-3", 48, 12)],
     info: [I("mesones", -125, -20, "Mesones", "Mesones en el hall del segundo piso.")] },
-  { id: "escalera-3", name: "Escalera al 3er piso", tab: "3er piso", links: [L("segundo", -172, -18), L("tercero", -115, 8)], info: [] },
+  { id: "escalera-3", name: "Escalera al 3er piso", tab: "3er piso", links: [L("hall-2", -172, -18, "Bajar al 2º piso"), L("tercero", -115, 8)], info: [] },
   { id: "tercero", name: "Llegada al 3er piso", tab: "3er piso", links: [L("escalera-3", 45, -35), L("pasillo-3", -70, -5)], info: [] },
   { id: "pasillo-3", name: "Pasillo del 3er piso", tab: "3er piso", links: [L("tercero", -58, -15)], info: [] },
 
@@ -2077,7 +2075,7 @@ function build(start) {
         arrowStyle: { size: { width: 132, height: 70 }, element: link => {
           const el = document.createElement("div");
           el.innerHTML = '<span class="tl-ico" aria-hidden="true">↑</span><span class="tl-lbl"></span>';
-          el.querySelector(".tl-lbl").textContent = names[link.nodeId] || "";
+          el.querySelector(".tl-lbl").textContent = link.data?.label || names[link.nodeId] || "";
           return el;
         } },
         showLinkTooltip: false,
