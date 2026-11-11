@@ -11,7 +11,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 /* Layout: una columna móvil; cada pieza es una ficha con su placa esmaltada (el código que también va en la puerta). */
@@ -59,6 +59,16 @@
   color-scheme: dark;
 }
 body[data-house="pocuro"] { --house: var(--pocuro); }
+/* Identidad de cada casa, sacada de sus fotos: Placeres = portón amarillo y puertas verdes, letra redonda;
+   Pocuro = madera, crema y verde oscuro, letra con serifa. */
+body[data-house="placeres"] { --f-display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif; --accent-hero: #ffc62e; --accent-ink: #231a00; --sea: #1f7a4d; --sea-ink: #ffffff; }
+body[data-house="pocuro"] { --f-display: "Fraunces", Georgia, "Times New Roman", serif; --accent-hero: #e9c58a; --accent-ink: #2a1d10; --sea: #2f4a3a; --sea-ink: #f6efe2; --pocuro: #8a5a2b; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body[data-house="placeres"] { --sea: #3fae73; --sea-ink: #08140d; }
+  :root:not([data-theme="light"]) body[data-house="pocuro"] { --sea: #8fb59c; --sea-ink: #0f1a13; --pocuro: #d6a466; }
+}
+:root[data-theme="dark"] body[data-house="placeres"] { --sea: #3fae73; --sea-ink: #08140d; }
+:root[data-theme="dark"] body[data-house="pocuro"] { --sea: #8fb59c; --sea-ink: #0f1a13; --pocuro: #d6a466; }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -89,11 +99,25 @@ header.top .wrap { display: flex; align-items: center; justify-content: space-be
 .switch button { border: 0; background: none; padding: 6px 14px; border-radius: 99px; font-weight: 600; font-size: .92rem; color: var(--muted); }
 .switch button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
 
-.hero { padding-block: 28px 0; }
-.hero-grid { display: grid; gap: 18px; }
-.hero h1 { font-size: clamp(2rem, 7vw, 3.6rem); font-weight: 800; letter-spacing: -.025em; }
-.hero h1 em { font-style: normal; color: var(--house); }
-.hero .lead { font-size: 1.08rem; color: var(--muted); max-width: 56ch; }
+/* Portada: la foto 360 real de cada casa gira lenta detrás del texto */
+.hero { position: relative; overflow: hidden; display: flex; align-items: flex-end; min-height: clamp(540px, 84vh, 780px); background: #14100c; color: #fff; }
+.hero-pano { position: absolute; inset: 0; background-image: var(--pano); background-size: auto 100%; background-repeat: repeat-x; background-position: var(--x0, 0px) 50%; animation: pano-pan 160s linear infinite; }
+@keyframes pano-pan { to { background-position: calc(var(--x0, 0px) - var(--pw, 4000px)) 50%; } }
+.hero-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,6,4,.25) 0%, rgba(8,6,4,.08) 30%, rgba(8,6,4,.55) 66%, rgba(8,6,4,.86) 100%), linear-gradient(90deg, rgba(8,6,4,.5) 0%, rgba(8,6,4,0) 65%); }
+.hero-in { position: relative; display: grid; gap: 14px; padding-block: 96px 34px; width: 100%; }
+.hero-seal { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-hero); box-shadow: 0 6px 22px rgba(0,0,0,.45); }
+.hero .eyebrow { color: rgba(255,255,255,.82); }
+.hero h1 { font-size: clamp(2.2rem, 7.4vw, 4rem); font-weight: 800; letter-spacing: -.02em; max-width: 15ch; text-shadow: 0 2px 20px rgba(0,0,0,.35); }
+body[data-house="pocuro"] .hero h1 { font-weight: 600; letter-spacing: -.01em; }
+.hero h1 em { font-style: normal; color: var(--accent-hero); }
+body[data-house="pocuro"] .hero h1 em { font-style: italic; }
+.hero .lead { font-size: 1.08rem; color: rgba(255,255,255,.9); max-width: 52ch; text-shadow: 0 1px 10px rgba(0,0,0,.4); }
+.hero .facts li { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.28); color: #fff; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.btn-glass { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.45); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.hero .btn-main { background: var(--accent-hero); color: var(--accent-ink); }
+.season { justify-self: start; display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,.35); border-radius: 99px; padding: 7px 14px; background: rgba(8,6,4,.55); color: #fff; font-weight: 600; font-size: .9rem; text-align: left; }
+.season b { color: var(--accent-hero); }
+@media (prefers-reduced-motion: reduce) { .hero-pano { animation: none; } }
 .facts { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
 .facts li { font-family: var(--f-mono); font-size: .8rem; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 9px; }
 .cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -1021,19 +1045,22 @@ legend small { font-weight: 400; color: var(--muted); }
 </div></header>
 
 <main>
-  <section class="hero"><div class="wrap">
-    <div class="hero-grid">
+  <section class="hero">
+    <div class="hero-pano" id="heroPano" aria-hidden="true"></div>
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <img class="hero-seal" id="heroSeal" alt="" width="84" height="84">
       <p class="eyebrow" id="heroEyebrow"></p>
       <h1 id="heroTitle"></h1>
       <p class="lead" id="heroLead"></p>
       <ul class="facts" id="heroFacts"></ul>
       <div class="cta-row">
         <button class="btn btn-main" type="button" data-consult="" data-intent="visita">Agendar una visita</button>
-        <button class="btn btn-ghost" type="button" id="heroTour">Recorrer la casa en 360°</button>
+        <button class="btn btn-glass" type="button" id="heroTour">Entrar a la casa en 360°</button>
       </div>
+      <button type="button" class="season" id="heroSeason"></button>
     </div>
-  </div>
-  <canvas class="skyline" id="skyline" aria-hidden="true"></canvas>
+    <canvas class="skyline" id="skyline" hidden></canvas>
   </section>
 
   <div class="avail"><div class="wrap">
@@ -1273,26 +1300,43 @@ const HOUSES = {
     blocks: [{ dow: 2, times: ["18:00", "18:30", "19:00"] }, { dow: 4, times: ["18:00", "18:30", "19:00"] }, { dow: 6, times: ["11:00", "11:30", "12:00", "12:30"] }],
     commons: [["cocina", "Cocina"], ["comedor", "Comedor"], ["patio", "Patio techado"], ["lavanderia", "Lavandería"], ["hall-2", "2º piso"], ["pasillo-2", "Ala del patio"]],
     tour: true,
-    seasonal: false
+    hero: { pano: "recorrido/hero/placeres.jpg", ratio: 4096 / 717, yaw: 0, seal: "recorrido/hero/placeres-sello.jpg" },
+    // Desde mediados de diciembre la casa queda vacía: se arrienda por noche a turistas de Año Nuevo y verano
+    seasonal: true,
+    season: {
+      eyebrow: "Año Nuevo y verano · Cerro Placeres",
+      title: "Pasa Año Nuevo en <em>Valparaíso</em>",
+      lead: "Desde mediados de diciembre arrendamos las piezas por noche. Casa colorida con cocina equipada, patio techado y lavandería, a pasos del plan.",
+      facts: ["Por noche desde mediados de diciembre", "Cocina equipada", "Lavandería"],
+      ribbon: "<b>Año Nuevo y verano:</b> piezas por noche desde mediados de diciembre →"
+    }
   },
   pocuro: {
     id: "pocuro", name: "Casa Pocuro", code: "PO",
     eyebrow: "Sector Pocuro · Valparaíso",
     title: "Una casa tranquila cerca de <em>Enfermería UV</em>",
-    lead: "Piezas amplias con baño privado para estudiantes, profesionales y visitas de verano. Para Año Nuevo, terraza con vista a la bahía.",
+    lead: "Piezas amplias con baño privado para estudiantes y profesionales, en una casa antigua con techos de vidrio y muebles de época.",
     facts: ["≈ 6 min a pie · Enfermería UV", "Baño privado", "Por mes o por noches"],
     blocks: [{ dow: 3, times: ["18:00", "18:30", "19:00"] }, { dow: 6, times: ["15:00", "15:30", "16:00", "16:30"] }],
     commons: [["comedor", "Comedor"], ["cocina", "Cocina"], ["lavanderia", "Lavandería"], ["colibri", "Pasillo del picaflor"], ["balcon", "Balcón a la calle"]],
     tour: true,
-    seasonal: true
+    hero: { pano: "recorrido/hero/pocuro.jpg", ratio: 4096 / 751, yaw: -40, seal: "recorrido/hero/pocuro-sello.jpg" },
+    seasonal: true,
+    season: {
+      eyebrow: "Año Nuevo y verano · Pocuro",
+      title: "Verano y Año Nuevo en <em>Valparaíso</em>",
+      lead: "Piezas con baño privado por noche, en una casa antigua y tranquila, con balcón a la calle.",
+      facts: ["Baño privado", "Por noche", "Balcón a la calle"],
+      ribbon: "<b>Año Nuevo y verano:</b> piezas por noche →"
+    }
   }
 };
 
 const DEFAULT_ROOMS = [
-  { code: "PL-01", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "9 m²", "Escritorio"], price: 210000, status: "ocupada", from: "", wall: "#d6dde3" },
-  { code: "PL-02", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "10 m²", "Escritorio", "Ventana al cerro"], price: 220000, status: "libre", from: "", wall: "#dfe4d5" },
-  { code: "PL-03", house: "placeres", name: "Individual con baño privado", specs: ["Baño privado", "12 m²", "Escritorio"], price: 250000, status: "pronto", from: "2027-03-01", wall: "#e6dccd" },
-  { code: "PL-04", house: "placeres", name: "Individual grande", specs: ["Baño privado", "15 m²", "Escritorio doble", "Clóset"], price: 290000, status: "libre", from: "", wall: "#d3e0e2" },
+  { code: "PL-01", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "9 m²", "Escritorio"], price: 210000, night: 28000, status: "ocupada", from: "", wall: "#d6dde3" },
+  { code: "PL-02", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "10 m²", "Escritorio", "Ventana al cerro"], price: 220000, night: 30000, status: "libre", from: "", wall: "#dfe4d5" },
+  { code: "PL-03", house: "placeres", name: "Individual con baño privado", specs: ["Baño privado", "12 m²", "Escritorio"], price: 250000, night: 36000, status: "pronto", from: "2027-03-01", wall: "#e6dccd" },
+  { code: "PL-04", house: "placeres", name: "Individual grande", specs: ["Baño privado", "15 m²", "Escritorio doble", "Clóset"], price: 290000, night: 40000, status: "libre", from: "", wall: "#d3e0e2" },
   { code: "PO-01", house: "pocuro", name: "Suite con baño privado", specs: ["Baño privado", "16 m²", "Cama 2 plazas"], price: 320000, night: 45000, status: "libre", from: "", wall: "#e4ddd3" },
   { code: "PO-02", house: "pocuro", name: "Habitación doble", specs: ["Baño privado", "18 m²", "2 camas"], price: 420000, night: 60000, status: "ocupada", from: "", wall: "#d9e2dc" },
   { code: "PO-03", house: "pocuro", name: "Individual vista al mar", specs: ["Baño privado", "13 m²", "Vista a la bahía"], price: 340000, night: 50000, status: "pronto", from: "2026-12-15", wall: "#dde2ea" }
@@ -1318,7 +1362,9 @@ let texts = store.get("texts", null) || JSON.parse(JSON.stringify(DEFAULT_TEXTS)
 let fromSheet = false;
 let leads = store.get("leads", null);
 let house = "placeres";
-let mode = "mes";
+// Desde el 10 de diciembre hasta fines de febrero la página parte mostrando el arriendo por noche
+const today = new Date();
+let mode = (today.getMonth() === 11 && today.getDate() >= 10) || today.getMonth() <= 1 ? "noche" : "mes";
 let source = "web";
 const hashSrc = (location.hash || "").slice(1);
 if (SOURCES[hashSrc]) source = hashSrc;
@@ -1498,12 +1544,18 @@ function render() {
   const h = HOUSES[house];
   document.body.dataset.house = house;
   $$(".switch button").forEach(b => b.setAttribute("aria-pressed", b.dataset.house === house));
-  $("#heroEyebrow").textContent = h.eyebrow;
-  $("#heroTitle").innerHTML = h.title;
-  $("#heroLead").textContent = h.lead;
-  $("#heroFacts").innerHTML = h.facts.map(f => "<li>" + esc(f) + "</li>").join("");
   $("#modeSwitch").hidden = !h.seasonal;
   if (!h.seasonal) mode = "mes";
+  // En temporada (por noche) la portada habla a turistas; el resto del año, a estudiantes
+  const hc = mode === "noche" && h.season ? h.season : h;
+  $("#heroEyebrow").textContent = hc.eyebrow;
+  $("#heroTitle").innerHTML = hc.title;
+  $("#heroLead").textContent = hc.lead;
+  $("#heroFacts").innerHTML = hc.facts.map(f => "<li>" + esc(f) + "</li>").join("");
+  $("#heroSeason").hidden = !h.season;
+  if (h.season) $("#heroSeason").innerHTML = mode === "noche" ? "← Ver arriendo por mes para estudiantes" : h.season.ribbon;
+  $("#heroSeal").src = h.hero.seal;
+  setHeroPano();
   $$("#modeSwitch button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode));
 
   const list = rooms.filter(r => r.house === house);
@@ -1549,8 +1601,16 @@ function render() {
     else $(".thumb", btn).prepend(thumbFrom(commonScene(k, house), k));
   });
 
-  drawSkyline();
   renderOwner();
+}
+
+// La franja 360 se repite a lo ancho y se desplaza una vuelta completa; parte centrada en el punto lindo de la foto
+function setHeroPano() {
+  const cfg = HOUSES[house].hero, p = $("#heroPano");
+  const pw = p.clientHeight * cfg.ratio;
+  p.style.setProperty("--pano", "url(" + cfg.pano + ")");
+  p.style.setProperty("--pw", pw + "px");
+  p.style.setProperty("--x0", (p.clientWidth / 2 - (cfg.yaw + 180) / 360 * pw) + "px");
 }
 
 function drawSkyline() {
@@ -1834,7 +1894,11 @@ document.addEventListener("click", e => {
 $("#heroTour").addEventListener("click", () => { if (HOUSES[house].tour && window.openTour) window.openTour(undefined, house); else openViewer(HOUSES[house].commons[0][0]); });
 $$(".switch button").forEach(b => b.addEventListener("click", () => { house = b.dataset.house; render(); }));
 $$("#modeSwitch button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.mode; render(); }));
-let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawSkyline, 150); });
+$("#heroSeason").addEventListener("click", () => {
+  mode = mode === "noche" ? "mes" : "noche"; render();
+  if (mode === "noche") $("#piezas").scrollIntoView({ behavior: "smooth" });
+});
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(setHeroPano, 150); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawSkyline);
 new MutationObserver(drawSkyline).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 if (location.hash === "#duena") $("#owner").hidden = false;
