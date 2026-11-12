@@ -255,6 +255,49 @@ legend small { font-weight: 400; color: var(--muted); }
 .tour-card h3 { font-size: 1.05rem; padding-right: 36px; }
 .tour-card p { color: var(--muted); font-size: .93rem; }
 .tour-card .x { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; font-size: 1rem; }
+.tour-card.is-rule { max-width: 460px; max-height: min(64%, 520px); overflow: auto; gap: 8px; border-top: 5px solid var(--accent-hero, #ffc62e); }
+.tour-card.is-rule h3 { font-size: 1.3rem; }
+.tour-card.is-rule .x { position: sticky; top: 0; right: auto; justify-self: end; margin-bottom: -36px; z-index: 1; }
+.tour-card.is-rule .eyebrow { padding-right: 40px; }
+.tour-card .eyebrow { margin: 0; }
+.rule-group { display: grid; gap: 4px; }
+.rule-group h4 { margin: 4px 0 0; font: 700 .72rem/1.3 var(--f-mono); letter-spacing: .07em; text-transform: uppercase; color: var(--house); }
+.rule-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: .92rem; line-height: 1.42; }
+.rule-list li { position: relative; padding-left: 16px; }
+.rule-list li::before { content: ""; position: absolute; left: 2px; top: .58em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-hero, var(--house)); box-shadow: 0 0 0 1px var(--accent-ink, transparent); }
+.rule-list b { font-weight: 700; color: var(--ink); }
+.rule-list ul { margin: 4px 0 0; padding-left: 1em; display: grid; gap: 2px; color: var(--muted); }
+.rule-list ul li { padding-left: 14px; }
+.rule-list ul li::before { width: 5px; height: 5px; background: none; box-shadow: inset 0 0 0 1.5px var(--muted); top: .6em; }
+.rule-list ul { list-style: none; padding-left: 0; }
+.hs.hs-rule { width: auto; height: 32px; border-radius: 99px; padding: 0 11px 0 9px; gap: 6px; grid-auto-flow: column; background: var(--accent-hero, #ffc62e); color: var(--accent-ink, #16212c); font: 700 .78rem/1 var(--f-body); white-space: nowrap; }
+.hs.hs-rule svg { width: 15px; height: 15px; }
+
+/* Arriendo mensual y reglamento */
+.incl { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); list-style: none; margin: 0; padding: 0; }
+.incl li { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; grid-template-columns: 40px 1fr; gap: 4px 12px; align-items: start; }
+.incl .ico { grid-row: span 2; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-hero, var(--sunk)); color: var(--accent-ink, var(--ink)); }
+.incl .ico svg { width: 22px; height: 22px; }
+.incl strong { font-family: var(--f-display); font-size: 1.05rem; line-height: 1.2; }
+.incl p { margin: 0; color: var(--muted); font-size: .9rem; }
+.panel.guarantee { border-left: 5px solid var(--accent-hero, var(--house)); }
+.panel .big { font-family: var(--f-display); font-size: 1.6rem; line-height: 1.1; margin: 8px 0 6px; }
+.panel .more { margin-top: 12px; display: inline-block; color: var(--sea); font-weight: 700; }
+.regl { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); align-items: start; }
+.regl-col > h3 { margin-bottom: 10px; font-size: 1.25rem; }
+.regl-col > h3 small { display: block; font: 600 .72rem/1.4 var(--f-mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.regl details { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; }
+.regl summary { list-style: none; cursor: pointer; padding: 13px 44px 13px 16px; position: relative; font-family: var(--f-display); font-weight: 700; font-size: 1.02rem; display: flex; gap: 10px; align-items: baseline; }
+.regl summary::-webkit-details-marker { display: none; }
+.regl summary .n { flex: none; font: 700 .8rem/1 var(--f-mono); color: var(--house); }
+.regl summary::after { content: "+"; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font: 600 1.3rem/1 var(--f-body); color: var(--muted); transition: transform .2s; }
+.regl details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+.regl details > div { padding: 0 16px 14px; }
+.regl details .intro { margin: 0 0 8px; color: var(--muted); font-size: .92rem; }
+.regl .note-imp { margin-top: 10px; background: var(--sunk); border-radius: 10px; padding: 10px 12px; font-size: .9rem; }
+.pledge { margin: 26px 0 0; padding: 22px 24px; border-radius: 16px; background: var(--sea); color: var(--sea-ink); }
+.pledge p.eyebrow { color: inherit; opacity: .75; }
+.pledge blockquote { margin: 6px 0 0; font-family: var(--f-display); font-size: clamp(1.15rem, 2.6vw, 1.5rem); line-height: 1.3; text-wrap: pretty; }
 .hs { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.92); color: #16212c; font: 700 17px/1 var(--f-display); box-shadow: 0 0 0 4px rgba(255,255,255,.3), 0 4px 12px rgba(0,0,0,.4); cursor: pointer; animation: hs-pulse 2.4s ease-out infinite; }
 @keyframes hs-pulse { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,.55), 0 4px 12px rgba(0,0,0,.4); } 70% { box-shadow: 0 0 0 14px rgba(255,255,255,0), 0 4px 12px rgba(0,0,0,.4); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0), 0 4px 12px rgba(0,0,0,.4); } }
 .psv-virtual-tour-link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
@@ -1087,6 +1130,14 @@ legend small { font-weight: 400; color: var(--muted); }
     <div class="commons" id="commons"></div>
   </div></section>
 
+  <section class="block" id="mensual"><div class="wrap">
+    <div class="block-head">
+      <div><p class="eyebrow">Arriendo mensual · estudiantes</p><h2>¿Qué incluye la mensualidad?</h2></div>
+      <p>Un solo pago al mes, sin cuentas aparte. Esto es lo que tienes con tu pieza.</p>
+    </div>
+    <ul class="incl" id="inclList"></ul>
+  </div></section>
+
   <section class="block"><div class="wrap">
     <div class="block-head"><div><p class="eyebrow">Cómo se arrienda</p><h2>Primero la ves, después decides</h2></div></div>
     <ol class="steps">
@@ -1103,10 +1154,21 @@ legend small { font-weight: 400; color: var(--muted); }
       <h3>Requisitos para arrendar</h3>
       <ul id="reqList"></ul>
     </div>
+    <div class="panel guarantee" id="garantiaPanel">
+      <p class="eyebrow">Al firmar el contrato</p>
+      <h3>¿Se paga mes de garantía?</h3>
+      <p class="big">Sí, un mes.</p>
+      <ul>
+        <li>Asegura el cuidado de las instalaciones y el cumplimiento del acuerdo.</li>
+        <li>No corresponde al pago de ningún mes de arriendo.</li>
+        <li>Se devuelve completa si entregas la habitación tal como la recibiste.</li>
+      </ul>
+    </div>
     <div class="panel">
       <p class="eyebrow">Convivencia</p>
       <h3>Reglas de la casa</h3>
       <ul id="rulesList"></ul>
+      <a class="more" href="#reglamento" id="rulesMore">Ver el reglamento completo ↓</a>
     </div>
     <div class="panel host">
       <div class="avatar">foto de la dueña</div>
@@ -1115,6 +1177,18 @@ legend small { font-weight: 400; color: var(--muted); }
         <h3 id="ownerName"></h3>
         <p class="note" style="font-size:.95rem">Vive en la casa y te muestra cada espacio en la visita. Responde por WhatsApp.</p>
       </div>
+    </div>
+  </div></section>
+
+  <section class="block" id="reglamento"><div class="wrap">
+    <div class="block-head">
+      <div><p class="eyebrow">Reglamento de convivencia y uso de las instalaciones</p><h2>Una buena convivencia es responsabilidad de todos</h2></div>
+      <p>Lo que se pide a cada residente y lo que el hostal se compromete a hacer. En el recorrido 360° verás estas reglas en el lugar donde aplican.</p>
+    </div>
+    <div class="regl" id="reglCols"></div>
+    <div class="pledge">
+      <p class="eyebrow">Nuestro compromiso</p>
+      <blockquote id="pledgeText"></blockquote>
     </div>
   </div></section>
 </main>
@@ -1260,8 +1334,8 @@ legend small { font-weight: 400; color: var(--muted); }
   </div>
   <div class="tour-tabs" id="tourTabs" role="group" aria-label="Ir a un lugar de la casa"></div>
   <div class="tour-stage" id="tourStage">
-    <div class="tour-hint" id="tourHint">Arrastra para mirar · toca las flechas para avanzar · toca ⓘ para saber más</div>
-    <div class="tour-card" id="tourCard" hidden><button type="button" class="x" id="tourCardClose" aria-label="Cerrar">×</button><h3 id="tourCardTitle"></h3><p id="tourCardText"></p></div>
+    <div class="tour-hint" id="tourHint">Arrastra para mirar · toca las flechas para avanzar · toca ⓘ o «Reglas» para saber más</div>
+    <div class="tour-card" id="tourCard" hidden><button type="button" class="x" id="tourCardClose" aria-label="Cerrar">×</button><p class="eyebrow" id="tourCardEyebrow" hidden></p><h3 id="tourCardTitle"></h3><div id="tourCardText"></div></div>
     <div class="tour-pick" id="tourPick" hidden></div>
   </div>
 </div>
@@ -1278,17 +1352,138 @@ const CONFIG = {
 const DEFAULT_TEXTS = {
   owner: "[Nombre de la dueña]",
   requisitos: [
-    "Cédula de identidad.",
-    "Ingresos de al menos 2 veces el arriendo, o un apoderado que los tenga.",
-    "Un mes de garantía.",
-    "Contrato por semestre o año. En verano también por noches (Casa Pocuro)."
+    "Cédula de identidad vigente (copia por ambos lados).",
+    "Capacidad de pago: ingresos de al menos 2 veces el arriendo, con contrato de trabajo o certificado de antigüedad laboral. Si eres independiente, boletas de honorarios y declaración anual de renta.",
+    "Informe comercial (Dicom o Equifax) para ver el historial de pagos.",
+    "Conocer y aceptar el reglamento interno de convivencia."
   ],
   reglas: [
-    "Sin fiestas y sin visitas que se queden a dormir.",
-    "No se fuma ni se vapea dentro de la casa.",
-    "Lavadora con horario por pieza."
+    "Las visitas se informan y autorizan antes; no pueden quedarse a dormir ni usar la cocina.",
+    "No se fuma, ni se consume alcohol o drogas dentro del hostal.",
+    "Estufas, calefactores y hervidores en la pieza solo con autorización (recargo de $15.000 al mes).",
+    "Lavandería de lunes a viernes de 9:30 a 21:00; fines de semana, horario libre.",
+    "Comedor abierto de 7:00 a 22:00."
   ]
 };
+
+/* Reglamento de convivencia (documento HOSTALES de la dueña).
+   "Título: texto" se muestra con el título en negrita. Un arreglo dentro de items es una sublista. */
+const SVG = p => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+const ICONS = {
+  cama: SVG('<path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.6"/>'),
+  llave: SVG('<circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M16 7l2 2M14 9l2 2"/>'),
+  lavadora: SVG('<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4.5"/><path d="M7 6.5h.01M10 6.5h4"/>'),
+  limpieza: SVG('<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>'),
+  gastos: SVG('<path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r=".9" fill="currentColor"/>'),
+  escudo: SVG('<path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>'),
+  mantencion: SVG('<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.3-.6-.6-2.3z"/>'),
+  libro: SVG('<path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6a3 3 0 0 0-3 3"/><path d="M20 4v14h-7"/>')
+};
+const REGLAMENTO = {
+  incluye: [
+    ["cama", "Habitación amoblada", "Espacio equipado para tu comodidad."],
+    ["llave", "Acceso a las instalaciones", "Uso de todas las dependencias y espacios comunes del hostal."],
+    ["lavadora", "Lavandería", "Uso ilimitado de lavadora y secadora."],
+    ["limpieza", "Limpieza semanal", "Limpieza de tu habitación una vez por semana."],
+    ["gastos", "Gastos incluidos", "Electricidad, agua y Wi-Fi."],
+    ["escudo", "Seguridad", "Alarma Verisure, cámaras de vigilancia y cerco eléctrico."],
+    ["mantencion", "Mantención de espacios comunes", "Limpieza y mantenimiento de lunes a viernes."]
+  ],
+  residentes: [
+    { id: "habitacion", t: "Limpieza y cuidado de la habitación", items: [
+      "Coordinar la limpieza: cada residente coordina con la encargada de mantención el día y horario de la limpieza semanal de su habitación.",
+      "Aseo obligatorio: la limpieza se hace una vez por semana y no es acumulable.",
+      "Mantener el orden: no dejes ropa ni objetos en el suelo, porque impiden hacer bien el aseo.",
+      "Cuidado de la habitación: mantenla ordenada y en buenas condiciones durante toda tu estadía."] },
+    { id: "lavanderia", t: "Uso de lavandería", intro: "La mensualidad incluye el uso de lavadora y secadora.", items: [
+      "Horario: de lunes a viernes, de 9:30 a 21:00. Los fines de semana, horario libre.",
+      "Capacidad: respeta los kilos permitidos por cada máquina. Sobrecargarlas o usarlas mal es una falta grave.",
+      "Retiro de ropa: retira tus prendas apenas termine cada ciclo de lavado o secado, respetando el turno de los demás.",
+      "Cuidado de las prendas: cada residente es responsable de su ropa. No dejes prendas colgadas por varios días.",
+      "Detergente: cada residente trae su propio detergente y cuida sus cosas."] },
+    { id: "cocina", t: "Uso de cocina y comedor", items: [
+      "Limpieza después de cocinar: lava, seca y guarda al tiro la loza, ollas, sartenes y utensilios que uses.",
+      "Orden: deja limpios los mesones, muebles, microondas y los demás espacios que ocupes.",
+      "Utensilios compartidos: no saques ni guardes en tu pieza artículos del hostal, como termos, vasos, loza, planchas o potes plásticos.",
+      "Artículos de limpieza: cada residente aporta para el uso común:", ["1 lavaloza de 750 ml", "1 kilo de sal", "3 esponjas", "1 set de paños de cocina"],
+      "Basura: colabora con el cambio de bolsas cuando haga falta.",
+      "Alimentos: mantén tus alimentos ordenados y en buen estado. No dejes productos descompuestos en fruteros, mesones o refrigeradores.",
+      "Horario del comedor: de 7:00 a 22:00.",
+      "Orden del comedor: al terminar, deja mesas y sillas limpias, sacude los manteles y apaga el televisor.",
+      "Ruidos: evita gritos, música fuerte y ruidos molestos, sobre todo en la noche."] },
+    { id: "visitas", t: "Visitas", items: [
+      "Toda visita se informa y la autoriza antes el encargado.",
+      "No se permiten visitas para pernoctar.",
+      "Las visitas están de paso y no tienen los mismos derechos ni beneficios que los residentes.",
+      "Las visitas no pueden usar la cocina.",
+      "Toda visita queda registrada por seguridad."] },
+    { id: "seguridad", t: "Seguridad y aparatos eléctricos", items: [
+      "Aparatos restringidos: no se pueden usar calefactores, ventiladores, estufas, calientacamas ni hervidores en las habitaciones sin autorización previa.",
+      "Recargo eléctrico: el uso autorizado de estos aparatos tiene un recargo mensual de $15.000.",
+      "Aparatos permitidos: afeitadoras, depiladoras, secadores de pelo, computadores y radios.",
+      "Sin fuego: no se permiten velas, inciensos ni nada que genere fuego dentro del hostal.",
+      "Llaves: son personales e intransferibles. Está prohibido prestarlas o entregarlas a terceros."] },
+    { id: "instalaciones", t: "Cuidado de las instalaciones", items: [
+      "No se puede pintar, rayar, clavar ni pegar adhesivos en paredes o muebles.",
+      "Cada residente cuida los artefactos, utensilios, muebles y espacios compartidos.",
+      "Cualquier daño se informa y lo repone quien resulte responsable.",
+      "Pasar las llaves a terceros es una falta gravísima y puede terminar la estadía, según el contrato."] },
+    { id: "sustancias", t: "Alcohol, tabaco y otras sustancias", items: [
+      "No se permite consumir alcohol ni entrar en estado de ebriedad al hostal.",
+      "No se fuma dentro de las habitaciones ni en los espacios comunes.",
+      "Está prohibido consumir marihuana u otras drogas dentro del hostal.",
+      "Quienes fumen tabaco pueden hacerlo en la plaza que está frente a la casa.",
+      "Celebraciones o actividades grupales: se piden antes y requieren autorización del encargado."] },
+    { id: "respeto", t: "Respeto y convivencia", items: [
+      "Respeta el descanso de los demás residentes y de los vecinos: evita gritos, música a alto volumen, portazos y otros ruidos molestos.",
+      "Cuida los espacios comunes y respeta los turnos de uso.",
+      "Fiestas o eventos: necesitan autorización previa, acuerdo de los residentes y una persona responsable de posibles daños.",
+      "Participa en las reuniones de residentes cuando el hostal las convoque."] }
+  ],
+  hostal: [
+    { id: "h-habitacion", t: "Limpieza de habitaciones", intro: "El personal de mantención hace una limpieza semanal, coordinada antes con cada residente. Incluye:", items: [
+      ["Limpieza y desinfección del baño", "Retiro de basura", "Aspirado de pisos", "Sacudido de superficies", "Ventilación de la habitación", "Orden de la cama"]],
+      note: "Importante: la limpieza no incluye recoger ni doblar ropa. Si hay ropa en el suelo o desorden que impida hacer bien el aseo, la encargada puede no hacerlo; si se repite, se informa a los apoderados." },
+    { id: "h-lavanderia", t: "Servicio de lavandería", intro: "Lavadora y secadora a disposición de los residentes, incluidas en la mensualidad.", items: [
+      "Lunes a viernes: de 9:30 a 21:00.",
+      "Fines de semana: horario libre.",
+      "Fichas: si el sistema las usa, las entrega el encargado de lunes a viernes."] },
+    { id: "h-cocina", t: "Limpieza de cocina y comedor", intro: "El personal del hostal se encarga de la limpieza general de estos espacios.", items: [
+      "Cada mañana: pisos limpios y trapeados, mesones limpios, cocinas y fuegos limpios y espacios comunes ordenados.",
+      "Limpieza profunda periódica: ollas y utensilios de uso común, refrigeradores, cocina y fuegos, microondas y hervidor, pisos y superficies."] },
+    { id: "h-articulos", t: "Artículos de limpieza", intro: "El hostal mantiene disponibles:", items: [
+      ["Artículos de limpieza para uso común", "Bolsas de basura", "Paños de cocina limpios para secar loza y utensilios"]] },
+    { id: "h-camaras", t: "Seguridad y cámaras", intro: "Las cámaras de seguridad de la cocina funcionan:", items: [
+      "Lunes a viernes: desde las 17:00.",
+      "Sábados, domingos y festivos: todo el día.",
+      "Su finalidad es cuidar la seguridad y la convivencia de la comunidad."] },
+    { id: "h-inventario", t: "Cuidado de las instalaciones e inventario", items: [
+      "El hostal lleva un inventario de los artefactos, utensilios y muebles de uso común.",
+      "Se revisa cada mes y sus resultados se pueden informar en las reuniones de residentes.",
+      "Si hay daños, se revisan las responsabilidades y cómo se reponen."] },
+    { id: "h-mantencion", t: "Mantención de espacios comunes", items: [
+      "El hostal mantiene las instalaciones y espacios compartidos limpios, funcionando y seguros."] },
+    { id: "h-alimentos", t: "Alimentos en mal estado", items: [
+      "El personal puede retirar y botar alimentos descompuestos de fruteros, mesones o refrigeradores, para mantener la higiene de los espacios compartidos."] }
+  ],
+  compromiso: "El hostal se compromete a entregar espacios limpios, seguros y funcionales. A cambio, esperamos que cada residente cuide las instalaciones, respete a los demás y colabore con el buen funcionamiento de la comunidad."
+};
+const reglaSec = id => REGLAMENTO.residentes.find(s => s.id === id) || REGLAMENTO.hostal.find(s => s.id === id);
+function reglaItemsHTML(items) {
+  const lis = [];
+  for (const it of items) {
+    if (Array.isArray(it)) {
+      const sub = "<ul>" + it.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>";
+      if (lis.length && typeof items[items.indexOf(it) - 1] === "string") lis[lis.length - 1] = lis[lis.length - 1].replace(/<\/li>$/, sub + "</li>");
+      else it.forEach(x => lis.push("<li>" + esc(x) + "</li>"));
+      continue;
+    }
+    const m = it.match(/^([^:]{2,40}):\s*(.*)$/);
+    lis.push("<li>" + (m ? "<b>" + esc(m[1].charAt(0).toUpperCase() + m[1].slice(1)) + ":</b> " + esc(m[2]) : esc(it)) + "</li>");
+  }
+  return '<ul class="rule-list">' + lis.join("") + "</ul>";
+}
+window.REGLAMENTO = REGLAMENTO; window.ICONS_LIBRO = ICONS.libro; window.reglaSec = reglaSec; window.reglaItemsHTML = reglaItemsHTML;
 
 const HOUSES = {
   placeres: {
@@ -1373,6 +1568,19 @@ const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const money = n => "$" + n.toLocaleString("es-CL");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function renderReglamento() {
+  if ($("#inclList").childElementCount) return;
+  $("#inclList").innerHTML = REGLAMENTO.incluye.map(([ic, t, d]) =>
+    `<li><span class="ico">${ICONS[ic]}</span><strong>${esc(t)}</strong><p>${esc(d)}</p></li>`).join("");
+  const col = (title, sub, secs, open) => `<div class="regl-col"><h3><small>${sub}</small>${title}</h3>` +
+    secs.map((s, i) => `<details${open && i === 0 ? " open" : ""}><summary><span class="n">${String(i + 1).padStart(2, "0")}</span>${esc(s.t)}</summary><div>` +
+      (s.intro ? `<p class="intro">${esc(s.intro)}</p>` : "") + reglaItemsHTML(s.items) +
+      (s.note ? `<p class="note-imp">${esc(s.note)}</p>` : "") + "</div></details>").join("") + "</div>";
+  $("#reglCols").innerHTML = col("Lo que te toca a ti", "Parte I · Obligaciones de los residentes", REGLAMENTO.residentes, true) +
+    col("Lo que hace el hostal", "Parte II · Compromisos del hostal", REGLAMENTO.hostal, true);
+  $("#pledgeText").textContent = REGLAMENTO.compromiso;
+}
 const fmtDate = (iso, opts = { day: "numeric", month: "short" }) => iso ? new Date(iso + "T12:00:00").toLocaleDateString("es-CL", opts).replace(".", "") : "";
 
 function statusInfo(r) {
@@ -1566,6 +1774,9 @@ function render() {
   $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
   $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
   $("#ownerName").textContent = texts.owner;
+  renderReglamento();
+  const monthly = mode !== "noche";
+  $("#mensual").hidden = !monthly; $("#garantiaPanel").hidden = !monthly;
   $("#waShown").textContent = "+" + CONFIG.whatsapp.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, "$1 $2 $3 $4");
 
   $("#rooms").innerHTML = list.map(r => {
@@ -1993,6 +2204,8 @@ import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
 // Flecha sobre la puerta o pasillo que lleva a otra foto: yaw y pitch en grados
 const L = (nodeId, yaw, pitch = -8, label) => ({ nodeId, position: { yaw: yaw + "deg", pitch: pitch + "deg" }, data: { label } });
 const I = (id, yaw, pitch, title, text) => ({ id, yaw, pitch, title, text });
+// Punto de reglamento: refs = [[idSección, [índices de items]?], ...] del REGLAMENTO de la página
+const R = (id, yaw, pitch, title, refs) => ({ id: "regla-" + id, yaw, pitch, title, refs, rule: true });
 const TABS = [["Afuera", "plaza"], ["Entrada", "hall"], ["Cocina", "cocina"], ["Comedor", "comedor"], ["Patio", "patio"], ["Lavandería", "lavanderia"], ["2º piso", "hall-2"], ["3er piso", "tercero"], ["Ala del patio", "pasillo-2"]];
 const NODES = [
   { id: "plaza", name: "Plaza frente al hostal", tab: "Afuera", links: [L("calle", -6, -4)],
@@ -2086,6 +2299,28 @@ const POCURO_NODES = [
            I("planchar", -165, -20, "Tabla de planchar", "Tabla para planchar la ropa.")] }
 ];
 
+/* Reglamento dentro del recorrido: cada punto "Reglas" está en el lugar donde aplica (nunca sobre puertas de piezas) */
+const RULES_VISITAS = [["visitas"], ["seguridad", [4]], ["instalaciones", [3]]];
+const RULES_COCINA = [["cocina", [0, 1, 2, 3, 4, 5, 6]], ["h-cocina"], ["h-articulos"], ["h-camaras"]];
+const RULES_LAV = [["lavanderia"], ["h-lavanderia"]];
+const RULES_CONV = [["sustancias", [0, 1, 2, 4]], ["respeto"], ["instalaciones", [0, 1, 2]]];
+const RULES_HAB = [["habitacion"], ["h-habitacion"], ["seguridad", [0, 1, 2, 3]]];
+const addRule = (nodes, id, r) => nodes.find(n => n.id === id).info.push(r);
+addRule(NODES, "plaza", R("fumar", -150, 0, "Aquí se puede fumar", [["sustancias", [1, 3]]]));
+addRule(NODES, "hall", R("visitas", -82, -8, "Visitas, llaves y seguridad", RULES_VISITAS));
+addRule(NODES, "cocina", R("cocina", -8, 12, "Reglas de la cocina", RULES_COCINA));
+addRule(NODES, "refrigeradores", R("alimentos", 100, 22, "Tus alimentos", [["cocina", [6]], ["h-alimentos"]]));
+addRule(NODES, "comedor", R("comedor", 40, 5, "Reglas del comedor", [["cocina", [7, 8, 9]]]));
+addRule(NODES, "lavanderia", R("lavanderia", 25, 8, "Uso de la lavandería", RULES_LAV));
+addRule(NODES, "patio", R("convivencia", -80, -5, "Convivencia", RULES_CONV));
+addRule(NODES, "pasillo", R("habitacion", 128, 5, "Tu habitación", RULES_HAB));
+addRule(POCURO_NODES, "entrada", R("visitas", -40, 18, "Visitas, llaves y seguridad", RULES_VISITAS));
+addRule(POCURO_NODES, "pasillo", R("habitacion", 78, 10, "Tu habitación", [...RULES_HAB, ["respeto", [0]]]));
+addRule(POCURO_NODES, "comedor", R("comedor", 10, 16, "Comedor y refrigeradores", [["cocina", [7, 8, 9]], ["cocina", [6]], ["h-alimentos"]]));
+addRule(POCURO_NODES, "cocina", R("cocina", 60, 15, "Reglas de la cocina", RULES_COCINA));
+addRule(POCURO_NODES, "lavanderia", R("lavanderia", -80, 3, "Uso de la lavandería", RULES_LAV));
+addRule(POCURO_NODES, "casilleros", R("convivencia", -60, 10, "Convivencia", RULES_CONV));
+
 const TOURS = {
   placeres: { name: "Casa Placeres", dir: "recorrido/placeres/", start: "plaza", tabs: TABS, nodes: NODES },
   pocuro: { name: "Casa Pocuro", dir: "recorrido/pocuro/", start: POCURO_START, tabs: POCURO_TABS, nodes: POCURO_NODES }
@@ -2100,7 +2335,8 @@ const toPsv = t => t.nodes.map(n => ({
   id: n.id, panorama: t.dir + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab, look: n.look },
   markers: n.info.map(m => ({
     id: n.id + "-" + m.id, position: { yaw: m.yaw + "deg", pitch: m.pitch + "deg" },
-    html: '<span class="hs" aria-hidden="true">i</span>', size: { width: 34, height: 34 }, anchor: "center center",
+    html: m.rule ? '<span class="hs hs-rule" aria-hidden="true">' + window.ICONS_LIBRO + 'Reglas</span>' : '<span class="hs" aria-hidden="true">i</span>',
+    size: m.rule ? { width: 86, height: 32 } : { width: 34, height: 34 }, anchor: "center center",
     tooltip: { content: m.title, position: "top center" }, data: m
   }))
 }));
@@ -2109,7 +2345,23 @@ function setTabs(node) {
   $("#tourTitle").textContent = node.name + " · " + T.name;
   $("#tourTabs").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === node.data.tab));
 }
-function showCard(m) { $("#tourCardTitle").textContent = m.title; $("#tourCardText").textContent = m.text; $("#tourCard").hidden = false; }
+function showCard(m) {
+  const card = $("#tourCard"), eb = $("#tourCardEyebrow");
+  $("#tourCardTitle").textContent = m.title;
+  card.classList.toggle("is-rule", !!m.rule);
+  eb.hidden = !m.rule; eb.textContent = m.rule ? "Reglamento de convivencia" : "";
+  if (m.rule) {
+    $("#tourCardText").innerHTML = m.refs.map(([id, pick]) => {
+      const sec = window.reglaSec(id), own = !id.startsWith("h-");
+      const items = pick ? pick.map(i => sec.items[i]) : sec.items;
+      return '<div class="rule-group"><h4>' + (own ? "Lo que te toca · " : "Lo que hace el hostal · ") + sec.t + "</h4>" +
+        (sec.intro && !pick ? '<p>' + sec.intro + "</p>" : "") + window.reglaItemsHTML(items) + "</div>";
+    }).join("") + '<p style="font-size:.85rem">Reglamento completo en la página, sección <b>Reglamento</b>.</p>';
+  } else {
+    const p = document.createElement("p"); p.textContent = m.text; $("#tourCardText").replaceChildren(p);
+  }
+  card.hidden = false; card.scrollTop = 0;
+}
 function hideCard() { $("#tourCard").hidden = true; }
 
 // Cada foto 360 tiene su propio "norte". Al llegar a una foto se mira de espaldas a la
@@ -2177,6 +2429,7 @@ function useTour(key) {
   $("#tourTabs").innerHTML = T.tabs.map(([t, id]) => `<button type="button" data-tab="${t}" data-node="${id}" aria-pressed="false">${t}</button>`).join("");
 }
 
+window.tourViewer = () => viewer;
 window.openTour = function (id, house = "placeres") {
   useTour(TOURS[house] ? house : "placeres");
   const start = T.nodes.some(n => n.id === id) ? id : T.start;
