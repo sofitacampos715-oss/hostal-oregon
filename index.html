@@ -273,7 +273,15 @@ legend small { font-weight: 400; color: var(--muted); }
 .hs.hs-rule { width: auto; height: 32px; border-radius: 99px; padding: 0 11px 0 9px; gap: 6px; grid-auto-flow: column; background: var(--accent-hero, #ffc62e); color: var(--accent-ink, #16212c); font: 700 .78rem/1 var(--f-body); white-space: nowrap; }
 .hs.hs-rule svg { width: 15px; height: 15px; }
 .folder-pin { display: grid; justify-items: center; gap: 4px; cursor: pointer; transform-origin: 50% 100%; animation: fold-bob 1.9s ease-in-out infinite; filter: drop-shadow(0 8px 12px rgba(0,0,0,.5)); }
-.folder-pin svg { width: 128px; height: auto; display: block; }
+.folder-pin svg { width: 112px; height: auto; display: block; }
+.folder-pin svg.phone { width: 140px; overflow: visible; }
+.folder-pin .body { transform-box: fill-box; transform-origin: 50% 100%; animation: phone-body 1.6s ease-in-out infinite; }
+.folder-pin .handset { transform-box: fill-box; transform-origin: 50% 100%; animation: phone-ring 1.6s ease-in-out infinite; }
+@keyframes phone-body { 0%, 40%, 100% { transform: translateX(0); } 5%, 15%, 25% { transform: translateX(-1.5px); } 10%, 20%, 30% { transform: translateX(1.5px); } }
+.folder-pin .ring path { stroke: #fff; stroke-width: 4; filter: drop-shadow(0 0 2px rgba(0,0,0,.8)); }
+.folder-pin .ring { opacity: 0; animation: phone-waves 1.6s ease-out infinite; }
+@keyframes phone-ring { 0%, 42%, 100% { transform: rotate(0) translateY(0); } 4% { transform: rotate(-12deg) translateY(-3px); } 8% { transform: rotate(11deg) translateY(-3px); } 12% { transform: rotate(-11deg) translateY(-3px); } 16% { transform: rotate(10deg) translateY(-3px); } 20% { transform: rotate(-9deg) translateY(-2px); } 24% { transform: rotate(8deg) translateY(-2px); } 28% { transform: rotate(-6deg); } 32% { transform: rotate(4deg); } 36% { transform: rotate(-2deg); } }
+@keyframes phone-waves { 0% { opacity: 0; } 6%, 34% { opacity: 1; } 44%, 100% { opacity: 0; } }
 .folder-pin .bubble { position: relative; background: #fff; color: #16212c; font: 800 1rem/1 var(--f-body); padding: 7px 12px; border-radius: 99px; border: 2.5px solid #16212c; white-space: nowrap; }
 .folder-pin .bubble::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 10px; height: 10px; background: #fff; border-right: 2.5px solid #16212c; border-bottom: 2.5px solid #16212c; transform: translateX(-50%) rotate(45deg); }
 .folder-pin:hover { animation-play-state: paused; transform: scale(1.08); }
@@ -336,7 +344,7 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
 .psv-virtual-tour-link:hover .tl-ico { transform: scale(1.12); }
 .tour-pick { position: absolute; z-index: 96; top: 10px; left: 50%; transform: translateX(-50%); background: #ffd84d; color: #16212c; border-radius: 8px; padding: 6px 12px; font: 600 .85rem var(--f-mono); }
 
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } .hs, .folder-pin { animation: none; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } .hs, .folder-pin, .folder-pin .handset, .folder-pin .body { animation: none; } .folder-pin .ring { opacity: 1; animation: none; } }
 </style>
 <style id="psv-css">
 /*!
@@ -2204,7 +2212,30 @@ const I = (id, yaw, pitch, title, text) => ({ id, yaw, pitch, title, text });
 // Punto de reglamento: refs = [[idSección, [índices de items]?], ...] del REGLAMENTO de la página
 const R = (id, yaw, pitch, title, refs) => ({ id: "regla-" + id, yaw, pitch, title, refs, rule: true });
 // Carpeta dibujada sobre la cama: abre la ficha de la pieza con WhatsApp para agendar la visita
-const F = (yaw, pitch, code) => ({ id: "carpeta-" + code, yaw, pitch, title: "Pincha aquí", code, folder: true });
+const F = (yaw, pitch, code) => ({ id: "carpeta-" + code, yaw, pitch, title: "Agenda tu visita", code, folder: true });
+// Auricular de teléfono antiguo sonando (reemplaza el globo de texto)
+const PHONE_SVG = `<svg class="phone" viewBox="-6 0 152 112" aria-hidden="true">
+  <g class="ring ring-l" fill="none" stroke-linecap="round"><path d="M14 22 Q6 33 14 44"/><path d="M3 14 Q-8 33 3 52"/></g>
+  <g class="ring ring-r" fill="none" stroke-linecap="round"><path d="M126 22 Q134 33 126 44"/><path d="M137 14 Q148 33 137 52"/></g>
+  <g class="body">
+    <path d="M30 60 Q34 47 50 45 L90 45 Q106 47 110 60 L119 98 Q120 106 111 106 L29 106 Q20 106 21 98 Z" fill="#c8342b" stroke="#3b0d08" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M38 58 Q42 51 52 50 L70 50" fill="none" stroke="#f08a7e" stroke-width="3" stroke-linecap="round"/>
+    <rect x="40" y="36" width="9" height="12" rx="2" fill="#8f1f18" stroke="#3b0d08" stroke-width="2.5"/>
+    <rect x="91" y="36" width="9" height="12" rx="2" fill="#8f1f18" stroke="#3b0d08" stroke-width="2.5"/>
+    <circle cx="70" cy="76" r="20" fill="#f6ead2" stroke="#3b0d08" stroke-width="3"/>
+    <circle cx="58.3" cy="82.8" r="3.1" fill="#3b0d08"/><circle cx="56.5" cy="76.0" r="3.1" fill="#3b0d08"/><circle cx="58.3" cy="69.2" r="3.1" fill="#3b0d08"/><circle cx="63.2" cy="64.3" r="3.1" fill="#3b0d08"/><circle cx="70.0" cy="62.5" r="3.1" fill="#3b0d08"/><circle cx="76.8" cy="64.3" r="3.1" fill="#3b0d08"/><circle cx="81.7" cy="69.2" r="3.1" fill="#3b0d08"/><circle cx="83.5" cy="76.0" r="3.1" fill="#3b0d08"/><circle cx="81.7" cy="82.8" r="3.1" fill="#3b0d08"/><circle cx="76.8" cy="87.7" r="3.1" fill="#3b0d08"/>
+    <circle cx="70" cy="76" r="6.5" fill="#c8342b" stroke="#3b0d08" stroke-width="2"/>
+    <path d="M84 62 L89 57" stroke="#3b0d08" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g class="handset">
+    <path d="M30 30 Q70 16 110 30" fill="none" stroke="#3b0d08" stroke-width="15" stroke-linecap="round"/>
+    <path d="M30 30 Q70 16 110 30" fill="none" stroke="#c8342b" stroke-width="9" stroke-linecap="round"/>
+    <path d="M48 23 Q60 19 72 19" fill="none" stroke="#f08a7e" stroke-width="3" stroke-linecap="round"/>
+    <path d="M14 30 Q15 22 26 22 L40 23 Q47 24 46 31 L44 38 Q42 43 34 43 L22 43 Q13 43 14 36 Z" fill="#c8342b" stroke="#3b0d08" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M126 30 Q125 22 114 22 L100 23 Q93 24 94 31 L96 38 Q98 43 106 43 L118 43 Q127 43 126 36 Z" fill="#c8342b" stroke="#3b0d08" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M20 28 Q24 25 32 25" fill="none" stroke="#f08a7e" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+</svg>`;
 const FOLDER_SVG = (code) => `<svg viewBox="0 0 120 92" aria-hidden="true">
   <path d="M8 22 Q7 14 15 14 L44 13 Q49 13 52 18 L56 24 L104 23 Q113 23 112 32 L110 80 Q110 87 102 87 L17 88 Q9 88 9 80 Z" fill="#d99a2b" stroke="#3b2608" stroke-width="3" stroke-linejoin="round"/>
   <path d="M22 12 L88 8 Q93 8 94 13 L97 60 L25 64 Z" fill="#fffdf6" stroke="#3b2608" stroke-width="2.5" stroke-linejoin="round" transform="rotate(-4 60 36)"/>
@@ -2346,9 +2377,9 @@ const toPsv = t => t.nodes.map(n => ({
   id: n.id, panorama: t.dir + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab, look: n.look, face: n.face },
   markers: n.info.map(m => ({
     id: n.id + "-" + m.id, position: { yaw: m.yaw + "deg", pitch: m.pitch + "deg" },
-    html: m.folder ? '<span class="folder-pin"><span class="bubble">¡Pincha aquí!</span>' + FOLDER_SVG(m.code) + '</span>'
+    html: m.folder ? '<span class="folder-pin" aria-label="Llamar para agendar una visita">' + PHONE_SVG + '</span>'
         : m.rule ? '<span class="hs hs-rule" aria-hidden="true">' + window.ICONS_LIBRO + 'Reglas</span>' : '<span class="hs" aria-hidden="true">i</span>',
-    size: m.folder ? { width: 150, height: 150 } : m.rule ? { width: 86, height: 32 } : { width: 34, height: 34 }, anchor: "center center",
+    size: m.folder ? { width: 150, height: 130 } : m.rule ? { width: 86, height: 32 } : { width: 34, height: 34 }, anchor: "center center",
     tooltip: { content: m.title, position: "top center" }, data: m
   }))
 }));
@@ -2365,12 +2396,9 @@ function showCard(m) {
   eb.hidden = !m.rule && !m.folder; eb.textContent = m.rule ? "Reglamento de convivencia" : m.folder ? "Ficha de la pieza · " + m.code : "";
   if (m.folder) {
     const r = rooms.find(x => x.code === m.code) || DEFAULT_ROOMS.find(x => x.code === m.code);
-    const esc2 = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     $("#tourCardTitle").textContent = r ? r.name : m.code;
     const msg = "Hola, vi la " + (r ? r.name : "pieza") + " (" + m.code + ") de " + T.name + " en el recorrido 360° de la página y me gustaría agendar una visita. ¿Qué horarios tienen?";
-    $("#tourCardText").innerHTML = (r ? '<div class="fold-price">' + priceText(r).replace(/\/(mes|noche)/, " <small>/$1</small>") + "</div>" +
-        '<ul class="fold-specs">' + r.specs.map(x => "<li>" + esc2(x) + "</li>").join("") + "</ul>" : "") +
-      '<div class="fold-actions"><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/' + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg) + '">Agendar visita por WhatsApp</a>' +
+    $("#tourCardText").innerHTML = '<div class="fold-actions"><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/' + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg) + '">Agendar visita por WhatsApp</a>' +
       '<button type="button" class="btn btn-ghost" data-pick-slot>Elegir día y hora</button></div>';
     card.querySelector("[data-pick-slot]").onclick = () => { closeTour(); const sw = document.querySelector(".switch button[data-house=" + (r ? r.house : "pocuro") + "]"); if (sw && document.body.dataset.house !== sw.dataset.house) sw.click(); openSheet(m.code, "visita"); };
     card.hidden = false; card.scrollTop = 0; return;
