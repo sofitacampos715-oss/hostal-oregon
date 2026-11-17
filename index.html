@@ -298,6 +298,22 @@ legend small { font-weight: 400; color: var(--muted); }
 .pledge { margin: 26px 0 0; padding: 22px 24px; border-radius: 16px; background: var(--sea); color: var(--sea-ink); }
 .pledge p.eyebrow { color: inherit; opacity: .75; }
 .pledge blockquote { margin: 6px 0 0; font-family: var(--f-display); font-size: clamp(1.15rem, 2.6vw, 1.5rem); line-height: 1.3; text-wrap: pretty; }
+.sec-title { margin-bottom: 16px; font-size: clamp(1.5rem, 3.4vw, 2rem); }
+section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+.steps li { padding: 14px 16px; }
+.steps li strong { font-size: 1.1rem; }
+.incl { grid-template-columns: repeat(auto-fill, minmax(min(100%, 148px), 1fr)); gap: 8px; }
+@media (max-width: 480px) { .incl li { grid-template-columns: 30px 1fr; gap: 8px; padding: 10px; } .incl .ico { width: 30px; height: 30px; } .incl .ico svg { width: 18px; height: 18px; } .incl strong { font-size: .88rem; } .steps li { padding: 10px 14px; } }
+.incl li { grid-template-columns: 36px 1fr; align-items: center; padding: 12px 14px; }
+.incl .ico { grid-row: auto; width: 36px; height: 36px; border-radius: 10px; }
+.incl strong { font-size: .98rem; }
+.panel h3 { font-size: 1.25rem; }
+.regl-all > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 10px 18px; font-weight: 700; }
+.regl-all > summary::-webkit-details-marker { display: none; }
+.regl-all > summary::after { content: "+"; font-size: 1.2rem; line-height: 1; color: var(--muted); }
+.regl-all[open] > summary { margin-bottom: 18px; }
+.regl-all[open] > summary::after { content: "−"; }
+.dock-in p b { font-size: 1rem; }
 .hs { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.92); color: #16212c; font: 700 17px/1 var(--f-display); box-shadow: 0 0 0 4px rgba(255,255,255,.3), 0 4px 12px rgba(0,0,0,.4); cursor: pointer; animation: hs-pulse 2.4s ease-out infinite; }
 @keyframes hs-pulse { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,.55), 0 4px 12px rgba(0,0,0,.4); } 70% { box-shadow: 0 0 0 14px rgba(255,255,255,0), 0 4px 12px rgba(0,0,0,.4); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0), 0 4px 12px rgba(0,0,0,.4); } }
 .psv-virtual-tour-link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
@@ -1095,7 +1111,7 @@ legend small { font-weight: 400; color: var(--muted); }
       <img class="hero-seal" id="heroSeal" alt="" width="84" height="84">
       <p class="eyebrow" id="heroEyebrow"></p>
       <h1 id="heroTitle"></h1>
-      <p class="lead" id="heroLead"></p>
+      <p class="lead" id="heroLead" hidden></p>
       <ul class="facts" id="heroFacts"></ul>
       <div class="cta-row">
         <button class="btn btn-main" type="button" data-consult="" data-intent="visita">Agendar una visita</button>
@@ -1107,7 +1123,7 @@ legend small { font-weight: 400; color: var(--muted); }
   </section>
 
   <div class="avail"><div class="wrap">
-    <div><strong id="availText"></strong><div class="note" id="availSub"></div></div>
+    <div><strong id="availText"></strong><div class="note" id="availSub" hidden></div></div>
     <div class="mode" id="modeSwitch" role="group" aria-label="Tipo de estadía" hidden>
       <button type="button" data-mode="mes" aria-pressed="true">Por mes</button>
       <button type="button" data-mode="noche" aria-pressed="false">Verano y Año Nuevo</button>
@@ -1115,81 +1131,46 @@ legend small { font-weight: 400; color: var(--muted); }
   </div></div>
 
   <section class="block" id="piezas"><div class="wrap">
-    <div class="block-head">
-      <div><p class="eyebrow">Piezas</p><h2>Elige una pieza y ven a verla</h2></div>
-      <p>Cada pieza tiene un código, el mismo que está en su puerta. Así la dueña sabe al tiro cuál te interesa.</p>
-    </div>
+    <h2 class="sec-title">Piezas</h2>
     <div class="rooms" id="rooms"></div>
   </div></section>
 
   <section class="block"><div class="wrap">
-    <div class="block-head">
-      <div><p class="eyebrow">Espacios comunes</p><h2>Recorre la casa antes de venir</h2></div>
-      <p>Lo que más se pregunta en las visitas. Toca un espacio y camina por la casa en 360°.</p>
-    </div>
+    <h2 class="sec-title">La casa en 360°</h2>
     <div class="commons" id="commons"></div>
   </div></section>
 
   <section class="block" id="mensual"><div class="wrap">
-    <div class="block-head">
-      <div><p class="eyebrow">Arriendo mensual · estudiantes</p><h2>¿Qué incluye la mensualidad?</h2></div>
-      <p>Un solo pago al mes, sin cuentas aparte. Esto es lo que tienes con tu pieza.</p>
-    </div>
+    <h2 class="sec-title">Incluido en el arriendo</h2>
     <ul class="incl" id="inclList"></ul>
   </div></section>
 
   <section class="block"><div class="wrap">
-    <div class="block-head"><div><p class="eyebrow">Cómo se arrienda</p><h2>Primero la ves, después decides</h2></div></div>
+    <h2 class="sec-title">Cómo se arrienda</h2>
     <ol class="steps">
-      <li><strong>Mira las piezas</strong><p>Fotos, recorrido 360° y precio con gastos incluidos.</p></li>
-      <li><strong>Agenda una visita</strong><p>Elige un horario. Si vives fuera de Valparaíso, puede ser por videollamada.</p></li>
-      <li><strong>Conoce la casa</strong><p>Puedes venir con tu familia. Revisa la cocina, los baños y el barrio.</p></li>
-      <li><strong>Reserva</strong><p>Con un mes de garantía y los documentos de la lista de abajo.</p></li>
+      <li><strong>Elige tu pieza</strong></li>
+      <li><strong>Ven a verla</strong></li>
+      <li><strong>Reserva con 1 mes de garantía</strong></li>
     </ol>
   </div></section>
 
   <section class="block"><div class="wrap two">
     <div class="panel">
-      <p class="eyebrow">Antes de escribir</p>
-      <h3>Requisitos para arrendar</h3>
+      <h3>Para arrendar</h3>
       <ul id="reqList"></ul>
     </div>
-    <div class="panel guarantee" id="garantiaPanel">
-      <p class="eyebrow">Al firmar el contrato</p>
-      <h3>¿Se paga mes de garantía?</h3>
-      <p class="big">Sí, un mes.</p>
-      <ul>
-        <li>Asegura el cuidado de las instalaciones y el cumplimiento del acuerdo.</li>
-        <li>No corresponde al pago de ningún mes de arriendo.</li>
-        <li>Se devuelve completa si entregas la habitación tal como la recibiste.</li>
-      </ul>
-    </div>
     <div class="panel">
-      <p class="eyebrow">Convivencia</p>
-      <h3>Reglas de la casa</h3>
+      <h3>Reglas</h3>
       <ul id="rulesList"></ul>
-      <a class="more" href="#reglamento" id="rulesMore">Ver el reglamento completo ↓</a>
-    </div>
-    <div class="panel host">
-      <div class="avatar">foto de la dueña</div>
-      <div>
-        <p class="eyebrow">Quién te recibe</p>
-        <h3 id="ownerName"></h3>
-        <p class="note" style="font-size:.95rem">Vive en la casa y te muestra cada espacio en la visita. Responde por WhatsApp.</p>
-      </div>
     </div>
   </div></section>
 
   <section class="block" id="reglamento"><div class="wrap">
-    <div class="block-head">
-      <div><p class="eyebrow">Reglamento de convivencia y uso de las instalaciones</p><h2>Una buena convivencia es responsabilidad de todos</h2></div>
-      <p>Lo que se pide a cada residente y lo que el hostal se compromete a hacer. En el recorrido 360° verás estas reglas en el lugar donde aplican.</p>
-    </div>
-    <div class="regl" id="reglCols"></div>
-    <div class="pledge">
-      <p class="eyebrow">Nuestro compromiso</p>
-      <blockquote id="pledgeText"></blockquote>
-    </div>
+    <details class="regl-all">
+      <summary>Ver reglamento completo</summary>
+      <div class="regl" id="reglCols"></div>
+      <div class="pledge"><blockquote id="pledgeText"></blockquote></div>
+    </details>
   </div></section>
 </main>
 
@@ -1226,7 +1207,7 @@ legend small { font-weight: 400; color: var(--muted); }
 </div></footer>
 
 <div class="dock"><div class="dock-in">
-  <p><b>¿Quieres verla en persona?</b>Elige un horario y escríbele directo a la dueña.</p>
+  <p><b>Ven a conocerla</b></p>
   <button class="btn btn-wa" type="button" data-consult="" data-intent="visita">Agendar visita</button>
 </div></div>
 
@@ -1334,7 +1315,7 @@ legend small { font-weight: 400; color: var(--muted); }
   </div>
   <div class="tour-tabs" id="tourTabs" role="group" aria-label="Ir a un lugar de la casa"></div>
   <div class="tour-stage" id="tourStage">
-    <div class="tour-hint" id="tourHint">Arrastra para mirar · toca las flechas para avanzar · toca ⓘ o «Reglas» para saber más</div>
+    <div class="tour-hint" id="tourHint">Arrastra para mirar · toca las flechas para avanzar</div>
     <div class="tour-card" id="tourCard" hidden><button type="button" class="x" id="tourCardClose" aria-label="Cerrar">×</button><p class="eyebrow" id="tourCardEyebrow" hidden></p><h3 id="tourCardTitle"></h3><div id="tourCardText"></div></div>
     <div class="tour-pick" id="tourPick" hidden></div>
   </div>
@@ -1352,17 +1333,16 @@ const CONFIG = {
 const DEFAULT_TEXTS = {
   owner: "[Nombre de la dueña]",
   requisitos: [
-    "Cédula de identidad vigente (copia por ambos lados).",
-    "Capacidad de pago: ingresos de al menos 2 veces el arriendo, con contrato de trabajo o certificado de antigüedad laboral. Si eres independiente, boletas de honorarios y declaración anual de renta.",
-    "Informe comercial (Dicom o Equifax) para ver el historial de pagos.",
-    "Conocer y aceptar el reglamento interno de convivencia."
+    "Cédula de identidad",
+    "Ingresos de 2 veces el arriendo",
+    "Informe comercial (Dicom o Equifax)",
+    "1 mes de garantía, se devuelve al salir"
   ],
   reglas: [
-    "Las visitas se informan y autorizan antes; no pueden quedarse a dormir ni usar la cocina.",
-    "No se fuma, ni se consume alcohol o drogas dentro del hostal.",
-    "Estufas, calefactores y hervidores en la pieza solo con autorización (recargo de $15.000 al mes).",
-    "Lavandería de lunes a viernes de 9:30 a 21:00; fines de semana, horario libre.",
-    "Comedor abierto de 7:00 a 22:00."
+    "Visitas solo de día y avisadas",
+    "Sin alcohol, cigarro ni drogas adentro",
+    "Estufas en la pieza: con permiso ($15.000/mes)",
+    "Lavandería L–V 9:30–21:00"
   ]
 };
 
@@ -1381,13 +1361,13 @@ const ICONS = {
 };
 const REGLAMENTO = {
   incluye: [
-    ["cama", "Habitación amoblada", "Espacio equipado para tu comodidad."],
-    ["llave", "Acceso a las instalaciones", "Uso de todas las dependencias y espacios comunes del hostal."],
-    ["lavadora", "Lavandería", "Uso ilimitado de lavadora y secadora."],
-    ["limpieza", "Limpieza semanal", "Limpieza de tu habitación una vez por semana."],
-    ["gastos", "Gastos incluidos", "Electricidad, agua y Wi-Fi."],
-    ["escudo", "Seguridad", "Alarma Verisure, cámaras de vigilancia y cerco eléctrico."],
-    ["mantencion", "Mantención de espacios comunes", "Limpieza y mantenimiento de lunes a viernes."]
+    ["cama", "Pieza amoblada", "Espacio equipado para tu comodidad."],
+    ["llave", "Espacios comunes", "Uso de todas las dependencias y espacios comunes del hostal."],
+    ["lavadora", "Lavadora y secadora", "Uso ilimitado de lavadora y secadora."],
+    ["limpieza", "Aseo semanal", "Limpieza de tu habitación una vez por semana."],
+    ["gastos", "Luz, agua y Wi-Fi", "Electricidad, agua y Wi-Fi."],
+    ["escudo", "Alarma y cámaras", "Alarma Verisure, cámaras de vigilancia y cerco eléctrico."],
+    ["mantencion", "Mantención diaria", "Limpieza y mantenimiento de lunes a viernes."]
   ],
   residentes: [
     { id: "habitacion", t: "Limpieza y cuidado de la habitación", items: [
@@ -1491,7 +1471,7 @@ const HOUSES = {
     eyebrow: "Cerro Placeres · Valparaíso",
     title: "Tu pieza a pasos de la <em>Santa María</em>",
     lead: "Piezas amobladas para estudiantes que vienen de fuera de Valparaíso. Internet, luz, agua y gas incluidos. Ven a conocerla antes de decidir.",
-    facts: ["≈ 8 min a pie · USM Casa Central", "Gastos incluidos", "Dueña vive en la casa"],
+    facts: ["8 min a la USM", "Gastos incluidos", "Recorrido 360°"],
     blocks: [{ dow: 2, times: ["18:00", "18:30", "19:00"] }, { dow: 4, times: ["18:00", "18:30", "19:00"] }, { dow: 6, times: ["11:00", "11:30", "12:00", "12:30"] }],
     commons: [["cocina", "Cocina"], ["comedor", "Comedor"], ["patio", "Patio techado"], ["lavanderia", "Lavandería"], ["hall-2", "2º piso"], ["pasillo-2", "Ala del patio"]],
     tour: true,
@@ -1511,7 +1491,7 @@ const HOUSES = {
     eyebrow: "Sector Pocuro · Valparaíso",
     title: "Una casa tranquila cerca de <em>Enfermería UV</em>",
     lead: "Piezas amplias con baño privado para estudiantes y profesionales, en una casa antigua con techos de vidrio y muebles de época.",
-    facts: ["≈ 6 min a pie · Enfermería UV", "Baño privado", "Por mes o por noches"],
+    facts: ["6 min a Enfermería UV", "Baño privado", "Por mes o por noche"],
     blocks: [{ dow: 3, times: ["18:00", "18:30", "19:00"] }, { dow: 6, times: ["15:00", "15:30", "16:00", "16:30"] }],
     commons: [["comedor", "Comedor"], ["cocina", "Cocina"], ["lavanderia", "Lavandería"], ["colibri", "Pasillo del picaflor"], ["balcon", "Balcón a la calle"]],
     tour: true,
@@ -1572,7 +1552,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 function renderReglamento() {
   if ($("#inclList").childElementCount) return;
   $("#inclList").innerHTML = REGLAMENTO.incluye.map(([ic, t, d]) =>
-    `<li><span class="ico">${ICONS[ic]}</span><strong>${esc(t)}</strong><p>${esc(d)}</p></li>`).join("");
+    `<li title="${esc(d)}"><span class="ico">${ICONS[ic]}</span><strong>${esc(t)}</strong></li>`).join("");
   const col = (title, sub, secs, open) => `<div class="regl-col"><h3><small>${sub}</small>${title}</h3>` +
     secs.map((s, i) => `<details${open && i === 0 ? " open" : ""}><summary><span class="n">${String(i + 1).padStart(2, "0")}</span>${esc(s.t)}</summary><div>` +
       (s.intro ? `<p class="intro">${esc(s.intro)}</p>` : "") + reglaItemsHTML(s.items) +
@@ -1773,15 +1753,13 @@ function render() {
   $("#availSub").textContent = (soon ? soon + (soon > 1 ? " se liberan" : " se libera") + " pronto · " : "") + (fromSheet ? "actualizado desde la planilla de la dueña" : "actualizado por la dueña");
   $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
   $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
-  $("#ownerName").textContent = texts.owner;
   renderReglamento();
   const monthly = mode !== "noche";
-  $("#mensual").hidden = !monthly; $("#garantiaPanel").hidden = !monthly;
+  $("#mensual").hidden = !monthly;
   $("#waShown").textContent = "+" + CONFIG.whatsapp.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, "$1 $2 $3 $4");
 
   $("#rooms").innerHTML = list.map(r => {
     const s = statusInfo(r), busy = r.status === "ocupada";
-    const alt = busy && list.find(o => o.status === "libre");
     return `<article class="room${busy ? " is-busy" : ""}">
       <button class="thumb" type="button" data-tour="${r.code}" aria-label="Recorrer ${r.code} en 360°">
         <span class="plate">${r.code}</span><span class="pill ${s.cls}">${esc(s.text)}</span>
@@ -1790,15 +1768,14 @@ function render() {
       <div class="room-body">
         <h3>${esc(r.name)}</h3>
         <ul class="specs">${r.specs.map(x => "<li>" + esc(x) + "</li>").join("")}</ul>
-        <div class="price">${priceText(r).replace(/\/(mes|noche)/, " <small>/$1" + (mode === "mes" ? " · gastos incluidos" : "") + "</small>")}</div>
+        <div class="price">${priceText(r).replace(/\/(mes|noche)/, " <small>/$1" + "" + "</small>")}</div>
         <div class="room-actions">
           ${busy
-            ? `<button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="espera">Avísame si se libera</button>
-               <button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="visita">Ver la casa igual</button>`
-            : `<button class="btn btn-main btn-sm" type="button" data-consult="${r.code}" data-intent="visita">Quiero verla</button>
-               <button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="${mode === "noche" ? "reservar" : "duda"}">${mode === "noche" ? "Consultar fechas" : "Preguntar"}</button>`}
+            ? `<button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="espera">Avísame si se libera</button>`
+            : mode === "noche"
+              ? `<button class="btn btn-main btn-sm" type="button" data-consult="${r.code}" data-intent="reservar">Consultar fechas</button>`
+              : `<button class="btn btn-main btn-sm" type="button" data-consult="${r.code}" data-intent="visita">Quiero verla</button>`}
         </div>
-        ${alt ? `<p class="alt">Parecida y disponible: <button type="button" data-consult="${alt.code}" data-intent="visita">${alt.code} · ${money(alt.price)}</button></p>` : ""}
       </div>
     </article>`;
   }).join("");
@@ -2067,7 +2044,6 @@ $("#ownerTable").addEventListener("input", e => {
   store.set("texts", texts);
   $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
   $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
-  $("#ownerName").textContent = texts.owner;
 });
 $("#ownerTable").addEventListener("change", e => {
   const st = e.target.dataset.status, fr = e.target.dataset.from;
