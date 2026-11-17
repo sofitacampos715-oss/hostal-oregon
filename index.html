@@ -1507,6 +1507,9 @@ const HOUSES = {
   }
 };
 
+// Piezas que ya tienen foto 360 real: código de la pieza -> foto del recorrido
+const ROOM_TOURS = { "PO-21": { house: "pocuro", node: "pieza-21" } };
+
 const DEFAULT_ROOMS = [
   { code: "PL-01", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "9 m²", "Escritorio"], price: 210000, night: 28000, status: "ocupada", from: "", wall: "#d6dde3" },
   { code: "PL-02", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "10 m²", "Escritorio", "Ventana al cerro"], price: 220000, night: 30000, status: "libre", from: "", wall: "#dfe4d5" },
@@ -1514,7 +1517,7 @@ const DEFAULT_ROOMS = [
   { code: "PL-04", house: "placeres", name: "Individual grande", specs: ["Baño privado", "15 m²", "Escritorio doble", "Clóset"], price: 290000, night: 40000, status: "libre", from: "", wall: "#d3e0e2" },
   { code: "PO-01", house: "pocuro", name: "Suite con baño privado", specs: ["Baño privado", "16 m²", "Cama 2 plazas"], price: 320000, night: 45000, status: "libre", from: "", wall: "#e4ddd3" },
   { code: "PO-02", house: "pocuro", name: "Habitación doble", specs: ["Baño privado", "18 m²", "2 camas"], price: 420000, night: 60000, status: "ocupada", from: "", wall: "#d9e2dc" },
-  { code: "PO-03", house: "pocuro", name: "Individual vista al mar", specs: ["Baño privado", "13 m²", "Vista a la bahía"], price: 340000, night: 50000, status: "pronto", from: "2026-12-15", wall: "#dde2ea" }
+  { code: "PO-21", house: "pocuro", name: "Habitación con balcón a la calle", specs: ["Balcón a la calle", "Cama 2 plazas", "Escritorio y TV"], price: 340000, night: 50000, status: "pronto", from: "2026-12-15", wall: "#dde2ea" }
 ];
 
 const SOURCES = { web: "página web", "qr-usm": "QR Santa María", "qr-enf": "QR Enfermería UV", ig: "Instagram", google: "Google Maps" };
@@ -1779,7 +1782,11 @@ function render() {
       </div>
     </article>`;
   }).join("");
-  $$("#rooms .thumb").forEach(btn => btn.prepend(thumbFrom(sceneFor(btn.dataset.tour), "pieza")));
+  $$("#rooms .thumb").forEach(btn => {
+    const real = ROOM_TOURS[btn.dataset.tour];
+    if (real) { const img = new Image(); img.src = "recorrido/" + real.house + "/mini/" + real.node + ".jpg"; img.alt = ""; img.loading = "lazy"; btn.prepend(img); }
+    else btn.prepend(thumbFrom(sceneFor(btn.dataset.tour), "pieza"));
+  });
 
   $("#commons").innerHTML = h.commons.map(([k, label]) =>
     `<button class="common" type="button" data-common="${k}"><span class="thumb"><span class="tag360">↻ 360°</span></span><span class="label">${esc(label)}</span></button>`).join("");
@@ -2074,7 +2081,7 @@ document.addEventListener("click", e => {
   const c = e.target.closest("[data-consult]");
   if (c) { openSheet(c.dataset.consult, c.dataset.intent); return; }
   const t = e.target.closest("[data-tour]");
-  if (t) { openViewer(t.dataset.tour); return; }
+  if (t) { const real = ROOM_TOURS[t.dataset.tour]; if (real && window.openTour) window.openTour(real.node, real.house); else openViewer(t.dataset.tour); return; }
   const cm = e.target.closest("[data-common]");
   if (cm) { if (HOUSES[house].tour && window.openTour) window.openTour(cm.dataset.common, house); else openViewer(cm.dataset.common); }
 });
@@ -2268,9 +2275,11 @@ const POCURO_NODES = [
   { id: "colibri", name: "Pasillo del picaflor", tab: "Pasillos", links: [L("cocina", 0, -3), L("pasillo-balcon", 178, -5)],
     info: [I("picaflor", -95, 10, "Mural del picaflor", "Pasillo con techo de vidrio y un mural de picaflor.")] },
   { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("pieza-21", 16, -6, "Habitación 21"), L("colibri", 165, -5), L("entrada", -105, -22)], info: [] },
-  { id: "pieza-21", name: "Habitación 21 · ventana a la calle", tab: "Balcón", face: 0, links: [L("pasillo-balcon", -66, -8, "Pasillo al balcón")],
+  { id: "pieza-21", name: "Habitación 21 · ventana a la calle", tab: "Balcón", face: 0, links: [L("pasillo-balcon", -66, -8, "Pasillo al balcón"), L("bano-21", -171, -8, "Baño")],
     info: [I("ventana", 0, 12, "Ventana a la calle", "Puerta-ventana de madera con balconcito de fierro forjado, mirando a la calle.")] },
-  { id: "balcon", name: "Balcón a la calle", tab: "Balcón", links: [L("pasillo-balcon", 160, -5), L("pieza-21", -170, -10, "Habitación 21")],
+  { id: "bano-21", name: "Baño de la habitación 21", tab: "Balcón", links: [L("pieza-21", -45, -8, "Habitación 21")],
+    info: [I("ducha", -150, 0, "Baño privado", "Baño privado con ducha de vidrio, lavamanos y espejo.")] },
+  { id: "balcon", name: "Balcón a la calle", tab: "Balcón", links: [L("pasillo-balcon", 160, -5), L("pieza-21", 133, -8, "Habitación 21")],
     info: [I("vista", 0, 10, "Vista a la calle", "Balcón con vista al barrio de Pocuro.")] },
   { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("casilleros", 100, -8)],
     info: [I("lavadoras", -80, -20, "Lavadora y secadora", "Lavadora, secadora y lavadero."),
