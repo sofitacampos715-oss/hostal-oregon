@@ -2330,7 +2330,7 @@ const POCURO_NODES = [
   { id: "colibri", name: "Pasillo del picaflor", tab: "Pasillos", links: [L("cocina", 0, -3), L("pasillo-balcon", 178, -5)],
     info: [I("picaflor", -95, 10, "Mural del picaflor", "Pasillo con techo de vidrio y un mural de picaflor.")] },
   { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("pieza-21", 16, -6, "Habitación 21"), L("colibri", 165, -5), L("entrada", -105, -22)], info: [] },
-  { id: "pieza-21", name: "Habitación 21 · ventana a la calle", tab: "Balcón", face: 0, links: [L("pasillo-balcon", -66, -8, "Pasillo al balcón"), L("bano-21", -171, -8, "Baño")],
+  { id: "pieza-21", name: "Habitación 21 · ventana a la calle", tab: "Balcón", face: 0, pan: { yaw: 150, pitch: -10, delay: 2200 }, links: [L("pasillo-balcon", -66, -8, "Pasillo al balcón"), L("bano-21", -171, -8, "Baño")],
     info: [I("ventana", 0, 12, "Ventana a la calle", "Puerta-ventana de madera con balconcito de fierro forjado, mirando a la calle."), F(152, -20, "PO-21")] },
   { id: "bano-21", name: "Baño de la habitación 21", tab: "Balcón", links: [L("pieza-21", -45, -8, "Habitación 21")],
     info: [I("ducha", -150, 0, "Baño privado", "Baño privado con ducha de vidrio, lavamanos y espejo.")] },
@@ -2370,11 +2370,11 @@ const TOURS = {
 
 const $ = s => document.querySelector(s);
 const EDIT = /editar/.test(location.hash);
-let T, names, viewer, tour, marks, current = null, goingBack = false;
+let T, names, viewer, tour, marks, current = null, goingBack = false, panTimer = null, userMoved = false;
 const visited = [];
 
 const toPsv = t => t.nodes.map(n => ({
-  id: n.id, panorama: t.dir + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab, look: n.look, face: n.face },
+  id: n.id, panorama: t.dir + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab, look: n.look, face: n.face, pan: n.pan },
   markers: n.info.map(m => ({
     id: n.id + "-" + m.id, position: { yaw: m.yaw + "deg", pitch: m.pitch + "deg" },
     html: m.folder ? '<span class="folder-pin" aria-label="Llamar para agendar una visita">' + PHONE_SVG + '</span>'
@@ -2459,6 +2459,12 @@ function build(start) {
     current = node.id; goingBack = false;
     $("#tourBack").hidden = !visited.length;
     setTabs(node); hideCard();
+    // Algunas fotos giran solas hacia algo importante (ej.: el teléfono sobre la cama) si no las mueves
+    clearTimeout(panTimer); userMoved = false;
+    const pan = node.data && node.data.pan;
+    if (pan) panTimer = setTimeout(() => {
+      if (current === node.id && !userMoved) viewer.animate({ yaw: pan.yaw + "deg", pitch: pan.pitch + "deg", speed: "6rpm" });
+    }, pan.delay || 2000);
   });
   marks.addEventListener("select-marker", ({ marker }) => showCard(marker.data));
   const fade = () => { $("#tourHint").style.opacity = "0"; };
@@ -2483,6 +2489,8 @@ function useTour(key) {
 }
 
 window.tourViewer = () => viewer;
+// si la persona mueve la vista, no girar solo
+["pointerdown", "wheel", "touchstart", "keydown"].forEach(ev => $("#tourStage").addEventListener(ev, () => { userMoved = true; }, { passive: true }));
 window.openTour = function (id, house = "placeres") {
   useTour(TOURS[house] ? house : "placeres");
   const start = T.nodes.some(n => n.id === id) ? id : T.start;
