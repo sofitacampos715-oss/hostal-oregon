@@ -272,6 +272,20 @@ legend small { font-weight: 400; color: var(--muted); }
 .rule-list ul { list-style: none; padding-left: 0; }
 .hs.hs-rule { width: auto; height: 32px; border-radius: 99px; padding: 0 11px 0 9px; gap: 6px; grid-auto-flow: column; background: var(--accent-hero, #ffc62e); color: var(--accent-ink, #16212c); font: 700 .78rem/1 var(--f-body); white-space: nowrap; }
 .hs.hs-rule svg { width: 15px; height: 15px; }
+.folder-pin { display: grid; justify-items: center; gap: 4px; cursor: pointer; transform-origin: 50% 100%; animation: fold-bob 1.9s ease-in-out infinite; filter: drop-shadow(0 8px 12px rgba(0,0,0,.5)); }
+.folder-pin svg { width: 128px; height: auto; display: block; }
+.folder-pin .bubble { position: relative; background: #fff; color: #16212c; font: 800 1rem/1 var(--f-body); padding: 7px 12px; border-radius: 99px; border: 2.5px solid #16212c; white-space: nowrap; }
+.folder-pin .bubble::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 10px; height: 10px; background: #fff; border-right: 2.5px solid #16212c; border-bottom: 2.5px solid #16212c; transform: translateX(-50%) rotate(45deg); }
+.folder-pin:hover { animation-play-state: paused; transform: scale(1.08); }
+@keyframes fold-bob { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(3deg); } }
+.tour-card.is-folder { max-width: 400px; gap: 10px; border-top: 5px solid var(--wa, #25d366); }
+.tour-card.is-folder h3 { font-size: 1.3rem; }
+.fold-price { font: 800 1.45rem/1.1 var(--f-display); color: var(--ink); }
+.fold-price small { font: 500 .85rem var(--f-body); color: var(--muted); }
+.fold-specs { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.fold-specs li { font-size: .82rem; background: var(--sunk); border-radius: 99px; padding: 4px 10px; }
+.fold-actions { display: grid; gap: 8px; }
+.fold-actions .btn { width: 100%; justify-content: center; text-align: center; }
 
 /* Arriendo mensual y reglamento */
 .incl { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); list-style: none; margin: 0; padding: 0; }
@@ -322,7 +336,7 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
 .psv-virtual-tour-link:hover .tl-ico { transform: scale(1.12); }
 .tour-pick { position: absolute; z-index: 96; top: 10px; left: 50%; transform: translateX(-50%); background: #ffd84d; color: #16212c; border-radius: 8px; padding: 6px 12px; font: 600 .85rem var(--f-mono); }
 
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } .hs { animation: none; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } .hs, .folder-pin { animation: none; } }
 </style>
 <style id="psv-css">
 /*!
@@ -1323,7 +1337,7 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
 
 <script>
 const CONFIG = {
-  whatsapp: "56900000000",
+  whatsapp: "56995433659",
   // Enlaces de "Publicar en la web" (formato CSV) de cada pestaña de la planilla de Google.
   // Si están vacíos, la página usa los datos de ejemplo de más abajo.
   sheetPiezas: "",
@@ -1535,7 +1549,7 @@ const store = {
   set(k, v) { try { localStorage.setItem("casasvalpo:" + k, JSON.stringify(v)); } catch (e) {} }
 };
 
-let rooms = store.get("rooms", null) || DEFAULT_ROOMS.map(r => ({ ...r }));
+let rooms = store.get("rooms-v2", null) || DEFAULT_ROOMS.map(r => ({ ...r }));
 let texts = store.get("texts", null) || JSON.parse(JSON.stringify(DEFAULT_TEXTS));
 let fromSheet = false;
 let leads = store.get("leads", null);
@@ -2057,7 +2071,7 @@ $("#ownerTable").addEventListener("change", e => {
   const r = rooms.find(x => x.code === (st || fr)); if (!r) return;
   if (st) { r.status = e.target.value; if (r.status === "pronto" && !r.from) r.from = "2027-03-01"; if (r.status !== "pronto") r.from = ""; }
   if (fr) r.from = e.target.value;
-  store.set("rooms", rooms);
+  store.set("rooms-v2", rooms);
   render();
 });
 $$(".tabs button").forEach(b => b.addEventListener("click", () => {
@@ -2071,7 +2085,7 @@ $("#resetDemo").addEventListener("click", () => {
   leads = leads.filter(l => / \(ejemplo\)$/.test(l.name));
   rooms = DEFAULT_ROOMS.map(r => ({ ...r }));
   texts = JSON.parse(JSON.stringify(DEFAULT_TEXTS));
-  store.set("leads", leads); store.set("rooms", rooms); store.set("texts", texts);
+  store.set("leads", leads); store.set("rooms-v2", rooms); store.set("texts", texts);
   render();
 });
 $("#openOwner").addEventListener("click", () => { $("#owner").hidden = false; $("#owner").scrollIntoView({ behavior: "smooth" }); });
@@ -2189,6 +2203,16 @@ const L = (nodeId, yaw, pitch = -8, label) => ({ nodeId, position: { yaw: yaw + 
 const I = (id, yaw, pitch, title, text) => ({ id, yaw, pitch, title, text });
 // Punto de reglamento: refs = [[idSección, [índices de items]?], ...] del REGLAMENTO de la página
 const R = (id, yaw, pitch, title, refs) => ({ id: "regla-" + id, yaw, pitch, title, refs, rule: true });
+// Carpeta dibujada sobre la cama: abre la ficha de la pieza con WhatsApp para agendar la visita
+const F = (yaw, pitch, code) => ({ id: "carpeta-" + code, yaw, pitch, title: "Pincha aquí", code, folder: true });
+const FOLDER_SVG = (code) => `<svg viewBox="0 0 120 92" aria-hidden="true">
+  <path d="M8 22 Q7 14 15 14 L44 13 Q49 13 52 18 L56 24 L104 23 Q113 23 112 32 L110 80 Q110 87 102 87 L17 88 Q9 88 9 80 Z" fill="#d99a2b" stroke="#3b2608" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M22 12 L88 8 Q93 8 94 13 L97 60 L25 64 Z" fill="#fffdf6" stroke="#3b2608" stroke-width="2.5" stroke-linejoin="round" transform="rotate(-4 60 36)"/>
+  <path d="M34 22 L80 19 M34 30 L84 27 M34 38 L72 36" stroke="#9aa9b4" stroke-width="2.4" stroke-linecap="round" transform="rotate(-4 60 36)"/>
+  <path d="M6 36 Q6 30 13 30 L107 29 Q115 29 114 37 L110 81 Q110 88 101 88 L16 89 Q8 89 8 81 Z" fill="#f2c46d" stroke="#3b2608" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="34" y="48" width="52" height="22" rx="5" fill="#fff" stroke="#3b2608" stroke-width="2.5" transform="rotate(-3 60 59)"/>
+  <text x="60" y="64" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="14" fill="#16212c" transform="rotate(-3 60 59)">${code}</text>
+</svg>`;
 const TABS = [["Afuera", "plaza"], ["Entrada", "hall"], ["Cocina", "cocina"], ["Comedor", "comedor"], ["Patio", "patio"], ["Lavandería", "lavanderia"], ["2º piso", "hall-2"], ["3er piso", "tercero"], ["Ala del patio", "pasillo-2"]];
 const NODES = [
   { id: "plaza", name: "Plaza frente al hostal", tab: "Afuera", links: [L("calle", -6, -4)],
@@ -2276,7 +2300,7 @@ const POCURO_NODES = [
     info: [I("picaflor", -95, 10, "Mural del picaflor", "Pasillo con techo de vidrio y un mural de picaflor.")] },
   { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("pieza-21", 16, -6, "Habitación 21"), L("colibri", 165, -5), L("entrada", -105, -22)], info: [] },
   { id: "pieza-21", name: "Habitación 21 · ventana a la calle", tab: "Balcón", face: 0, links: [L("pasillo-balcon", -66, -8, "Pasillo al balcón"), L("bano-21", -171, -8, "Baño")],
-    info: [I("ventana", 0, 12, "Ventana a la calle", "Puerta-ventana de madera con balconcito de fierro forjado, mirando a la calle.")] },
+    info: [I("ventana", 0, 12, "Ventana a la calle", "Puerta-ventana de madera con balconcito de fierro forjado, mirando a la calle."), F(152, -20, "PO-21")] },
   { id: "bano-21", name: "Baño de la habitación 21", tab: "Balcón", links: [L("pieza-21", -45, -8, "Habitación 21")],
     info: [I("ducha", -150, 0, "Baño privado", "Baño privado con ducha de vidrio, lavamanos y espejo.")] },
   { id: "balcon", name: "Balcón a la calle", tab: "Balcón", links: [L("pasillo-balcon", 160, -5), L("pieza-21", 133, -8, "Habitación 21")],
@@ -2322,8 +2346,9 @@ const toPsv = t => t.nodes.map(n => ({
   id: n.id, panorama: t.dir + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab, look: n.look, face: n.face },
   markers: n.info.map(m => ({
     id: n.id + "-" + m.id, position: { yaw: m.yaw + "deg", pitch: m.pitch + "deg" },
-    html: m.rule ? '<span class="hs hs-rule" aria-hidden="true">' + window.ICONS_LIBRO + 'Reglas</span>' : '<span class="hs" aria-hidden="true">i</span>',
-    size: m.rule ? { width: 86, height: 32 } : { width: 34, height: 34 }, anchor: "center center",
+    html: m.folder ? '<span class="folder-pin"><span class="bubble">¡Pincha aquí!</span>' + FOLDER_SVG(m.code) + '</span>'
+        : m.rule ? '<span class="hs hs-rule" aria-hidden="true">' + window.ICONS_LIBRO + 'Reglas</span>' : '<span class="hs" aria-hidden="true">i</span>',
+    size: m.folder ? { width: 150, height: 150 } : m.rule ? { width: 86, height: 32 } : { width: 34, height: 34 }, anchor: "center center",
     tooltip: { content: m.title, position: "top center" }, data: m
   }))
 }));
@@ -2336,7 +2361,20 @@ function showCard(m) {
   const card = $("#tourCard"), eb = $("#tourCardEyebrow");
   $("#tourCardTitle").textContent = m.title;
   card.classList.toggle("is-rule", !!m.rule);
-  eb.hidden = !m.rule; eb.textContent = m.rule ? "Reglamento de convivencia" : "";
+  card.classList.toggle("is-folder", !!m.folder);
+  eb.hidden = !m.rule && !m.folder; eb.textContent = m.rule ? "Reglamento de convivencia" : m.folder ? "Ficha de la pieza · " + m.code : "";
+  if (m.folder) {
+    const r = rooms.find(x => x.code === m.code) || DEFAULT_ROOMS.find(x => x.code === m.code);
+    const esc2 = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    $("#tourCardTitle").textContent = r ? r.name : m.code;
+    const msg = "Hola, vi la " + (r ? r.name : "pieza") + " (" + m.code + ") de " + T.name + " en el recorrido 360° de la página y me gustaría agendar una visita. ¿Qué horarios tienen?";
+    $("#tourCardText").innerHTML = (r ? '<div class="fold-price">' + priceText(r).replace(/\/(mes|noche)/, " <small>/$1</small>") + "</div>" +
+        '<ul class="fold-specs">' + r.specs.map(x => "<li>" + esc2(x) + "</li>").join("") + "</ul>" : "") +
+      '<div class="fold-actions"><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/' + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg) + '">Agendar visita por WhatsApp</a>' +
+      '<button type="button" class="btn btn-ghost" data-pick-slot>Elegir día y hora</button></div>';
+    card.querySelector("[data-pick-slot]").onclick = () => { closeTour(); const sw = document.querySelector(".switch button[data-house=" + (r ? r.house : "pocuro") + "]"); if (sw && document.body.dataset.house !== sw.dataset.house) sw.click(); openSheet(m.code, "visita"); };
+    card.hidden = false; card.scrollTop = 0; return;
+  }
   if (m.rule) {
     $("#tourCardText").innerHTML = m.refs.map(([id, pick]) => {
       const sec = window.reglaSec(id), own = !id.startsWith("h-");
