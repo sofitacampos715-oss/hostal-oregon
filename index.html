@@ -11,6 +11,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
@@ -295,6 +296,19 @@ legend small { font-weight: 400; color: var(--muted); }
 .fold-actions { display: grid; gap: 8px; }
 .fold-actions .btn { width: 100%; justify-content: center; text-align: center; }
 
+/* Mapa (Leaflet) */
+.map { height: clamp(320px, 52vh, 460px); border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: var(--sunk); z-index: 0; }
+.map .leaflet-control-attribution { font-size: 10px; }
+.pin { position: relative; display: grid; justify-items: center; gap: 4px; }
+.pin img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 0 3px var(--pin, #1f7a4d), 0 6px 14px rgba(0,0,0,.35); background: #fff; }
+.pin b { font: 700 .78rem/1 var(--f-body); background: #fff; color: #16212c; border-radius: 99px; padding: 4px 9px; box-shadow: 0 2px 8px rgba(0,0,0,.25); white-space: nowrap; }
+.pin.is-on img { transform: scale(1.12); }
+.pin-ref { width: 12px; height: 12px; border-radius: 50%; background: #5b6b78; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.leaflet-popup-content { margin: 12px 14px; font-family: var(--f-body); }
+.map-pop { display: grid; gap: 8px; min-width: 190px; }
+.map-pop strong { font: 700 1.05rem/1.2 var(--f-display); }
+.map-pop span { color: #5b6b78; font-size: .85rem; }
+.map-pop .btn { width: 100%; justify-content: center; text-align: center; }
 /* Arriendo mensual y reglamento */
 .incl { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); list-style: none; margin: 0; padding: 0; }
 .incl li { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; grid-template-columns: 40px 1fr; gap: 4px 12px; align-items: start; }
@@ -1162,6 +1176,11 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
     <div class="commons" id="commons"></div>
   </div></section>
 
+  <section class="block" id="ubicacion"><div class="wrap">
+    <h2 class="sec-title">Dónde estamos</h2>
+    <div class="map" id="map" role="region" aria-label="Mapa con la ubicación de las dos casas"></div>
+  </div></section>
+
   <section class="block" id="mensual"><div class="wrap">
     <h2 class="sec-title">Incluido en el arriendo</h2>
     <ul class="incl" id="inclList"></ul>
@@ -1485,7 +1504,51 @@ function reglaItemsHTML(items) {
   }
   return '<ul class="rule-list">' + lis.join("") + "</ul>";
 }
+function initMap() {
+  if (!window.L || !document.getElementById("map")) return;
+  const map = L.map("map", { scrollWheelZoom: false, zoomControl: true, attributionControl: true });
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+  const markers = {};
+  for (const [key, pl] of Object.entries(PLACES)) {
+    const icon = L.divIcon({
+      className: "", iconSize: [140, 86], iconAnchor: [70, 30], popupAnchor: [0, -30],
+      html: `<div class="pin" data-pin="${key}" style="--pin:${pl.color}"><img src="recorrido/hero/${key}-sello.jpg" alt=""><b>${pl.label}</b></div>`
+    });
+    const dir = `https://www.google.com/maps/dir/?api=1&destination=${pl.lat},${pl.lng}`;
+    const pop = document.createElement("div");
+    pop.className = "map-pop";
+    pop.innerHTML = `<strong>${pl.label}</strong><span>${pl.area}</span>
+      <button type="button" class="btn btn-main btn-sm" data-tour360="${key}">Entrar en 360°</button>
+      <a class="btn btn-ghost btn-sm" href="${dir}" target="_blank" rel="noopener">Cómo llegar</a>`;
+    pop.querySelector("[data-tour360]").addEventListener("click", () => { if (window.openTour) window.openTour(undefined, key); });
+    markers[key] = L.marker([pl.lat, pl.lng], { icon, title: pl.label, keyboard: true }).addTo(map).bindPopup(pop);
+  }
+  for (const r of MAP_REFS) {
+    L.marker([r.lat, r.lng], { icon: L.divIcon({ className: "", iconSize: [12, 12], html: '<div class="pin-ref"></div>' }), title: r.label })
+      .addTo(map).bindTooltip(r.label, { direction: "top", offset: [0, -6] });
+  }
+  map.fitBounds(L.latLngBounds(Object.values(PLACES).map(p => [p.lat, p.lng])).pad(0.35));
+  window.hostalMap = { map, markers };
+  window.mapFocus = key => {
+    document.querySelectorAll("[data-pin]").forEach(el => el.classList.toggle("is-on", el.dataset.pin === key));
+  };
+  window.mapFocus(house);
+  // el mapa se dibuja bien aunque la sección aparezca después
+  new ResizeObserver(() => map.invalidateSize()).observe(document.getElementById("map"));
+}
+window.addEventListener("load", initMap);
+
 window.REGLAMENTO = REGLAMENTO; window.ICONS_LIBRO = ICONS.libro; window.reglaSec = reglaSec; window.reglaItemsHTML = reglaItemsHTML;
+
+// Ubicación de cada casa: GPS de las fotos 360 (precisión ±30 m)
+const PLACES = {
+  placeres: { lat: -33.04000, lng: -71.59139, label: "Casa Placeres", area: "Cerro Placeres · a pasos de la USM", color: "#1f7a4d" },
+  pocuro: { lat: -33.05361, lng: -71.60694, label: "Casa Pocuro", area: "Pocuro 1052 · Cerro La Cruz", color: "#8a5a2b" }
+};
+const MAP_REFS = [{ lat: -33.03518, lng: -71.59527, label: "USM Casa Central" }];
 
 const HOUSES = {
   placeres: {
@@ -1779,6 +1842,7 @@ function render() {
   $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
   $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
   renderReglamento();
+  if (window.mapFocus) window.mapFocus(house);
   const monthly = mode !== "noche";
   $("#mensual").hidden = !monthly;
   $("#waShown").textContent = "+" + CONFIG.whatsapp.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, "$1 $2 $3 $4");
@@ -2198,6 +2262,7 @@ render();
 loadSheets();
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script type="module">
 /* ---------- Recorridos virtuales de las dos casas (fotos 360 reales, Insta360 X4) ----------
    Ángulos en grados: yaw = izquierda/derecha (0 = centro de la foto), pitch = arriba/abajo.
