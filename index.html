@@ -2267,8 +2267,10 @@ const POCURO_NODES = [
            I("micro", 115, -10, "Microondas y horno", "Microondas y horno eléctrico, junto a la ventana hacia el comedor.")] },
   { id: "colibri", name: "Pasillo del picaflor", tab: "Pasillos", links: [L("cocina", 0, -3), L("pasillo-balcon", 178, -5)],
     info: [I("picaflor", -95, 10, "Mural del picaflor", "Pasillo con techo de vidrio y un mural de picaflor.")] },
-  { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("colibri", 165, -5), L("entrada", -105, -22)], info: [] },
-  { id: "balcon", name: "Balcón a la calle", tab: "Balcón", links: [L("pasillo-balcon", 160, -5)],
+  { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("pieza-21", 16, -6, "Habitación 21"), L("colibri", 165, -5), L("entrada", -105, -22)], info: [] },
+  { id: "pieza-21", name: "Habitación 21 · ventana a la calle", tab: "Balcón", face: 0, links: [L("pasillo-balcon", -66, -8, "Pasillo al balcón")],
+    info: [I("ventana", 0, 12, "Ventana a la calle", "Puerta-ventana de madera con balconcito de fierro forjado, mirando a la calle.")] },
+  { id: "balcon", name: "Balcón a la calle", tab: "Balcón", links: [L("pasillo-balcon", 160, -5), L("pieza-21", -170, -10, "Habitación 21")],
     info: [I("vista", 0, 10, "Vista a la calle", "Balcón con vista al barrio de Pocuro.")] },
   { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("casilleros", 100, -8)],
     info: [I("lavadoras", -80, -20, "Lavadora y secadora", "Lavadora, secadora y lavadero."),
@@ -2308,7 +2310,7 @@ let T, names, viewer, tour, marks, current = null, goingBack = false;
 const visited = [];
 
 const toPsv = t => t.nodes.map(n => ({
-  id: n.id, panorama: t.dir + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab, look: n.look },
+  id: n.id, panorama: t.dir + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab, look: n.look, face: n.face },
   markers: n.info.map(m => ({
     id: n.id + "-" + m.id, position: { yaw: m.yaw + "deg", pitch: m.pitch + "deg" },
     html: m.rule ? '<span class="hs hs-rule" aria-hidden="true">' + window.ICONS_LIBRO + 'Reglas</span>' : '<span class="hs" aria-hidden="true">i</span>',
@@ -2344,7 +2346,7 @@ function hideCard() { $("#tourCard").hidden = true; }
 // puerta por donde se entró (la flecha que vuelve a la foto anterior), o sea, hacia adelante.
 function lookForward(node, fromNode) {
   const back = fromNode && node.links.find(l => l.nodeId === fromNode.id);
-  const yaw = back ? parseFloat(back.position.yaw) + 180 : (node.data.look ?? 0);
+  const yaw = node.data.face ?? (back ? parseFloat(back.position.yaw) + 180 : (node.data.look ?? 0));
   return { showLoader: true, speed: "20rpm", effect: "fade", rotation: false,
     rotateTo: { yaw: yaw + "deg", pitch: "0deg" }, zoomTo: viewer.getZoomLevel() };
 }
