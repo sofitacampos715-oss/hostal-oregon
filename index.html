@@ -152,6 +152,7 @@ section.block { padding-block: 40px 8px; }
 .pill.ok { color: var(--ok); background: var(--ok-bg); }
 .pill.soon { color: var(--soon); background: var(--soon-bg); }
 .pill.busy { color: var(--busy); background: var(--busy-bg); }
+.pill.ask { color: var(--ink); background: var(--sunk, rgba(127,127,127,.15)); }
 .thumb .pill { position: absolute; top: 12px; right: 10px; }
 .room-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .specs { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
@@ -1664,10 +1665,32 @@ const HOUSES = {
 const ROOM_TOURS = { "PO-21": { house: "pocuro", node: "pieza-21" }, "PL-23": { house: "placeres", node: "pieza-mar" } };
 
 const DEFAULT_ROOMS = [
-  { code: "PL-01", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "9 m²", "Escritorio"], price: 210000, night: 28000, status: "ocupada", from: "", wall: "#d6dde3" },
-  { code: "PL-02", house: "placeres", name: "Individual estándar", specs: ["Baño compartido", "10 m²", "Escritorio", "Ventana al cerro"], price: 220000, night: 30000, status: "libre", from: "", wall: "#dfe4d5" },
-  { code: "PL-03", house: "placeres", name: "Individual con baño privado", specs: ["Baño privado", "12 m²", "Escritorio"], price: 250000, night: 36000, status: "pronto", from: "2027-03-01", wall: "#e6dccd" },
-  { code: "PL-23", house: "placeres", name: "Habitación con vista al mar", specs: ["Vista al mar", "Baño privado", "Cama 2 plazas", "Escritorio"], price: 290000, night: 40000, status: "libre", from: "", wall: "#d3e0e2" },
+  // Casa Placeres: precios mensuales reales (estudiantes), noviembre 2026. Disponibilidad: por confirmar.
+  { code: "PL-01", house: "placeres", name: "Habitación 1", specs: [], price: 280000, status: "consultar", from: "", wall: "#d6dde3" },
+  { code: "PL-02", house: "placeres", name: "Habitación 2", specs: [], price: 285000, status: "consultar", from: "", wall: "#dfe4d5" },
+  { code: "PL-03", house: "placeres", name: "Habitación 3", specs: [], price: 230000, status: "consultar", from: "", wall: "#e6dccd" },
+  { code: "PL-04", house: "placeres", name: "Habitación 4", specs: [], price: 260000, status: "consultar", from: "", wall: "#d3e0e2" },
+  { code: "PL-05", house: "placeres", name: "Habitación 5", specs: [], price: 230000, status: "consultar", from: "", wall: "#e4ddd3" },
+  { code: "PL-06", house: "placeres", name: "Habitación 6", specs: [], price: 200000, status: "consultar", from: "", wall: "#d9e2dc" },
+  { code: "PL-07", house: "placeres", name: "Habitación 7", specs: [], price: 235000, status: "consultar", from: "", wall: "#dde2ea" },
+  { code: "PL-08", house: "placeres", name: "Habitación 8", specs: [], price: 210000, status: "consultar", from: "", wall: "#d6dde3" },
+  { code: "PL-09", house: "placeres", name: "Habitación 9", specs: [], price: 230000, status: "consultar", from: "", wall: "#dfe4d5" },
+  { code: "PL-10", house: "placeres", name: "Habitación 10", specs: [], price: 290000, status: "consultar", from: "", wall: "#e6dccd" },
+  { code: "PL-11", house: "placeres", name: "Habitación 11", specs: [], price: 270000, status: "consultar", from: "", wall: "#d3e0e2" },
+  { code: "PL-12", house: "placeres", name: "Habitación 12", specs: [], price: 260000, status: "consultar", from: "", wall: "#e4ddd3" },
+  { code: "PL-13", house: "placeres", name: "Habitación 13", specs: [], price: 255000, status: "consultar", from: "", wall: "#d9e2dc" },
+  { code: "PL-14", house: "placeres", name: "Habitación 14", specs: [], price: 260000, status: "consultar", from: "", wall: "#dde2ea" },
+  { code: "PL-15", house: "placeres", name: "Habitación 15", specs: [], price: 260000, status: "consultar", from: "", wall: "#d6dde3" },
+  { code: "PL-16", house: "placeres", name: "Habitación 16", specs: [], price: 270000, status: "consultar", from: "", wall: "#dfe4d5" },
+  { code: "PL-17", house: "placeres", name: "Habitación 17", specs: [], price: 270000, status: "consultar", from: "", wall: "#e6dccd" },
+  { code: "PL-18", house: "placeres", name: "Habitación 18", specs: [], price: 200000, status: "consultar", from: "", wall: "#d3e0e2" },
+  { code: "PL-19", house: "placeres", name: "Habitación 19", specs: [], price: 200000, status: "consultar", from: "", wall: "#e4ddd3" },
+  { code: "PL-20", house: "placeres", name: "Habitación 20", specs: [], price: 265000, status: "consultar", from: "", wall: "#d9e2dc" },
+  { code: "PL-21", house: "placeres", name: "Habitación 21", specs: [], price: 255000, status: "consultar", from: "", wall: "#dde2ea" },
+  { code: "PL-22", house: "placeres", name: "Habitación 22", specs: [], price: 200000, status: "consultar", from: "", wall: "#d6dde3" },
+  { code: "PL-23", house: "placeres", name: "Habitación con vista al mar", specs: ["Vista al mar", "Baño privado", "Cama 2 plazas", "Escritorio"], price: 290000, status: "consultar", from: "", wall: "#d3e0e2" },
+  { code: "PL-24", house: "placeres", name: "Habitación 24", specs: [], price: 285000, status: "consultar", from: "", wall: "#e6dccd" },
+  { code: "PL-25", house: "placeres", name: "Habitación 25", specs: [], price: 220000, status: "consultar", from: "", wall: "#d3e0e2" },
   { code: "PO-01", house: "pocuro", name: "Suite con baño privado", specs: ["Baño privado", "16 m²", "Cama 2 plazas"], price: 320000, night: 45000, status: "libre", from: "", wall: "#e4ddd3" },
   { code: "PO-02", house: "pocuro", name: "Habitación doble", specs: ["Baño privado", "18 m²", "2 camas"], price: 420000, night: 60000, status: "ocupada", from: "", wall: "#d9e2dc" },
   { code: "PO-21", house: "pocuro", name: "Habitación con balcón a la calle", specs: ["Balcón a la calle", "Cama 2 plazas", "Escritorio y TV"], price: 340000, night: 50000, status: "pronto", from: "2026-12-15", wall: "#dde2ea" }
@@ -1688,7 +1711,7 @@ const store = {
   set(k, v) { try { localStorage.setItem("casasvalpo:" + k, JSON.stringify(v)); } catch (e) {} }
 };
 
-let rooms = store.get("rooms-v5", null) || DEFAULT_ROOMS.map(r => ({ ...r }));
+let rooms = store.get("rooms-v6", null) || DEFAULT_ROOMS.map(r => ({ ...r }));
 let texts = store.get("texts", null) || JSON.parse(JSON.stringify(DEFAULT_TEXTS));
 let fromSheet = false;
 let leads = store.get("leads", null);
@@ -1722,6 +1745,7 @@ const fmtDate = (iso, opts = { day: "numeric", month: "short" }) => iso ? new Da
 function statusInfo(r) {
   if (r.status === "libre") return { cls: "ok", text: "Disponible" };
   if (r.status === "pronto") return { cls: "soon", text: r.from ? "Se libera el " + fmtDate(r.from) : "Se libera pronto" };
+  if (r.status === "consultar") return { cls: "ask", text: "Consultar disponibilidad" };
   return { cls: "busy", text: "Arrendada" };
 }
 function priceText(r) {
@@ -2185,7 +2209,7 @@ function renderOwner() {
   if (ownerTab === "piezas") {
     box.innerHTML = `<table><thead><tr><th>Código</th><th>Casa</th><th>Pieza</th><th>Precio</th><th>Estado</th><th>Se libera</th></tr></thead><tbody>${
       rooms.map(r => `<tr><td class="code">${r.code}</td><td>${HOUSES[r.house].name}</td><td>${esc(r.name)}</td><td>${money(r.price)}</td>
-        <td><select data-status="${r.code}" aria-label="Estado de ${r.code}">${[["libre", "Disponible"], ["pronto", "Se libera"], ["ocupada", "Arrendada"]].map(([v, t]) => `<option value="${v}"${r.status === v ? " selected" : ""}>${t}</option>`).join("")}</select></td>
+        <td><select data-status="${r.code}" aria-label="Estado de ${r.code}">${[["consultar", "Por confirmar"], ["libre", "Disponible"], ["pronto", "Se libera"], ["ocupada", "Arrendada"]].map(([v, t]) => `<option value="${v}"${r.status === v ? " selected" : ""}>${t}</option>`).join("")}</select></td>
         <td><input type="date" data-from="${r.code}" value="${r.from}" aria-label="Fecha en que se libera ${r.code}"${r.status === "pronto" ? "" : " disabled"}></td></tr>`).join("")
     }</tbody></table>`;
   } else {
@@ -2211,7 +2235,7 @@ $("#ownerTable").addEventListener("change", e => {
   const r = rooms.find(x => x.code === (st || fr)); if (!r) return;
   if (st) { r.status = e.target.value; if (r.status === "pronto" && !r.from) r.from = "2027-03-01"; if (r.status !== "pronto") r.from = ""; }
   if (fr) r.from = e.target.value;
-  store.set("rooms-v5", rooms);
+  store.set("rooms-v6", rooms);
   render();
 });
 $$(".tabs button").forEach(b => b.addEventListener("click", () => {
@@ -2225,7 +2249,7 @@ $("#resetDemo").addEventListener("click", () => {
   leads = leads.filter(l => / \(ejemplo\)$/.test(l.name));
   rooms = DEFAULT_ROOMS.map(r => ({ ...r }));
   texts = JSON.parse(JSON.stringify(DEFAULT_TEXTS));
-  store.set("leads", leads); store.set("rooms-v5", rooms); store.set("texts", texts);
+  store.set("leads", leads); store.set("rooms-v6", rooms); store.set("texts", texts);
   render();
 });
 $("#openOwner").addEventListener("click", () => { $("#owner").hidden = false; $("#owner").scrollIntoView({ behavior: "smooth" }); });
@@ -2285,7 +2309,8 @@ function applyPiezasCSV(text) {
   const list = csvObjects(text).filter(o => o.codigo).map(o => {
     const estado = norm(o.estado), from = parseDate(o["se libera"]);
     let status = "ocupada";
-    if (estado.startsWith("disp") || estado === "libre") status = "libre";
+    if (!estado || estado.startsWith("consult") || estado.includes("confirmar")) status = "consultar";
+    else if (estado.startsWith("disp") || estado === "libre") status = "libre";
     else if (estado.includes("libera") || (from && from > today)) status = "pronto";
     const num = s => Number(String(s || "").replace(/\D/g, "")) || 0;
     return {
