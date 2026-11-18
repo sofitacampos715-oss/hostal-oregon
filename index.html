@@ -249,6 +249,9 @@ legend small { font-weight: 400; color: var(--muted); }
 .tour-tabs { display: flex; gap: 8px; padding: 0 max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); overflow-x: auto; scrollbar-width: none; }
 .tour-tabs button { flex: none; border: 1px solid rgba(255,255,255,.25); background: none; color: #fff; border-radius: 99px; padding: 7px 14px; font-size: .9rem; font-weight: 600; }
 .tour-tabs button[aria-pressed="true"] { background: #fff; color: #05090d; border-color: #fff; }
+.tour-tabs .tab-home { display: inline-flex; align-items: center; gap: 6px; background: #ffc62e; color: #231a00; border-color: #ffc62e; font-weight: 800; margin-right: 6px; box-shadow: 0 0 0 3px rgba(255,198,46,.25); }
+.tour-tabs .tab-home[data-home="pocuro"] { background: #e9c58a; color: #2a1d10; border-color: #e9c58a; box-shadow: 0 0 0 3px rgba(233,197,138,.25); }
+.tour-tabs .tab-home:hover { filter: brightness(1.08); }
 .tour-stage { flex: 1; position: relative; min-height: 0; }
 .tour-stage .psv-container { background: #05090d; }
 .tour-hint { position: absolute; left: 50%; top: 12px; max-width: calc(100% - 24px); white-space: normal !important; text-align: center; transform: translateX(-50%); z-index: 90; background: rgba(0,0,0,.62); border-radius: 99px; padding: 6px 14px; font-size: .85rem; pointer-events: none; white-space: nowrap; transition: opacity .4s; }
@@ -2622,7 +2625,8 @@ function useTour(key) {
   if (viewer) { viewer.destroy(); viewer = null; }
   T = TOURS[key]; names = Object.fromEntries(T.nodes.map(n => [n.id, n.name]));
   current = null; visited.length = 0; $("#tourBack").hidden = true;
-  $("#tourTabs").innerHTML = T.tabs.map(([t, id]) => `<button type="button" data-tab="${t}" data-node="${id}" aria-pressed="false">${t}</button>`).join("");
+  $("#tourTabs").innerHTML = `<button type="button" class="tab-home" data-home="${key}" title="Volver a la página de ${T.name}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Volver al inicio</button>` +
+    T.tabs.map(([t, id]) => `<button type="button" data-tab="${t}" data-node="${id}" aria-pressed="false">${t}</button>`).join("");
 }
 
 window.tourViewer = () => viewer;
@@ -2640,6 +2644,14 @@ window.openTour = function (id, house = "placeres") {
 function closeTour() { $("#tour").hidden = true; document.documentElement.style.overflow = ""; hideCard(); }
 
 $("#tourTabs").addEventListener("click", e => {
+  const h = e.target.closest("button[data-home]");
+  if (h) {   // volver al inicio de la página de esta casa
+    closeTour();
+    const sw = document.querySelector(".switch button[data-house=" + h.dataset.home + "]");
+    if (sw && document.body.dataset.house !== h.dataset.home) sw.click();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
   const b = e.target.closest("button[data-node]"); if (!b) return;
   if (tour.getCurrentNode()?.id !== b.dataset.node) tour.setCurrentNode(b.dataset.node);
 });
