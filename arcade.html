@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Gaviotas del Espacio</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
+  body { display: grid; place-items: center; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  #wrap { position: relative; width: min(100vw, calc(100vh * 224 / 288)); width: min(100vw, calc(100dvh * 224 / 288)); aspect-ratio: 224 / 288; }
+  canvas { width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+  /* efecto de tele antigua */
+  #wrap::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.55)); }
+  .pad { position: fixed; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); display: none; gap: 12px; z-index: 2; }
+  .pad button { width: 64px; height: 64px; border-radius: 50%; border: 2px solid rgba(255,255,255,.35); background: rgba(255,255,255,.08); color: #fff; font: 700 22px system-ui; touch-action: none; }
+  .pad button:active, .pad button.on { background: rgba(255,255,255,.25); }
+  #padL { left: 14px; } #padR { right: 14px; }
+  #fire { width: 84px; height: 84px; background: rgba(255,60,60,.25); border-color: rgba(255,120,120,.6); font-size: 15px; }
+  @media (pointer: coarse) { .pad { display: flex; } }
+  #mute { position: fixed; top: 6px; left: 50%; transform: translateX(-50%); z-index: 3; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 99px; padding: 6px 10px; font: 600 12px system-ui; }
+</style>
+</head>
+<body>
+<button id="mute" type="button" aria-label="Sonido">🔊</button>
+<div id="wrap"><canvas id="c" width="224" height="288"></canvas></div>
+<div class="pad" id="padL"><button id="bl" aria-label="Izquierda">◀</button><button id="br" aria-label="Derecha">▶</button></div>
+<div class="pad" id="padR"><button id="fire" aria-label="Disparar">FUEGO</button></div>
+<script>
+"use strict";
+// Juego retro original: naves-gaviota en formación que se lanzan en picada sobre el cerro.
+const cv = document.getElementById("c"), g = cv.getContext("2d");
+const Wd = 224, Hd = 288;
+g.imageSmoothingEnabled = false;
+// ---------- sprites propios (1 = color principal, 2 = secundario, 3 = detalle) ----------
+const SPR = {
+  ship: ["....3....", "...121...", "...121...", "..11211..", ".1112111.", "111222111", "11.2.2.11", "1.......1"],
+  gull: [["1.......1", "11.....11", ".11.3.11.", "..11111..", "...222...", "....2...."],
+         ["...........", "..1.....1..", ".111.3.111.", "11..111..11", "....222....", ".....2....."]],
+  bat: [["..1...1..", "...111...", "..13131..", ".1111111.", "1.2.2.2.1", ".........", ], ["..1...1..", "...111...", "..13131..", "111111111", "..2.2.2..", "........."]],
+  boss: [["...1111...", ".11111111.", "1133113311", "1111111111", ".2.2..2.2.", "2........2"], ["...1111...", ".11111111.", "1133113311", "1111111111", "..2.22.2..", ".2......2."]]
+};
+function drawSpr(rows, x, y, cols) {
+  for (let j = 0; j < rows.length; j++) for (let i = 0; i < rows[j].length; i++) {
+    const ch = rows[j][i]; if (ch === ".") continue;
+    g.fillStyle = cols[+ch - 1]; g.fillRect(Math.round(x + i), Math.round(y + j), 1, 1);
+  }
+}
+const COL = { ship: ["#f2f2f2", "#ff3b3b", "#4ad3ff"], gull: ["#f4f4f4", "#ffb000", "#222"], bat: ["#7cf07c", "#2fa84f", "#ff3b3b"], boss: ["#c86bff", "#ffd400", "#fff"] };
+// ---------- sonido ----------
+let AC = null, muted = false;
+function beep(f = 440, d = 0.07, type = "square", v = 0.05, slide = 0) {
+  if (muted) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+  const o = AC.createOscillator(), gn = AC.createGain(); o.type = type; o.frequency.value = f;
+  if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, f + slide), AC.currentTime + d);
+  gn.gain.value = v; gn.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + d); o.connect(gn).connect(AC.destination); o.start(); o.stop(AC.currentTime + d);
+}
+document.getElementById("mute").onclick = e => { muted = !muted; e.target.textContent = muted ? "🔇" : "🔊"; };
+// ---------- estado ----------
+const stars = Array.from({ length: 60 }, () => ({ x: Math.random() * Wd, y: Math.random() * Hd, s: Math.random() * 0.6 + 0.2, c: ["#fff", "#9cf", "#ff9", "#f9c"][Math.random() * 4 | 0] }));
+let state = "title", score = 0, best = +(localStorage.getItem("gaviotas-best") || 0), lives = 3, wave = 0, t = 0;
+let ship, shots = [], foes = [], bombs = [], booms = [], sway = 0, waveMsg = 0;
+function newGame() { score = 0; lives = 3; wave = 0; ship = { x: Wd / 2 - 4, y: Hd - 30, dead: 0, inv: 90 }; nextWave(); state = "play"; beep(660, .1); beep(880, .15); }
+function nextWave() {
+  wave++; shots = []; bombs = []; foes = []; sway = 0; waveMsg = 100;
+  const rows = [["boss", 4], ["bat", 8], ["bat", 8], ["gull", 10], ["gull", 10]];
+  rows.forEach(([k, n], r) => { for (let i = 0; i < n; i++) {
+    const hx = Wd / 2 + (i - (n - 1) / 2) * 18, hy = 40 + r * 16;
+    foes.push({ k, hx, hy, x: hx + (i % 2 ? -1 : 1) * 200, y: -20 - r * 30 - i * 6, mode: "enter", t: 0, hp: k === "boss" ? 2 : 1, ph: Math.random() * 6 });
+  } });
+}
+// ---------- controles ----------
+const key = {};
+addEventListener("keydown", e => { key[e.code] = true; if (["ArrowLeft", "ArrowRight", "Space", "ArrowUp"].includes(e.code)) e.preventDefault(); if (state !== "play" && (e.code === "Space" || e.code === "Enter")) newGame(); });
+addEventListener("keyup", e => { key[e.code] = false; });
+const hold = (id, k) => { const b = document.getElementById(id);
+  const on = e => { e.preventDefault(); key[k] = true; b.classList.add("on"); if (state !== "play") newGame(); };
+  const off = e => { e.preventDefault(); key[k] = false; b.classList.remove("on"); };
+  b.addEventListener("pointerdown", on); b.addEventListener("pointerup", off); b.addEventListener("pointercancel", off); b.addEventListener("pointerleave", off); };
+hold("bl", "ArrowLeft"); hold("br", "ArrowRight"); hold("fire", "Space");
+cv.addEventListener("pointerdown", () => { if (state !== "play") newGame(); });
+// ---------- juego ----------
+let fireCd = 0;
+function update() {
+  t++;
+  for (const s of stars) { s.y += s.s * (state === "play" ? 1.4 : 0.6); if (s.y > Hd) { s.y = 0; s.x = Math.random() * Wd; } }
+  booms = booms.filter(b => ++b.t < 24);
+  if (state !== "play") return;
+  if (waveMsg) waveMsg--;
+  // nave
+  if (ship.dead) { if (--ship.dead === 0) { if (lives > 0) { ship.x = Wd / 2 - 4; ship.inv = 120; } else { state = "over"; if (score > best) { best = score; try { localStorage.setItem("gaviotas-best", best); } catch (e) {} } } } }
+  else {
+    const sp = 1.9; if (key.ArrowLeft || key.KeyA) ship.x -= sp; if (key.ArrowRight || key.KeyD) ship.x += sp;
+    ship.x = Math.max(4, Math.min(Wd - 13, ship.x)); if (ship.inv) ship.inv--;
+    if (fireCd) fireCd--;
+    if ((key.Space || key.ArrowUp) && !fireCd && shots.length < 3) { shots.push({ x: ship.x + 4, y: ship.y - 2 }); fireCd = 12; beep(880, .05, "square", .03, 600); }
+  }
+  shots.forEach(s => s.y -= 5); shots = shots.filter(s => s.y > -6);
+  // formación que se mece
+  sway = Math.sin(t / 60) * 14;
+  const speed = 1 + wave * 0.12;
+  const diving = foes.filter(f => f.mode === "dive").length;
+  if (foes.length && t % Math.max(40, 110 - wave * 10) === 0 && diving < 2 + Math.min(wave, 4)) {
+    const cand = foes.filter(f => f.mode === "form"); if (cand.length) { const f = cand[Math.random() * cand.length | 0]; f.mode = "dive"; f.t = 0; f.dir = f.x < Wd / 2 ? 1 : -1; f.sx = f.x; f.sy = f.y; beep(300, .25, "sawtooth", .03, -200); }
+  }
+  for (const f of foes) {
+    f.t++;
+    const tx = f.hx + sway, ty = f.hy + Math.sin(t / 30 + f.ph) * 1.5;
+    if (f.mode === "enter") { f.x += (tx - f.x) * 0.05 * speed; f.y += (ty - f.y) * 0.05 * speed; if (Math.abs(f.x - tx) < 1 && Math.abs(f.y - ty) < 1) f.mode = "form"; }
+    else if (f.mode === "form") { f.x = tx; f.y = ty; }
+    else if (f.mode === "dive") {
+      // picada en curva hacia la nave, como una gaviota que baja al mar
+      const k = f.t / 70;
+      f.x = f.sx + f.dir * Math.sin(k * 3.2) * 50 + (ship.x - f.sx) * Math.min(1, k * 0.6);
+      f.y = f.sy + f.t * 1.6 * speed;
+      if (f.t % 45 === 20 && Math.random() < 0.7) bombs.push({ x: f.x + 4, y: f.y + 6, vx: (ship.x - f.x) / 140 });
+      if (f.y > Hd + 10) { f.mode = "enter"; f.y = -12; f.x = tx; }
+    }
+  }
+  if (t % Math.max(50, 140 - wave * 12) === 0 && foes.length) { const f = foes[Math.random() * foes.length | 0]; if (f.mode === "form") bombs.push({ x: f.x + 4, y: f.y + 6, vx: 0 }); }
+  bombs.forEach(b => { b.y += 2.2 + wave * 0.1; b.x += b.vx; }); bombs = bombs.filter(b => b.y < Hd);
+  // choques
+  for (const s of shots) for (const f of foes) if (!s.hit && Math.abs(s.x - (f.x + 4.5)) < 6 && Math.abs(s.y - (f.y + 3)) < 5) {
+    s.hit = true; if (--f.hp <= 0) { f.dead = true; score += f.k === "boss" ? (f.mode === "dive" ? 400 : 150) : f.k === "bat" ? (f.mode === "dive" ? 160 : 80) : (f.mode === "dive" ? 100 : 50); boom(f.x + 4, f.y + 3, COL[f.k][0]); beep(180, .18, "square", .05, -120); }
+    else beep(520, .06);
+  }
+  shots = shots.filter(s => !s.hit); foes = foes.filter(f => !f.dead);
+  if (!ship.dead && !ship.inv) {
+    const hit = bombs.some(b => Math.abs(b.x - (ship.x + 4.5)) < 5 && Math.abs(b.y - (ship.y + 4)) < 5) || foes.some(f => Math.abs(f.x - ship.x) < 8 && Math.abs(f.y - ship.y) < 7);
+    if (hit) { lives--; ship.dead = 90; boom(ship.x + 4, ship.y + 4, "#ff3b3b", 30); beep(90, .6, "sawtooth", .07, -60); bombs = []; foes.forEach(f => { if (f.mode === "dive") { f.mode = "enter"; f.y = -12; } }); }
+  }
+  if (!foes.length) nextWave();
+}
+function boom(x, y, c, n = 16) { for (let i = 0; i < n; i++) { const a = Math.random() * 6.28, v = Math.random() * 1.6 + 0.3; booms.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, c, t: 0 }); } }
+function text(s, x, y, c = "#fff", size = 8, align = "center") { g.fillStyle = c; g.font = `bold ${size}px ui-monospace, Consolas, monospace`; g.textAlign = align; g.fillText(s, x, y); }
+function draw() {
+  g.fillStyle = "#03030a"; g.fillRect(0, 0, Wd, Hd);
+  for (const s of stars) { if ((t + s.x) % 40 < 34) { g.fillStyle = s.c; g.fillRect(s.x | 0, s.y | 0, 1, 1); } }
+  // silueta del cerro al fondo (casitas de Valparaíso)
+  g.fillStyle = "#0c1230"; for (let i = 0; i < 14; i++) { const h = 8 + ((i * 37) % 13); g.fillRect(i * 16, Hd - 10 - h, 14, h + 10); }
+  g.fillStyle = "#ffcf5a"; for (let i = 0; i < 14; i++) if ((i * 7 + (t >> 6)) % 3) g.fillRect(i * 16 + 4, Hd - 14 - ((i * 37) % 13) / 2, 2, 2);
+  booms.forEach(b => { b.x += b.vx; b.y += b.vy; g.fillStyle = b.c; g.globalAlpha = 1 - b.t / 24; g.fillRect(b.x | 0, b.y | 0, 2, 2); g.globalAlpha = 1; });
+  if (state === "play" || state === "over") {
+    const fr = (t >> 4) & 1;
+    for (const f of foes) { const s = f.k === "gull" ? SPR.gull[fr] : f.k === "bat" ? SPR.bat[fr] : SPR.boss[fr]; drawSpr(s, f.x - (s[0].length - 9) / 2, f.y, f.hp > 1 || f.k !== "boss" ? COL[f.k] : ["#ff6bd6", "#ffd400", "#fff"]); }
+    g.fillStyle = "#ffef5a"; shots.forEach(s => g.fillRect(s.x | 0, s.y | 0, 1, 4));
+    g.fillStyle = "#ff5a5a"; bombs.forEach(b => { g.fillRect(b.x | 0, b.y | 0, 2, 3); });
+    if (state === "play" && !ship.dead && !(ship.inv && (t >> 2) & 1)) drawSpr(SPR.ship, ship.x, ship.y, COL.ship);
+    text("PUNTAJE", 8, 10, "#ff5a5a", 7, "left"); text(String(score).padStart(6, "0"), 8, 19, "#fff", 8, "left");
+    text("RÉCORD", Wd - 8, 10, "#ff5a5a", 7, "right"); text(String(Math.max(best, score)).padStart(6, "0"), Wd - 8, 19, "#fff", 8, "right");
+    for (let i = 0; i < lives - (ship && ship.dead ? 0 : 1); i++) drawSpr(SPR.ship, 6 + i * 11, Hd - 10, COL.ship);
+    text("OLA " + wave, Wd - 6, Hd - 3, "#4ad3ff", 7, "right");
+    if (waveMsg && state === "play") text("OLA " + wave, Wd / 2, Hd / 2, "#4ad3ff", 12);
+  }
+  if (state === "title") {
+    text("GAVIOTAS", Wd / 2, 92, "#ffd400", 20); text("DEL ESPACIO", Wd / 2, 114, "#ff5a5a", 14);
+    drawSpr(SPR.boss[(t >> 4) & 1], Wd / 2 - 40, 140, COL.boss); text("400", Wd / 2 - 20, 146, "#fff", 7, "left");
+    drawSpr(SPR.bat[(t >> 4) & 1], Wd / 2 - 39, 156, COL.bat); text("160", Wd / 2 - 20, 162, "#fff", 7, "left");
+    drawSpr(SPR.gull[(t >> 4) & 1], Wd / 2 - 39, 172, COL.gull); text("100", Wd / 2 - 20, 178, "#fff", 7, "left");
+    if ((t >> 5) & 1) text(matchMedia("(pointer: coarse)").matches ? "TOCA PARA JUGAR" : "ESPACIO PARA JUGAR", Wd / 2, 214, "#fff", 9);
+    text("← → MOVER · ESPACIO DISPARA", Wd / 2, 236, "#7a8", 7);
+    text("RÉCORD " + String(best).padStart(6, "0"), Wd / 2, 256, "#ff5a5a", 7);
+    text("HOSTAL OREGON · CERRO PLACERES", Wd / 2, 278, "#556", 6);
+  }
+  if (state === "over") {
+    text("FIN DEL JUEGO", Wd / 2, 130, "#ff5a5a", 14); text("PUNTAJE " + score, Wd / 2, 152, "#fff", 9);
+    if ((t >> 5) & 1) text(matchMedia("(pointer: coarse)").matches ? "TOCA PARA OTRA" : "ESPACIO PARA OTRA", Wd / 2, 180, "#ffd400", 9);
+  }
+}
+(function loop() { update(); draw(); requestAnimationFrame(loop); })();
+</script>
+</body>
+</html>
