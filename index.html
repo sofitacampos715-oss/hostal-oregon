@@ -1748,9 +1748,25 @@ const DEFAULT_ROOMS = [
   { code: "PL-23", house: "placeres", name: "Habitación con vista al mar", specs: ["Vista al mar", "Baño privado", "Cama 2 plazas", "Escritorio"], price: 290000, status: "consultar", from: "", wall: "#d3e0e2" },
   { code: "PL-24", house: "placeres", name: "Habitación 24", specs: [], price: 285000, status: "consultar", from: "", wall: "#e6dccd" },
   { code: "PL-25", house: "placeres", name: "Habitación 25", specs: [], price: 220000, status: "consultar", from: "", wall: "#d3e0e2" },
-  { code: "PO-01", house: "pocuro", name: "Suite con baño privado", specs: ["Baño privado", "16 m²", "Cama 2 plazas"], price: 320000, night: 45000, status: "libre", from: "", wall: "#e4ddd3" },
-  { code: "PO-02", house: "pocuro", name: "Habitación doble", specs: ["Baño privado", "18 m²", "2 camas"], price: 420000, night: 60000, status: "ocupada", from: "", wall: "#d9e2dc" },
-  { code: "PO-21", house: "pocuro", name: "Habitación con balcón a la calle", specs: ["Balcón a la calle", "Cama 2 plazas", "Escritorio y TV"], price: 340000, night: 50000, status: "pronto", from: "2026-12-15", wall: "#dde2ea" }
+  // Casa Pocuro: precios mensuales reales (estudiantes), noviembre 2026. Disponibilidad: por confirmar.
+  { code: "PO-01", house: "pocuro", name: "Habitación 1", specs: [], price: 225000, status: "consultar", from: "", wall: "#e4ddd3" },
+  { code: "PO-02", house: "pocuro", name: "Habitación 2", specs: [], price: 260000, status: "consultar", from: "", wall: "#d9e2dc" },
+  { code: "PO-03", house: "pocuro", name: "Habitación 3", specs: [], price: 240000, status: "consultar", from: "", wall: "#dde2ea" },
+  { code: "PO-04", house: "pocuro", name: "Habitación 4", specs: [], price: 250000, status: "consultar", from: "", wall: "#d6dde3" },
+  { code: "PO-05", house: "pocuro", name: "Habitación 5", specs: [], price: 260000, status: "consultar", from: "", wall: "#dfe4d5" },
+  { code: "PO-06", house: "pocuro", name: "Habitación 6", specs: [], price: 265000, status: "consultar", from: "", wall: "#e6dccd" },
+  { code: "PO-07", house: "pocuro", name: "Habitación 7", specs: [], price: 230000, status: "libre", from: "", wall: "#d3e0e2" },
+  { code: "PO-08", house: "pocuro", name: "Habitación 8", specs: [], price: 265000, status: "consultar", from: "", wall: "#e4ddd3" },
+  { code: "PO-09", house: "pocuro", name: "Habitación 9", specs: [], price: 280000, status: "consultar", from: "", wall: "#d9e2dc" },
+  { code: "PO-10", house: "pocuro", name: "Habitación 10", specs: [], price: 280000, status: "consultar", from: "", wall: "#dde2ea" },
+  { code: "PO-21", house: "pocuro", name: "Habitación con balcón a la calle", specs: ["Balcón a la calle", "Cama 2 plazas", "Escritorio y TV"], price: 280000, status: "consultar", from: "", wall: "#dde2ea" },
+  { code: "PO-22", house: "pocuro", name: "Habitación 22", specs: [], price: 300000, status: "consultar", from: "", wall: "#dfe4d5" },
+  { code: "PO-23", house: "pocuro", name: "Habitación 23", specs: [], price: 275000, status: "consultar", from: "", wall: "#e6dccd" },
+  { code: "PO-24", house: "pocuro", name: "Habitación 24", specs: [], price: 260000, status: "consultar", from: "", wall: "#d3e0e2" },
+  { code: "PO-25", house: "pocuro", name: "Habitación 25", specs: [], price: 285000, status: "consultar", from: "", wall: "#e4ddd3" },
+  { code: "PO-26", house: "pocuro", name: "Habitación 26", specs: [], price: 260000, status: "consultar", from: "", wall: "#d9e2dc" },
+  { code: "PO-27", house: "pocuro", name: "Habitación 27", specs: [], price: 300000, status: "consultar", from: "", wall: "#dde2ea" },
+  { code: "PO-28", house: "pocuro", name: "Habitación 28", specs: [], price: 285000, status: "consultar", from: "", wall: "#d6dde3" }
 ];
 
 const SOURCES = { web: "página web", "qr-usm": "QR Santa María", "qr-enf": "QR Enfermería UV", ig: "Instagram", google: "Google Maps" };
@@ -1768,7 +1784,7 @@ const store = {
   set(k, v) { try { localStorage.setItem("casasvalpo:" + k, JSON.stringify(v)); } catch (e) {} }
 };
 
-let rooms = store.get("rooms-v6", null) || DEFAULT_ROOMS.map(r => ({ ...r }));
+let rooms = store.get("rooms-v7", null) || DEFAULT_ROOMS.map(r => ({ ...r }));
 let texts = store.get("texts", null) || JSON.parse(JSON.stringify(DEFAULT_TEXTS));
 let fromSheet = false;
 let leads = store.get("leads", null);
@@ -1988,7 +2004,10 @@ function render() {
   const soon = list.filter(r => r.status === "pronto").length;
   const known = list.some(r => r.status !== "consultar");
   const minP = Math.min(...list.map(r => r.price).filter(Boolean));
-  $("#availText").textContent = known ? free + " de " + list.length + " piezas disponibles hoy" : list.length + " piezas · desde " + money(minP) + " al mes";
+  const unknown = list.some(r => r.status === "consultar");
+  $("#availText").textContent = !known ? list.length + " piezas · desde " + money(minP) + " al mes"
+    : unknown ? (free ? free + (free > 1 ? " disponibles hoy" : " disponible hoy") + " · " : "") + list.length + " piezas desde " + money(minP) + " al mes"
+    : free + " de " + list.length + " piezas disponibles hoy";
   $("#availSub").textContent = (soon ? soon + (soon > 1 ? " se liberan" : " se libera") + " pronto · " : "") + (fromSheet ? "actualizado desde la planilla de la dueña" : "actualizado por la dueña");
   $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
   $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
@@ -2050,12 +2069,15 @@ function featuredRooms(list) {
   const pool = known && list.some(r => r.status === "libre") ? list.filter(r => r.status === "libre") : list;
   const out = [];
   const add = r => { if (r && !out.includes(r) && out.length < 3) out.push(r); };
-  pool.filter(r => ROOM_TOURS[r.code]).forEach(add);
-  const byPrice = [...pool].sort((a, b) => a.price - b.price || a.code.localeCompare(b.code));
-  add(byPrice[0]);
-  add(byPrice[Math.floor(byPrice.length / 2)]);
-  byPrice.forEach(add);
-  return out.sort((a, b) => (ROOM_TOURS[b.code] ? 1 : 0) - (ROOM_TOURS[a.code] ? 1 : 0) || a.price - b.price);
+  for (const set of pool === list ? [list] : [pool, list]) {
+    set.filter(r => ROOM_TOURS[r.code]).forEach(add);
+    const byPrice = [...set].sort((a, b) => a.price - b.price || a.code.localeCompare(b.code));
+    add(byPrice[0]);
+    add(byPrice[Math.floor(byPrice.length / 2)]);
+    byPrice.forEach(add);
+  }
+  const ord = { libre: 0, pronto: 1, consultar: 2, ocupada: 3 };
+  return out.sort((a, b) => ord[a.status] - ord[b.status] || (ROOM_TOURS[b.code] ? 1 : 0) - (ROOM_TOURS[a.code] ? 1 : 0) || a.price - b.price);
 }
 const RANGES = [["todas", "Todas", () => true], ["baja", "Hasta $230.000", p => p <= 230000], ["media", "$231.000 a $270.000", p => p > 230000 && p <= 270000], ["alta", "Más de $270.000", p => p > 270000]];
 let rlRange = "todas", rlSort = "precio";
@@ -2367,7 +2389,7 @@ $("#ownerTable").addEventListener("change", e => {
   const r = rooms.find(x => x.code === (st || fr)); if (!r) return;
   if (st) { r.status = e.target.value; if (r.status === "pronto" && !r.from) r.from = "2027-03-01"; if (r.status !== "pronto") r.from = ""; }
   if (fr) r.from = e.target.value;
-  store.set("rooms-v6", rooms);
+  store.set("rooms-v7", rooms);
   render();
 });
 $$(".tabs button").forEach(b => b.addEventListener("click", () => {
@@ -2381,7 +2403,7 @@ $("#resetDemo").addEventListener("click", () => {
   leads = leads.filter(l => / \(ejemplo\)$/.test(l.name));
   rooms = DEFAULT_ROOMS.map(r => ({ ...r }));
   texts = JSON.parse(JSON.stringify(DEFAULT_TEXTS));
-  store.set("leads", leads); store.set("rooms-v6", rooms); store.set("texts", texts);
+  store.set("leads", leads); store.set("rooms-v7", rooms); store.set("texts", texts);
   render();
 });
 $("#openOwner").addEventListener("click", () => { $("#owner").hidden = false; $("#owner").scrollIntoView({ behavior: "smooth" }); });
