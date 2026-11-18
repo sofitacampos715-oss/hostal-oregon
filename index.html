@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795036028">
-<script>window.BUILD="1795036028";</script>
+<meta name="build" content="1795038228">
+<script>window.BUILD="1795038228";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -1249,11 +1249,6 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
 } }
 </script>
 
-<div class="demo-bar"><div class="wrap">
-  <span>Prototipo para revisar: fotos, precios, distancias y textos son de ejemplo.</span>
-  <button type="button" id="openOwner">Ver planilla de la dueña ↓</button>
-</div></div>
-
 <header class="top"><div class="wrap">
   <div class="brand">Hostal <span>Oregon</span></div>
   <div class="switch" role="group" aria-label="Elegir casa">
@@ -1351,33 +1346,6 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
     </details>
   </div></section>
 </main>
-
-<section class="owner" id="owner" hidden><div class="wrap">
-  <div>
-    <p class="eyebrow">Solo para la dueña · demo</p>
-    <h2>Así se ve su planilla</h2>
-    <p class="note" style="font-size:.95rem;max-width:68ch">En la versión real esto es una planilla de Google que ella edita desde el celular. Si cambia el estado de una pieza aquí, la página de arriba se actualiza sola. Cada consulta que se envía por WhatsApp queda anotada en “Interesados”.</p>
-  </div>
-  <div class="tabs" role="tablist">
-    <button type="button" role="tab" data-tab="piezas" aria-selected="true">Piezas</button>
-    <button type="button" role="tab" data-tab="visitas" aria-selected="false">Visitas</button>
-    <button type="button" role="tab" data-tab="interesados" aria-selected="false">Interesados</button>
-    <button type="button" role="tab" data-tab="textos" aria-selected="false">Reglas y requisitos</button>
-  </div>
-  <div class="sheet-like" id="ownerTable"></div>
-  <div class="row2" style="max-width:520px">
-    <label>Simular que la persona llegó desde
-      <select class="field" id="srcSim">
-        <option value="web">La página directa</option>
-        <option value="qr-usm">QR en la Santa María</option>
-        <option value="qr-enf">QR en Enfermería UV</option>
-        <option value="ig">Instagram</option>
-        <option value="google">Google Maps</option>
-      </select>
-    </label>
-    <label>&nbsp;<button type="button" class="btn btn-ghost btn-sm" id="resetDemo">Borrar consultas de prueba</button></label>
-  </div>
-</div></section>
 
 <footer><div class="wrap">
   <span>Hostal Oregon · Cerro Placeres y sector Pocuro, Valparaíso</span>
@@ -1508,11 +1476,7 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
 
 <script>
 const CONFIG = {
-  whatsapp: "56995433659",
-  // Enlaces de "Publicar en la web" (formato CSV) de cada pestaña de la planilla de Google.
-  // Si están vacíos, la página usa los datos de ejemplo de más abajo.
-  sheetPiezas: "",
-  sheetTextos: ""
+  whatsapp: "56995433659"
 };
 
 const DEFAULT_TEXTS = {
@@ -1802,10 +1766,10 @@ const store = {
   set(k, v) { try { localStorage.setItem("casasvalpo:" + k, JSON.stringify(v)); } catch (e) {} }
 };
 
-let rooms = store.get("rooms-v7", null) || DEFAULT_ROOMS.map(r => ({ ...r }));
-let texts = store.get("texts", null) || JSON.parse(JSON.stringify(DEFAULT_TEXTS));
-let fromSheet = false;
-let leads = store.get("leads", null);
+// Piezas, precios y textos: fijos en esta página (se actualizan editando DEFAULT_ROOMS / DEFAULT_TEXTS)
+let rooms = DEFAULT_ROOMS.map(r => ({ ...r }));
+let texts = JSON.parse(JSON.stringify(DEFAULT_TEXTS));
+let leads = store.get("leads", null) || [];
 let house = "placeres";
 // Desde el 10 de diciembre hasta fines de febrero la página parte mostrando el arriendo por noche
 const today = new Date();
@@ -1860,17 +1824,6 @@ function slotsFor(h) {
 }
 function takenSlots() { return new Set((leads || []).filter(l => l.slotKey).map(l => l.slotKey)); }
 
-if (!leads) {
-  const pl = slotsFor("placeres"), po = slotsFor("pocuro");
-  const ago = h => Date.now() - h * 3600e3;
-  leads = [
-    { t: ago(30), code: "PL-02", intent: "visita", slot: pl[2] && pl[2].label, slotKey: pl[2] && pl[2].key, who: "Estudiante USM", when: "Marzo", name: "Camila (ejemplo)", src: "QR Santa María", note: "Con mi familia" },
-    { t: ago(20), code: "PO-01", intent: "reservar", who: "Vacaciones · 2 personas", when: "28 dic → 2 ene", name: "Diego (ejemplo)", src: "Instagram" },
-    { t: ago(6), code: "PL-03", intent: "video", slot: pl[0] && pl[0].label, slotKey: pl[0] && pl[0].key, who: "Estudiante USM", when: "Marzo", name: "Valentina (ejemplo)", src: "Instagram" },
-    { t: ago(2), code: "PO-02", intent: "espera", who: "Trabajo en la zona", when: "Aún no sé", name: "Jorge (ejemplo)", src: "Google Maps" }
-  ];
-  void po;
-}
 
 /* ---------- Imágenes 360 de ejemplo (se reemplazan por fotos reales) ---------- */
 function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -2026,7 +1979,7 @@ function render() {
   $("#availText").textContent = !known ? list.length + " piezas · desde " + money(minP) + " al mes"
     : unknown ? (free ? free + (free > 1 ? " disponibles hoy" : " disponible hoy") + " · " : "") + list.length + " piezas desde " + money(minP) + " al mes"
     : free + " de " + list.length + " piezas disponibles hoy";
-  $("#availSub").textContent = (soon ? soon + (soon > 1 ? " se liberan" : " se libera") + " pronto · " : "") + (fromSheet ? "actualizado desde la planilla de la dueña" : "actualizado por la dueña");
+  $("#availSub").textContent = soon ? soon + (soon > 1 ? " se liberan" : " se libera") + " pronto" : "";
   $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
   $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
   renderReglamento();
@@ -2077,7 +2030,6 @@ function render() {
     else $(".thumb", btn).prepend(thumbFrom(commonScene(k, house), k));
   });
 
-  renderOwner();
 }
 
 // Piezas destacadas: la que tiene foto 360, la más barata y una de precio medio (entre las disponibles, si se sabe)
@@ -2288,7 +2240,6 @@ $("#sendWa").addEventListener("click", () => {
     who: whoText(s), when: whenText(s), name: s.name || "(sin nombre)", src: SOURCES[source], note: s.intent === "visita" && s.with ? "Con " + s.with : (s.doubt || "")
   });
   store.set("leads", leads);
-  renderOwner();
   setTimeout(() => { buildSlots(); sync(); }, 300);
 });
 $("#copyMsg").addEventListener("click", async e => {
@@ -2365,67 +2316,6 @@ $("#viewerFoot").addEventListener("click", e => {
   showScene(sc.canvas());
 });
 
-/* ---------- Planilla de la dueña ---------- */
-let ownerTab = "piezas";
-function renderOwner() {
-  const box = $("#ownerTable");
-  if (ownerTab === "textos") {
-    box.innerHTML = `<div style="padding:14px;display:grid;gap:12px">
-      <p class="note">Una línea por regla o requisito. En la planilla real, cada una es una fila de la pestaña “Textos”.</p>
-      <label class="note">Requisitos<textarea class="field" id="tReq" rows="5">${esc(texts.requisitos.join("\n"))}</textarea></label>
-      <label class="note">Reglas de la casa<textarea class="field" id="tRules" rows="4">${esc(texts.reglas.join("\n"))}</textarea></label>
-      <label class="note">Nombre de la dueña<input class="field" id="tOwner" value="${esc(texts.owner)}"></label>
-    </div>`;
-    return;
-  }
-  if (ownerTab === "piezas") {
-    box.innerHTML = `<table><thead><tr><th>Código</th><th>Casa</th><th>Pieza</th><th>Precio</th><th>Estado</th><th>Se libera</th></tr></thead><tbody>${
-      rooms.map(r => `<tr><td class="code">${r.code}</td><td>${HOUSES[r.house].name}</td><td>${esc(r.name)}</td><td>${money(r.price)}</td>
-        <td><select data-status="${r.code}" aria-label="Estado de ${r.code}">${[["consultar", "Por confirmar"], ["libre", "Disponible"], ["pronto", "Se libera"], ["ocupada", "Arrendada"]].map(([v, t]) => `<option value="${v}"${r.status === v ? " selected" : ""}>${t}</option>`).join("")}</select></td>
-        <td><input type="date" data-from="${r.code}" value="${r.from}" aria-label="Fecha en que se libera ${r.code}"${r.status === "pronto" ? "" : " disabled"}></td></tr>`).join("")
-    }</tbody></table>`;
-  } else {
-    const rows = (ownerTab === "visitas" ? leads.filter(l => l.slot) : leads.slice().reverse());
-    if (!rows.length) { box.innerHTML = `<p class="empty">Todavía no hay ${ownerTab === "visitas" ? "visitas agendadas" : "consultas"}.</p>`; return; }
-    box.innerHTML = ownerTab === "visitas"
-      ? `<table><thead><tr><th>Horario</th><th>Tipo</th><th>Pieza</th><th>Nombre</th><th>Quién es</th><th>Nota</th></tr></thead><tbody>${
-          rows.map(l => `<tr><td>${esc(l.slot)}</td><td>${INTENT_LOG[l.intent]}</td><td class="code">${l.code}</td><td>${esc(l.name)}</td><td>${esc(l.who || "—")}</td><td>${esc(l.note || "")}</td></tr>`).join("")}</tbody></table>`
-      : `<table><thead><tr><th>Fecha</th><th>Pieza</th><th>Quiere</th><th>Nombre</th><th>Quién es</th><th>Para cuándo</th><th>Llegó por</th></tr></thead><tbody>${
-          rows.map(l => `<tr><td>${new Date(l.t).toLocaleDateString("es-CL", { day: "numeric", month: "short" }).replace(".", "")} ${new Date(l.t).toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })}</td><td class="code">${l.code}</td><td>${INTENT_LOG[l.intent]}</td><td>${esc(l.name)}</td><td>${esc(l.who || "—")}</td><td>${esc(l.when || "—")}</td><td>${esc(l.src)}</td></tr>`).join("")}</tbody></table>`;
-  }
-}
-$("#ownerTable").addEventListener("input", e => {
-  if (!["tReq", "tRules", "tOwner"].includes(e.target.id)) return;
-  const lines = id => $("#" + id).value.split("\n").map(s => s.trim()).filter(Boolean);
-  texts = { requisitos: lines("tReq"), reglas: lines("tRules"), owner: $("#tOwner").value.trim() || DEFAULT_TEXTS.owner };
-  store.set("texts", texts);
-  $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
-  $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
-});
-$("#ownerTable").addEventListener("change", e => {
-  const st = e.target.dataset.status, fr = e.target.dataset.from;
-  const r = rooms.find(x => x.code === (st || fr)); if (!r) return;
-  if (st) { r.status = e.target.value; if (r.status === "pronto" && !r.from) r.from = "2027-03-01"; if (r.status !== "pronto") r.from = ""; }
-  if (fr) r.from = e.target.value;
-  store.set("rooms-v7", rooms);
-  render();
-});
-$$(".tabs button").forEach(b => b.addEventListener("click", () => {
-  ownerTab = b.dataset.tab;
-  $$(".tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
-  renderOwner();
-}));
-$("#srcSim").value = source;
-$("#srcSim").addEventListener("change", e => { source = e.target.value; });
-$("#resetDemo").addEventListener("click", () => {
-  leads = leads.filter(l => / \(ejemplo\)$/.test(l.name));
-  rooms = DEFAULT_ROOMS.map(r => ({ ...r }));
-  texts = JSON.parse(JSON.stringify(DEFAULT_TEXTS));
-  store.set("leads", leads); store.set("rooms-v7", rooms); store.set("texts", texts);
-  render();
-});
-$("#openOwner").addEventListener("click", () => { $("#owner").hidden = false; $("#owner").scrollIntoView({ behavior: "smooth" }); });
-
 /* ---------- Eventos generales ---------- */
 document.addEventListener("click", e => {
   if (e.target.closest("#roomList [data-consult], #roomList [data-tour]")) closeList(true);
@@ -2446,86 +2336,9 @@ $("#heroSeason").addEventListener("click", () => {
 let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(setHeroPano, 150); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawSkyline);
 new MutationObserver(drawSkyline).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-if (location.hash === "#duena") $("#owner").hidden = false;
 
-/* ---------- Planilla de Google real ---------- */
-const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
-function parseCSV(text) {
-  const rows = []; let row = [], cell = "", q = false;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
-    else if (ch === '"') q = true;
-    else if (ch === ",") { row.push(cell); cell = ""; }
-    else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
-    else if (ch !== "\r") cell += ch;
-  }
-  if (cell || row.length) { row.push(cell); rows.push(row); }
-  return rows.filter(r => r.some(c => c.trim()));
-}
-function csvObjects(text) {
-  const [head, ...rest] = parseCSV(text);
-  const keys = head.map(norm);
-  return rest.map(r => Object.fromEntries(keys.map((k, i) => [k, (r[i] || "").trim()])));
-}
-function parseDate(s) {
-  s = String(s || "").trim();
-  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-  if (m) return `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}`;
-  m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
-  if (m) return `${m[3].length === 2 ? "20" + m[3] : m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}`;
-  return "";
-}
-const WALLS = ["#d6dde3", "#dfe4d5", "#e6dccd", "#d3e0e2", "#e4ddd3", "#d9e2dc", "#dde2ea"];
-function applyPiezasCSV(text) {
-  const today = new Date().toISOString().slice(0, 10);
-  const list = csvObjects(text).filter(o => o.codigo).map(o => {
-    const estado = norm(o.estado), from = parseDate(o["se libera"]);
-    let status = "ocupada";
-    if (!estado || estado.startsWith("consult") || estado.includes("confirmar")) status = "consultar";
-    else if (estado.startsWith("disp") || estado === "libre") status = "libre";
-    else if (estado.includes("libera") || (from && from > today)) status = "pronto";
-    const num = s => Number(String(s || "").replace(/\D/g, "")) || 0;
-    return {
-      code: o.codigo.toUpperCase(), house: norm(o.casa).includes("poc") ? "pocuro" : "placeres",
-      name: o.tipo || "Pieza", specs: (o.detalles || "").split(",").map(s => s.trim()).filter(Boolean),
-      price: num(o["precio mes"]), night: num(o["precio noche"]) || undefined,
-      status, from: status === "pronto" ? from : "", wall: WALLS[hashStr(o.codigo) % WALLS.length]
-    };
-  });
-  if (list.length) rooms = list;
-}
-function applyTextosCSV(text) {
-  const t = { owner: texts.owner, requisitos: [], reglas: [] };
-  csvObjects(text).forEach(o => {
-    const sec = norm(o.seccion), val = o.texto;
-    if (!val) return;
-    if (sec.startsWith("requis")) t.requisitos.push(val);
-    else if (sec.startsWith("regla")) t.reglas.push(val);
-    else if (sec.includes("nombre") || sec.includes("duena")) t.owner = val;
-    else if (sec.includes("whatsapp")) CONFIG.whatsapp = val.replace(/\D/g, "");
-  });
-  if (t.requisitos.length) texts.requisitos = t.requisitos;
-  if (t.reglas.length) texts.reglas = t.reglas;
-  texts.owner = t.owner;
-}
-async function loadSheets() {
-  if (!CONFIG.sheetPiezas && !CONFIG.sheetTextos) return;
-  try {
-    const get = url => fetch(url + (url.includes("?") ? "&" : "?") + "t=" + Date.now()).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
-    const [p, t] = await Promise.all([CONFIG.sheetPiezas ? get(CONFIG.sheetPiezas) : null, CONFIG.sheetTextos ? get(CONFIG.sheetTextos) : null]);
-    if (p) applyPiezasCSV(p);
-    if (t) applyTextosCSV(t);
-    fromSheet = true;
-    $("#openOwner").hidden = true;
-    render();
-  } catch (err) {
-    console.warn("No se pudo leer la planilla; se muestran los datos guardados.", err);
-  }
-}
 
 render();
-loadSheets();
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
