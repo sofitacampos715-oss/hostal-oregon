@@ -161,6 +161,49 @@ section.block { padding-block: 40px 8px; }
 .price small { font-family: var(--f-body); font-size: .82rem; font-weight: 500; color: var(--muted); }
 .room-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
 .room-actions .btn { flex: 1 1 auto; }
+/* Ver todas las piezas: botón + panel con lista compacta */
+.rooms-more { display: flex; justify-content: center; margin-top: 20px; }
+.rooms-all { font-size: 1.02rem; padding: 14px 24px; border-radius: 99px; gap: 10px; box-shadow: var(--shadow); }
+.rooms-all small { font-weight: 600; opacity: .85; }
+.rl-back { position: fixed; inset: 0; z-index: 70; background: rgba(5,9,13,.55); opacity: 0; transition: opacity .3s; }
+.rl-back.open { opacity: 1; }
+.rl { position: fixed; z-index: 71; left: 0; right: 0; bottom: 0; max-height: 90vh; max-height: 90dvh; display: flex; flex-direction: column; background: var(--surface); color: var(--ink); border-radius: 24px 24px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,.3); transform: translateY(105%); transition: transform .38s cubic-bezier(.2,.8,.2,1); }
+.rl.open { transform: none; }
+.rl-head { padding: 10px max(18px, env(safe-area-inset-right, 0px)) 12px max(18px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--line); display: grid; gap: 12px; }
+.rl-grip { width: 44px; height: 5px; border-radius: 9px; background: var(--line); margin: 0 auto; }
+.rl-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.rl-top h2 { margin: 2px 0 0; font: 800 1.6rem/1.1 var(--f-display); }
+.rl-top .x { flex: none; }
+.rl-count { color: var(--muted); font-size: .9rem; margin: 4px 0 0; }
+.rl-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rl-chips, .rl-sort { display: flex; gap: 6px; flex-wrap: wrap; }
+.rl-chips button, .rl-sort button { border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 99px; padding: 7px 12px; font: 600 .85rem var(--f-body); cursor: pointer; }
+.rl-chips button[aria-pressed="true"], .rl-sort button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.rl-sort { margin-left: auto; }
+.rl-sort span { align-self: center; font-size: .8rem; color: var(--muted); margin-right: 2px; }
+.rl-list { list-style: none; margin: 0; padding: 4px max(18px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); overflow: auto; overscroll-behavior: contain; }
+.rl-row { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.rl-row:last-child { border-bottom: 0; }
+.rl-num { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--sunk); font: 800 1.45rem/1 var(--f-display); color: var(--ink); }
+.rl-info { min-width: 0; display: grid; gap: 4px; }
+.rl-info b { font-size: 1rem; }
+.rl-info .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .8rem; color: var(--muted); }
+.rl-info .pill { font-size: .72rem; padding: 2px 8px; }
+.rl-360 { border: 0; background: var(--sea); color: var(--sea-ink); border-radius: 99px; padding: 2px 9px; font: 700 .72rem var(--f-body); cursor: pointer; }
+.rl-side { display: grid; justify-items: end; gap: 6px; }
+.rl-price { font: 800 1.08rem/1 var(--f-display); white-space: nowrap; }
+.rl-price small { font: 500 .75rem var(--f-body); color: var(--muted); }
+.rl-side .btn { padding: 7px 12px; font-size: .85rem; }
+.rl-empty { padding: 30px 0; text-align: center; color: var(--muted); }
+@media (min-width: 760px) {
+  .rl { left: 50%; right: auto; top: 50%; bottom: auto; width: min(760px, calc(100% - 32px)); max-height: min(86vh, 860px); border-radius: 22px; opacity: 0; transform: translate(-50%, -46%); transition: transform .3s, opacity .3s; }
+  .rl.open { opacity: 1; transform: translate(-50%, -50%); }
+  .rl-grip { display: none; }
+  .rl-row { grid-template-columns: 56px 1fr auto auto; }
+  .rl-side { display: contents; }
+  .rl-price { text-align: right; min-width: 120px; }
+}
+@media (prefers-reduced-motion: reduce) { .rl, .rl-back { transition: none; } }
 .alt { font-size: .86rem; color: var(--muted); }
 .alt button { background: none; border: 0; padding: 0; color: var(--sea); font-weight: 700; text-decoration: underline; }
 
@@ -1231,7 +1274,21 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
   <section class="block" id="piezas"><div class="wrap">
     <h2 class="sec-title">Piezas</h2>
     <div class="rooms" id="rooms"></div>
+    <div class="rooms-more" id="roomsMore" hidden><button type="button" class="btn btn-main rooms-all" id="roomsAll"></button></div>
   </div></section>
+  <div class="rl-back" id="rlBack" hidden></div>
+  <section class="rl" id="roomList" role="dialog" aria-modal="true" aria-labelledby="rlTitle" hidden>
+    <div class="rl-head">
+      <div class="rl-grip" aria-hidden="true"></div>
+      <div class="rl-top"><div><p class="eyebrow" id="rlHouse"></p><h2 id="rlTitle">Todas las habitaciones</h2><p class="rl-count" id="rlCount"></p></div>
+        <button type="button" class="x" id="rlClose" aria-label="Cerrar lista">×</button></div>
+      <div class="rl-tools">
+        <div class="rl-chips" id="rlChips" role="group" aria-label="Filtrar por precio"></div>
+        <div class="rl-sort" role="group" aria-label="Ordenar"><span>Ordenar:</span><button type="button" data-sort="precio" aria-pressed="true">Precio</button><button type="button" data-sort="numero" aria-pressed="false">Número</button></div>
+      </div>
+    </div>
+    <ul class="rl-list" id="rlList"></ul>
+  </section>
 
   <section class="block"><div class="wrap">
     <h2 class="sec-title">La casa en 360°</h2>
@@ -1929,7 +1986,9 @@ function render() {
   const list = rooms.filter(r => r.house === house);
   const free = list.filter(r => r.status === "libre").length;
   const soon = list.filter(r => r.status === "pronto").length;
-  $("#availText").textContent = free + " de " + list.length + " piezas disponibles hoy";
+  const known = list.some(r => r.status !== "consultar");
+  const minP = Math.min(...list.map(r => r.price).filter(Boolean));
+  $("#availText").textContent = known ? free + " de " + list.length + " piezas disponibles hoy" : list.length + " piezas · desde " + money(minP) + " al mes";
   $("#availSub").textContent = (soon ? soon + (soon > 1 ? " se liberan" : " se libera") + " pronto · " : "") + (fromSheet ? "actualizado desde la planilla de la dueña" : "actualizado por la dueña");
   $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
   $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
@@ -1939,13 +1998,19 @@ function render() {
   $("#mensual").hidden = !monthly;
   $("#waShown").textContent = "+" + CONFIG.whatsapp.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, "$1 $2 $3 $4");
 
-  $("#rooms").innerHTML = list.map(r => {
+  const featured = featuredRooms(list);
+  $("#roomsMore").hidden = featured.length >= list.length;
+  $("#roomsAll").innerHTML = "Ver las " + list.length + " habitaciones <small>· desde " + money(minP) + "</small>";
+  if (!$("#roomList").hidden) drawList();
+  $("#rooms").innerHTML = featured.map(r => {
     const s = statusInfo(r), busy = r.status === "ocupada";
     return `<article class="room${busy ? " is-busy" : ""}">
-      <button class="thumb" type="button" data-tour="${r.code}" aria-label="Recorrer ${r.code} en 360°">
+      ${ROOM_TOURS[r.code]
+        ? `<button class="thumb" type="button" data-tour="${r.code}" aria-label="Recorrer ${r.code} en 360°">
         <span class="plate">${r.code}</span><span class="pill ${s.cls}">${esc(s.text)}</span>
         <span class="tag360">↻ Ver en 360°</span>
-      </button>
+      </button>`
+        : `<div class="thumb" data-thumb="${r.code}"><span class="plate">${r.code}</span><span class="pill ${s.cls}">${esc(s.text)}</span></div>`}
       <div class="room-body">
         <h3>${esc(r.name)}</h3>
         <ul class="specs">${r.specs.map(x => "<li>" + esc(x) + "</li>").join("")}</ul>
@@ -1962,6 +2027,7 @@ function render() {
   }).join("");
   $$("#rooms .thumb").forEach(btn => {
     const real = ROOM_TOURS[btn.dataset.tour];
+    if (!real && btn.dataset.thumb) { btn.prepend(thumbFrom(sceneFor(btn.dataset.thumb), "pieza")); return; }
     if (real) { const img = new Image(); img.src = "recorrido/" + real.house + "/mini/" + real.node + ".jpg"; img.alt = ""; img.loading = "lazy"; btn.prepend(img); }
     else btn.prepend(thumbFrom(sceneFor(btn.dataset.tour), "pieza"));
   });
@@ -1976,6 +2042,72 @@ function render() {
 
   renderOwner();
 }
+
+// Piezas destacadas: la que tiene foto 360, la más barata y una de precio medio (entre las disponibles, si se sabe)
+function featuredRooms(list) {
+  if (list.length <= 4) return list;
+  const known = list.some(r => r.status !== "consultar");
+  const pool = known && list.some(r => r.status === "libre") ? list.filter(r => r.status === "libre") : list;
+  const out = [];
+  const add = r => { if (r && !out.includes(r) && out.length < 3) out.push(r); };
+  pool.filter(r => ROOM_TOURS[r.code]).forEach(add);
+  const byPrice = [...pool].sort((a, b) => a.price - b.price || a.code.localeCompare(b.code));
+  add(byPrice[0]);
+  add(byPrice[Math.floor(byPrice.length / 2)]);
+  byPrice.forEach(add);
+  return out.sort((a, b) => (ROOM_TOURS[b.code] ? 1 : 0) - (ROOM_TOURS[a.code] ? 1 : 0) || a.price - b.price);
+}
+const RANGES = [["todas", "Todas", () => true], ["baja", "Hasta $230.000", p => p <= 230000], ["media", "$231.000 a $270.000", p => p > 230000 && p <= 270000], ["alta", "Más de $270.000", p => p > 270000]];
+let rlRange = "todas", rlSort = "precio";
+const roomNum = c => c.replace(/^[A-Z]+-0*/, "");
+function drawList() {
+  const all = rooms.filter(r => r.house === house);
+  const counts = Object.fromEntries(RANGES.map(([k, , f]) => [k, all.filter(r => f(r.price)).length]));
+  if (!counts[rlRange]) rlRange = "todas";
+  $("#rlHouse").textContent = HOUSES[house].name || (house === "pocuro" ? "Casa Pocuro" : "Casa Placeres");
+  $("#rlChips").innerHTML = RANGES.filter(([k]) => counts[k]).map(([k, t]) => `<button type="button" data-range="${k}" aria-pressed="${k === rlRange}">${t} <span aria-hidden="true">· ${counts[k]}</span></button>`).join("");
+  $$(".rl-sort button").forEach(b => b.setAttribute("aria-pressed", b.dataset.sort === rlSort));
+  const f = RANGES.find(([k]) => k === rlRange)[2];
+  const order = { libre: 0, consultar: 1, pronto: 2, ocupada: 3 };
+  const list = all.filter(r => f(r.price)).sort((a, b) =>
+    (order[a.status] - order[b.status]) || (rlSort === "precio" ? a.price - b.price : 0) || (parseInt(roomNum(a.code)) - parseInt(roomNum(b.code))));
+  $("#rlCount").textContent = list.length + (list.length === 1 ? " habitación" : " habitaciones") + (all.some(r => r.status !== "consultar") ? "" : " · pregunta cuáles están libres");
+  $("#rlList").innerHTML = list.length ? list.map(r => {
+    const s = statusInfo(r), busy = r.status === "ocupada", n = roomNum(r.code);
+    const named = r.name && r.name !== "Habitación " + n ? r.name : "";
+    return `<li class="rl-row">
+      <span class="rl-num" aria-hidden="true">${esc(n)}</span>
+      <span class="rl-info"><b>Habitación ${esc(n)}${named ? " · " + esc(named) : ""}</b>
+        <span class="meta"><span class="pill ${s.cls}">${esc(s.text)}</span>${ROOM_TOURS[r.code] ? `<button type="button" class="rl-360" data-tour="${r.code}">↻ Ver en 360°</button>` : ""}${r.specs.length ? "<span>" + esc(r.specs.slice(0, 3).join(" · ")) + "</span>" : ""}</span></span>
+      <span class="rl-side"><span class="rl-price">${priceText(r).replace(/\/(mes|noche)/, " <small>/$1</small>")}</span>
+        ${busy ? `<button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="espera">Avísame</button>`
+          : mode === "noche" ? `<button class="btn btn-main btn-sm" type="button" data-consult="${r.code}" data-intent="reservar">Consultar fechas</button>`
+          : `<button class="btn btn-main btn-sm" type="button" data-consult="${r.code}" data-intent="visita">Quiero verla</button>`}</span>
+    </li>`;
+  }).join("") : '<li class="rl-empty">No hay habitaciones en ese rango.</li>';
+}
+let rlLast = null;
+function openList() {
+  rlLast = document.activeElement;
+  drawList();
+  $("#roomList").hidden = false; $("#rlBack").hidden = false;
+  document.documentElement.style.overflow = "hidden";
+  requestAnimationFrame(() => requestAnimationFrame(() => { $("#roomList").classList.add("open"); $("#rlBack").classList.add("open"); }));
+  setTimeout(() => $("#rlClose").focus({ preventScroll: true }), 60);
+}
+function closeList(keepFocus) {
+  if ($("#roomList").hidden) return;
+  $("#roomList").classList.remove("open"); $("#rlBack").classList.remove("open");
+  document.documentElement.style.overflow = "";
+  setTimeout(() => { $("#roomList").hidden = true; $("#rlBack").hidden = true; }, 380);
+  if (!keepFocus && rlLast) rlLast.focus({ preventScroll: true });
+}
+$("#roomsAll").addEventListener("click", openList);
+$("#rlClose").addEventListener("click", () => closeList());
+$("#rlBack").addEventListener("click", () => closeList());
+$("#rlChips").addEventListener("click", e => { const b = e.target.closest("[data-range]"); if (b) { rlRange = b.dataset.range; drawList(); } });
+$$(".rl-sort button").forEach(b => b.addEventListener("click", () => { rlSort = b.dataset.sort; drawList(); }));
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#roomList").hidden) closeList(); });
 
 // La franja 360 se repite a lo ancho y se desplaza una vuelta completa; parte centrada en el punto lindo de la foto
 function setHeroPano() {
@@ -2256,6 +2388,7 @@ $("#openOwner").addEventListener("click", () => { $("#owner").hidden = false; $(
 
 /* ---------- Eventos generales ---------- */
 document.addEventListener("click", e => {
+  if (e.target.closest("#roomList [data-consult], #roomList [data-tour]")) closeList(true);
   const c = e.target.closest("[data-consult]");
   if (c) { openSheet(c.dataset.consult, c.dataset.intent); return; }
   const t = e.target.closest("[data-tour]");
