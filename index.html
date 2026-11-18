@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795040284">
-<script>window.BUILD="1795040284";</script>
+<meta name="build" content="1795041137">
+<script>window.BUILD="1795041137";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -468,6 +468,7 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
 .incl strong { font-size: .98rem; }
 .panel h3 { font-size: 1.25rem; }
 .regl-all > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 10px 18px; font-weight: 700; }
+.regl-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .regl-all > summary::-webkit-details-marker { display: none; }
 .regl-all > summary::after { content: "+"; font-size: 1.2rem; line-height: 1; color: var(--muted); }
 .regl-all[open] > summary { margin-bottom: 18px; }
@@ -1339,8 +1340,10 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
   </div></section>
 
   <section class="block" id="reglamento"><div class="wrap">
+    <p style="margin:0 0 12px"><a class="btn btn-main btn-sm" href="reglamento-hostal-oregon.pdf" download>Descargar reglamento completo (PDF)</a></p>
     <details class="regl-all">
       <summary>Ver reglamento completo</summary>
+      <p><a class="btn btn-main btn-sm" href="reglamento-hostal-oregon.pdf" download>Descargar reglamento (PDF)</a></p>
       <div class="regl" id="reglCols"></div>
       <div class="pledge"><blockquote id="pledgeText"></blockquote></div>
     </details>
@@ -2318,6 +2321,12 @@ $("#viewerFoot").addEventListener("click", e => {
 
 /* ---------- Eventos generales ---------- */
 document.addEventListener("click", e => {
+  if (!e.target.closest("[data-to-regl]")) return;
+  e.preventDefault(); if (window.closeTour) window.closeTour(); else { const t = document.getElementById("tour"); if (t) t.hidden = true; document.documentElement.style.overflow = ""; }
+  const d = document.querySelector("#reglamento details"); if (d) d.open = true;
+  document.getElementById("reglamento").scrollIntoView({ behavior: "smooth" });
+});
+document.addEventListener("click", e => {
   if (e.target.closest("#roomList [data-consult], #roomList [data-tour]")) closeList(true);
   const c = e.target.closest("[data-consult]");
   if (c) { openSheet(c.dataset.consult, c.dataset.intent); return; }
@@ -2522,9 +2531,9 @@ const POCURO_NODES = [
 
 /* Reglamento dentro del recorrido: cada punto "Reglas" está en el lugar donde aplica (nunca sobre puertas de piezas) */
 const RULES_VISITAS = [["visitas"], ["seguridad", [4]], ["instalaciones", [3]]];
-const RULES_COCINA = [["cocina", [0, 1, 2, 3, 4, 5, 6]], ["h-cocina"], ["h-articulos"], ["h-camaras"]];
+const RULES_COCINA = [["cocina", [0, 1, 2, 3, 4, 5]], ["h-cocina"], ["h-articulos"], ["h-camaras"]];
 const RULES_LAV = [["lavanderia"], ["h-lavanderia"]];
-const RULES_CONV = [["sustancias", [0, 1, 2, 4]], ["respeto"], ["instalaciones", [0, 1, 2]]];
+const RULES_CONV = [["sustancias", [0, 2, 4]], ["respeto"], ["instalaciones", [0, 1, 2]]];
 const RULES_HAB = [["habitacion"], ["h-habitacion"], ["seguridad", [0, 1, 2, 3]]];
 const addRule = (nodes, id, r) => nodes.find(n => n.id === id).info.push(r);
 addRule(NODES, "plaza", R("fumar", -150, 0, "Aquí se puede fumar", [["sustancias", [1, 3]]]));
@@ -2536,11 +2545,11 @@ addRule(NODES, "lavanderia", R("lavanderia", 25, 8, "Uso de la lavandería", RUL
 addRule(NODES, "patio", R("convivencia", -80, -5, "Convivencia", RULES_CONV));
 addRule(NODES, "pasillo", R("habitacion", 128, 5, "Tu habitación", RULES_HAB));
 addRule(POCURO_NODES, "entrada", R("visitas", -40, 18, "Visitas, llaves y seguridad", RULES_VISITAS));
-addRule(POCURO_NODES, "pasillo", R("habitacion", 78, 10, "Tu habitación", [...RULES_HAB, ["respeto", [0]]]));
+addRule(POCURO_NODES, "pasillo", R("habitacion", 78, 10, "Tu habitación", RULES_HAB));
 addRule(POCURO_NODES, "comedor", R("comedor", 10, 16, "Comedor y refrigeradores", [["cocina", [7, 8, 9]], ["cocina", [6]], ["h-alimentos"]]));
 addRule(POCURO_NODES, "cocina", R("cocina", 60, 15, "Reglas de la cocina", RULES_COCINA));
 addRule(POCURO_NODES, "lavanderia", R("lavanderia", -80, 3, "Uso de la lavandería", RULES_LAV));
-addRule(POCURO_NODES, "casilleros", R("convivencia", -60, 10, "Convivencia", RULES_CONV));
+addRule(POCURO_NODES, "casilleros", R("convivencia", -60, 10, "Convivencia", [["sustancias", [0, 1, 2, 3, 4]], ["respeto"], ["instalaciones", [0, 1, 2]]]));
 
 const TOURS = {
   placeres: { name: "Casa Placeres", dir: "recorrido/placeres/", start: "plaza", tabs: TABS, nodes: NODES },
@@ -2608,7 +2617,7 @@ function showCard(m) {
       const items = pick ? pick.map(i => sec.items[i]) : sec.items;
       return '<div class="rule-group"><h4>' + (own ? "Lo que te toca · " : "Lo que hace el hostal · ") + sec.t + "</h4>" +
         (sec.intro && !pick ? '<p>' + sec.intro + "</p>" : "") + window.reglaItemsHTML(items) + "</div>";
-    }).join("") + '<p style="font-size:.85rem">Reglamento completo en la página, sección <b>Reglamento</b>.</p>';
+    }).join("") + '<p class="regl-links"><a class="btn btn-main btn-sm" href="reglamento-hostal-oregon.pdf" download>Descargar reglamento completo (PDF)</a> <a class="btn btn-ghost btn-sm" href="#reglamento" data-to-regl>Ver reglamento en la página</a></p>';
   } else {
     const p = document.createElement("p"); p.textContent = m.text; $("#tourCardText").replaceChildren(p);
   }
