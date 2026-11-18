@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795041137">
-<script>window.BUILD="1795041137";</script>
+<meta name="build" content="1795043754">
+<script>window.BUILD="1795043754";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -1600,7 +1600,87 @@ const REGLAMENTO = {
   ],
   compromiso: "El hostal se compromete a entregar espacios limpios, seguros y funcionales. A cambio, esperamos que cada residente cuide las instalaciones, respete a los demás y colabore con el buen funcionamiento de la comunidad."
 };
-const reglaSec = id => REGLAMENTO.residentes.find(s => s.id === id) || REGLAMENTO.hostal.find(s => s.id === id);
+// Versión corta para los carteles del recorrido 360 (mismo orden y cantidad de reglas que la completa)
+const REGL_CORTO = {
+  residentes: [
+    { id: "habitacion", t: "Tu habitación", items: [
+      "Coordina con la encargada el día de tu aseo semanal.",
+      "El aseo es una vez por semana y no se acumula.",
+      "No dejes ropa ni cosas en el suelo.",
+      "Mantén tu pieza ordenada y en buen estado."] },
+    { id: "lavanderia", t: "Lavandería", intro: "Lavadora y secadora incluidas.", items: [
+      "Horario: lunes a viernes, 9:30 a 21:00. Fines de semana, libre.",
+      "Respeta la carga de cada máquina: sobrecargarla es falta grave.",
+      "Saca tu ropa apenas termine el ciclo.",
+      "No dejes ropa colgada por días.",
+      "Trae tu propio detergente."] },
+    { id: "cocina", t: "Cocina y comedor", items: [
+      "Lava, seca y guarda al tiro lo que uses.",
+      "Deja limpios mesones, muebles y microondas.",
+      "No te lleves a tu pieza cosas del hostal (loza, termos, potes).",
+      "Cada residente aporta para uso común:", ["1 lavaloza de 750 ml", "1 kilo de sal", "3 esponjas", "1 set de paños de cocina"],
+      "Ayuda a cambiar la bolsa de basura.",
+      "No dejes alimentos descompuestos en fruteros, mesones ni refrigeradores.",
+      "Comedor abierto de 7:00 a 22:00.",
+      "Al terminar, deja la mesa limpia, sacude el mantel y apaga la tele.",
+      "Sin gritos ni música fuerte, sobre todo de noche."] },
+    { id: "visitas", t: "Visitas", items: [
+      "Avisa antes: el encargado autoriza cada visita.",
+      "Las visitas no se quedan a dormir.",
+      "Las visitas están de paso: no tienen los beneficios de los residentes.",
+      "Las visitas no usan la cocina.",
+      "Cada visita queda registrada."] },
+    { id: "seguridad", t: "Seguridad y aparatos", items: [
+      "Sin estufas, calefactores, ventiladores, calientacamas ni hervidores en la pieza, salvo autorización.",
+      "Si se autorizan, tienen un recargo de $15.000 al mes.",
+      "Sí puedes usar secador de pelo, afeitadora, computador y radio.",
+      "Nada de velas, inciensos ni fuego.",
+      "Tus llaves son solo tuyas: no las prestes."] },
+    { id: "instalaciones", t: "Cuidado de la casa", items: [
+      "No pintes, rayes, claves ni pegues cosas en paredes o muebles.",
+      "Cuida muebles, artefactos y espacios compartidos.",
+      "Si algo se daña, avisa: lo repone quien lo causó.",
+      "Pasar tus llaves a otra persona es falta gravísima y puede terminar tu estadía."] },
+    { id: "sustancias", t: "Alcohol, tabaco y drogas", items: [
+      "Sin alcohol y sin llegar en estado de ebriedad.",
+      "No se fuma en las piezas ni en los espacios comunes.",
+      "Prohibidas la marihuana y otras drogas.",
+      "Para fumar tabaco, usa la plaza de enfrente.",
+      "Celebraciones: pide autorización antes."] },
+    { id: "respeto", t: "Convivencia", items: [
+      "Respeta el descanso: sin gritos, música alta ni portazos.",
+      "Cuida los espacios comunes y respeta los turnos.",
+      "Fiestas o eventos: con autorización, acuerdo de todos y un responsable.",
+      "Participa en las reuniones de residentes."] }
+  ],
+  hostal: [
+    { id: "h-habitacion", t: "Aseo de tu pieza", intro: "Una vez por semana, en el día que acuerdes:", items: [
+      ["Baño limpio y desinfectado", "Basura retirada", "Piso aspirado", "Superficies sacudidas", "Pieza ventilada", "Cama ordenada"]],
+      note: "No incluye recoger ni doblar ropa. Si hay ropa en el suelo puede no hacerse; si se repite, se avisa a los apoderados." },
+    { id: "h-lavanderia", t: "Lavandería", intro: "Incluida en la mensualidad.", items: [
+      "Lunes a viernes: 9:30 a 21:00.",
+      "Fines de semana: libre.",
+      "Fichas (si se usan): las entrega el encargado."] },
+    { id: "h-cocina", t: "Aseo de cocina y comedor", intro: "El hostal limpia estos espacios.", items: [
+      "Cada mañana: pisos, mesones, cocina y espacios comunes.",
+      "Cada cierto tiempo: limpieza profunda de ollas, refrigeradores, cocina, microondas y pisos."] },
+    { id: "h-articulos", t: "Artículos de limpieza", intro: "El hostal pone:", items: [
+      ["Productos de limpieza", "Bolsas de basura", "Paños de cocina limpios"]] },
+    { id: "h-camaras", t: "Cámaras", intro: "Cámaras en la cocina:", items: [
+      "Lunes a viernes: desde las 17:00.",
+      "Fines de semana y festivos: todo el día.",
+      "Son para la seguridad y la buena convivencia."] },
+    { id: "h-inventario", t: "Inventario", items: [
+      "El hostal lleva inventario de lo que es de uso común.",
+      "Se revisa cada mes y se comenta en las reuniones.",
+      "Si hay daños, se ve quién los repone."] },
+    { id: "h-mantencion", t: "Mantención", items: [
+      "Espacios comunes limpios, funcionando y seguros."] },
+    { id: "h-alimentos", t: "Alimentos en mal estado", items: [
+      "El personal puede botar alimentos descompuestos de fruteros, mesones y refrigeradores."] }
+  ]
+};
+const reglaSec = id => REGL_CORTO.residentes.find(s => s.id === id) || REGL_CORTO.hostal.find(s => s.id === id);
 function reglaItemsHTML(items) {
   const lis = [];
   for (const it of items) {
