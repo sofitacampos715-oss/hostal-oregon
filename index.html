@@ -4,6 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
+<meta name="build" content="1795032584">
+<script>window.BUILD="1795032584";</script>
+<script>
+/* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
+(function () {
+  var b = window.BUILD;
+  if (!b || !window.fetch) return;
+  fetch(location.pathname + "?nc=" + Date.now(), { cache: "no-store" })
+    .then(function (r) { return r.text(); })
+    .then(function (t) {
+      var m = t.match(/<meta name="build" content="(\d+)"/);
+      if (!m || m[1] === b) return;
+      try { if (sessionStorage.getItem("rb") === m[1]) return; sessionStorage.setItem("rb", m[1]); } catch (e) {}
+      location.replace(location.pathname + "?v=" + m[1] + location.hash);
+    })
+    .catch(function () {});
+})();
+</script>
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 </head>
 <body>
@@ -2722,7 +2740,7 @@ let T, names, viewer, tour, marks, current = null, goingBack = false, panTimer =
 const visited = [];
 
 const toPsv = t => t.nodes.map(n => ({
-  id: n.id, panorama: t.dir + n.id + ".jpg", name: n.name, links: n.links, data: { tab: n.tab, look: n.look, face: n.face, pan: n.pan },
+  id: n.id, panorama: t.dir + n.id + ".jpg" + (window.BUILD ? "?v=" + window.BUILD : ""), name: n.name, links: n.links, data: { tab: n.tab, look: n.look, face: n.face, pan: n.pan },
   markers: n.info.map(m => ({
     id: n.id + "-" + m.id, position: { yaw: m.yaw + "deg", pitch: m.pitch + "deg" },
     html: m.keys ? '<span class="keys-pin' + (m.wall ? ' is-wall' : '') + '" aria-label="Ver todas las piezas">' + (m.wall ? KEYS_WALL_SVG : KEYS_SVG) + '</span>'
