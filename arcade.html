@@ -10,7 +10,6 @@
   body { display: grid; place-items: center; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
   #wrap { position: relative; width: min(100vw, calc(100vh * 224 / 288)); width: min(100vw, calc(100dvh * 224 / 288)); aspect-ratio: 224 / 288; }
   canvas { width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
-  /* efecto de tele antigua */
   #wrap::after { content: ""; position: absolute; inset: 0; pointer-events: none;
     background: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.55)); }
   .pad { position: fixed; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); display: none; gap: 12px; z-index: 2; }
@@ -20,6 +19,13 @@
   #fire { width: 84px; height: 84px; background: rgba(255,60,60,.25); border-color: rgba(255,120,120,.6); font-size: 15px; }
   @media (pointer: coarse) { .pad { display: flex; } }
   #mute { position: fixed; top: 6px; left: 50%; transform: translateX(-50%); z-index: 3; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 99px; padding: 6px 10px; font: 600 12px system-ui; }
+  #nameBox { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; background: rgba(0,0,0,.55); }
+  #nameBox[hidden] { display: none; }
+  #nameBox form { background: #0b0b18; border: 2px solid #ffd400; border-radius: 12px; padding: 18px; width: min(86vw, 300px); text-align: center; color: #fff; box-shadow: 0 0 30px rgba(255,212,0,.25); }
+  #nameBox h2 { margin: 0 0 4px; color: #ffd400; font-size: 18px; letter-spacing: .08em; }
+  #nameBox p { margin: 0 0 12px; color: #9ab; font-size: 12px; }
+  #nameBox input { width: 100%; box-sizing: border-box; font: 700 22px ui-monospace, monospace; text-align: center; text-transform: uppercase; letter-spacing: .15em; padding: 8px; border-radius: 8px; border: 1px solid #556; background: #000; color: #4ad3ff; }
+  #nameBox button { margin-top: 12px; width: 100%; padding: 10px; border: 0; border-radius: 8px; background: #ffd400; color: #231a00; font: 800 15px system-ui; }
 </style>
 </head>
 <body>
@@ -27,27 +33,41 @@
 <div id="wrap"><canvas id="c" width="224" height="288"></canvas></div>
 <div class="pad" id="padL"><button id="bl" aria-label="Izquierda">◀</button><button id="br" aria-label="Derecha">▶</button></div>
 <div class="pad" id="padR"><button id="fire" aria-label="Disparar">FUEGO</button></div>
+<div id="nameBox" hidden><form id="nameForm">
+  <h2>¡NUEVO RÉCORD!</h2><p id="nameScore"></p>
+  <input id="nameIn" maxlength="8" autocomplete="off" placeholder="TU NOMBRE" aria-label="Tu nombre">
+  <button type="submit">Guardar</button>
+</form></div>
 <script>
 "use strict";
-// Juego retro original: naves-gaviota en formación que se lanzan en picada sobre el cerro.
+// Gaviotas del Espacio: juego retro original (Hostal Oregon, Cerro Placeres)
 const cv = document.getElementById("c"), g = cv.getContext("2d");
 const Wd = 224, Hd = 288;
 g.imageSmoothingEnabled = false;
-// ---------- sprites propios (1 = color principal, 2 = secundario, 3 = detalle) ----------
+const pad = rows => { const w = Math.max(...rows.map(r => r.length)); return rows.map(r => r.padEnd(w, ".")); };
 const SPR = {
-  ship: ["....3....", "...121...", "...121...", "..11211..", ".1112111.", "111222111", "11.2.2.11", "1.......1"],
-  gull: [["1.......1", "11.....11", ".11.3.11.", "..11111..", "...222...", "....2...."],
-         ["...........", "..1.....1..", ".111.3.111.", "11..111..11", "....222....", ".....2....."]],
-  bat: [["..1...1..", "...111...", "..13131..", ".1111111.", "1.2.2.2.1", ".........", ], ["..1...1..", "...111...", "..13131..", "111111111", "..2.2.2..", "........."]],
-  boss: [["...1111...", ".11111111.", "1133113311", "1111111111", ".2.2..2.2.", "2........2"], ["...1111...", ".11111111.", "1133113311", "1111111111", "..2.22.2..", ".2......2."]]
+  ship: pad(["....3....", "...121...", "...121...", "..11211..", ".1112111.", "111222111", "11.2.2.11", "1.......1"]),
+  gull: [pad(["1.......1", "11.....11", ".11.3.11.", "..11111..", "...222...", "....2...."]), pad(["...........", "..1.....1..", ".111.3.111.", "11..111..11", "....222....", ".....2....."])],
+  bat: [pad(["..1...1..", "...111...", "..13131..", ".1111111.", "1.2.2.2.1"]), pad(["..1...1..", "...111...", "..13131..", "111111111", "..2.2.2.."])],
+  boss: [pad(["...1111...", ".11111111.", "1133113311", "1111111111", ".2.2..2.2.", "2........2"]), pad(["...1111...", ".11111111.", "1133113311", "1111111111", "..2.22.2..", ".2......2."])],
+  uni: [pad(["............3...", "...........3....", "........4411....", ".......44111.2..", "......44111111..", "..11111111111...", ".1111111111111..", "4.111111111.....", "..1.1....1.1....", "..1.1....1.1...."]),
+        pad(["............3...", "...........3....", "........4411....", ".......44111.2..", "......44111111..", "..11111111111...", ".1111111111111..", "4.111111111.....", "...1.1..1.1.....", "..1...1...1....."])],
+  gaviotonA: pad(["11....................11", "111..................111", ".1111......33......1111.", "..111111..3333..111111..", "...1111111133111111111..", "....11111111111111111...", ".....111112222211111....", "......1112.22.2111......", ".......11.2..2.11.......", "..........2..2.........."]),
+  gaviotonB: pad(["........................", "........................", "....1111...33...1111....", "..11111111333311111111..", "111111111113311111111111", "1111.111111111111111.111", "11...11112222211111...11", ".......112.22.211.......", "........1.2..2.1........", "..........2..2.........."]),
+  pulpoA: pad(["......111111......", "....1111111111....", "...111111111111...", "..11133111133111..", "..11133111133111..", "..11111111111111..", "...111112211111...", "..2.2.2.2.2.2.2.2.", ".2..2..2..2..2..2.", "2..2..2..2..2..2..", ".2..2..2..2..2..2."]),
+  pulpoB: pad(["......111111......", "....1111111111....", "...111111111111...", "..11133111133111..", "..11133111133111..", "..11111111111111..", "...111112211111...", "...2.2.2.2.2.2.2..", "..2..2..2..2..2...", "...2..2..2..2..2..", "..2..2..2..2..2..."]),
 };
-function drawSpr(rows, x, y, cols) {
+const COL = { ship: ["#f2f2f2", "#ff3b3b", "#4ad3ff"], gull: ["#f4f4f4", "#ffb000", "#222"], bat: ["#7cf07c", "#2fa84f", "#ff3b3b"], boss: ["#c86bff", "#ffd400", "#fff"],
+  uni: ["#ffffff", "#ff8fd8", "#ffd400"], gavioton: ["#e8eef5", "#ff9a1f", "#ff2b2b"], pulpo: ["#ff5fa8", "#b0307a", "#ffffff"] };
+const RAINBOW = ["#ff3b3b", "#ff9a1f", "#ffe11f", "#3bdc5a", "#3bb4ff", "#9b5bff"];
+let t = 0;
+function drawSpr(rows, x, y, cols, sc = 1, flash = false) {
   for (let j = 0; j < rows.length; j++) for (let i = 0; i < rows[j].length; i++) {
     const ch = rows[j][i]; if (ch === ".") continue;
-    g.fillStyle = cols[+ch - 1]; g.fillRect(Math.round(x + i), Math.round(y + j), 1, 1);
+    g.fillStyle = flash ? "#fff" : ch === "4" ? RAINBOW[(i + j + (t >> 2)) % 6] : cols[+ch - 1];
+    g.fillRect(Math.round(x + i * sc), Math.round(y + j * sc), sc, sc);
   }
 }
-const COL = { ship: ["#f2f2f2", "#ff3b3b", "#4ad3ff"], gull: ["#f4f4f4", "#ffb000", "#222"], bat: ["#7cf07c", "#2fa84f", "#ff3b3b"], boss: ["#c86bff", "#ffd400", "#fff"] };
 // ---------- sonido ----------
 let AC = null, muted = false;
 function beep(f = 440, d = 0.07, type = "square", v = 0.05, slide = 0) {
@@ -56,119 +76,328 @@ function beep(f = 440, d = 0.07, type = "square", v = 0.05, slide = 0) {
   if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, f + slide), AC.currentTime + d);
   gn.gain.value = v; gn.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + d); o.connect(gn).connect(AC.destination); o.start(); o.stop(AC.currentTime + d);
 }
+const jingle = (notes, step = 0.09) => notes.forEach((f, i) => setTimeout(() => beep(f, step * 1.4, "square", 0.04), i * step * 1000));
 document.getElementById("mute").onclick = e => { muted = !muted; e.target.textContent = muted ? "🔇" : "🔊"; };
+// ---------- récords (en este equipo) ----------
+const LS = "gaviotas-records";
+const loadRec = () => { try { return JSON.parse(localStorage.getItem(LS)) || []; } catch (e) { return []; } };
+const saveRec = r => { try { localStorage.setItem(LS, JSON.stringify(r)); } catch (e) {} };
+let records = loadRec();
+const best = () => records.length ? records[0].s : 0;
+const qualifies = s => s > 0 && (records.length < 10 || s > records[records.length - 1].s);
 // ---------- estado ----------
-const stars = Array.from({ length: 60 }, () => ({ x: Math.random() * Wd, y: Math.random() * Hd, s: Math.random() * 0.6 + 0.2, c: ["#fff", "#9cf", "#ff9", "#f9c"][Math.random() * 4 | 0] }));
-let state = "title", score = 0, best = +(localStorage.getItem("gaviotas-best") || 0), lives = 3, wave = 0, t = 0;
-let ship, shots = [], foes = [], bombs = [], booms = [], sway = 0, waveMsg = 0;
-function newGame() { score = 0; lives = 3; wave = 0; ship = { x: Wd / 2 - 4, y: Hd - 30, dead: 0, inv: 90 }; nextWave(); state = "play"; beep(660, .1); beep(880, .15); }
+const stars = Array.from({ length: 70 }, () => ({ x: Math.random() * Wd, y: Math.random() * Hd, s: Math.random() * 0.6 + 0.2, c: ["#fff", "#9cf", "#ff9", "#f9c"][Math.random() * 4 | 0] }));
+let state = "title", score = 0, lives = 3, wave = 0, titleT = 0, overT = 0;
+let ship, shots = [], foes = [], bombs = [], booms = [], drops = [], texts = [], uni = null, boss = null;
+let sway = 0, waveMsg = 0, combo = 0, comboT = 0, nextLifeAt = 10000, shake = 0, uniTimer = 900;
+const pw = { double: 0, rapid: 0, spread: 0, shield: false };
+function newGame() {
+  score = 0; lives = 3; wave = 0; nextLifeAt = 10000; combo = 0; Object.assign(pw, { double: 0, rapid: 0, spread: 0, shield: false });
+  ship = { x: Wd / 2 - 4, y: Hd - 30, dead: 0, inv: 90 }; uni = null; uniTimer = 600 + Math.random() * 600; booms = []; drops = []; texts = [];
+  nextWave(); state = "play"; jingle([523, 659, 784, 1046]);
+}
+const isBossWave = w => w % 3 === 0;
 function nextWave() {
-  wave++; shots = []; bombs = []; foes = []; sway = 0; waveMsg = 100;
+  wave++; shots = []; bombs = []; foes = []; boss = null; sway = 0; waveMsg = 110;
+  if (isBossWave(wave)) { spawnBoss(); return; }
   const rows = [["boss", 4], ["bat", 8], ["bat", 8], ["gull", 10], ["gull", 10]];
   rows.forEach(([k, n], r) => { for (let i = 0; i < n; i++) {
     const hx = Wd / 2 + (i - (n - 1) / 2) * 18, hy = 40 + r * 16;
     foes.push({ k, hx, hy, x: hx + (i % 2 ? -1 : 1) * 200, y: -20 - r * 30 - i * 6, mode: "enter", t: 0, hp: k === "boss" ? 2 : 1, ph: Math.random() * 6 });
   } });
 }
+function spawnBoss() {
+  const kind = (wave / 3) % 2 === 1 ? "gaviota" : "pulpo";
+  const lvl = Math.ceil(wave / 3), hp = 70 + lvl * 35;
+  boss = kind === "gaviota"
+    ? { kind, name: "GRAN GAVIOTÓN", w: 48, h: 20, x: Wd / 2 - 24, y: -40, hp, max: hp, t: 0, flash: 0, phase: "enter", lvl }
+    : { kind, name: "PULPO DEL PUERTO", w: 36, h: 22, x: Wd / 2 - 18, y: -40, hp, max: hp, t: 0, flash: 0, phase: "enter", lvl, ang: 0 };
+  waveMsg = 150; for (let i = 0; i < 4; i++) setTimeout(() => beep(i % 2 ? 330 : 220, 0.25, "sawtooth", 0.05), i * 280);
+}
 // ---------- controles ----------
 const key = {};
-addEventListener("keydown", e => { key[e.code] = true; if (["ArrowLeft", "ArrowRight", "Space", "ArrowUp"].includes(e.code)) e.preventDefault(); if (state !== "play" && (e.code === "Space" || e.code === "Enter")) newGame(); });
+const nameOpen = () => !document.getElementById("nameBox").hidden;
+addEventListener("keydown", e => {
+  if (nameOpen()) return;
+  key[e.code] = true; if (["ArrowLeft", "ArrowRight", "Space", "ArrowUp", "ArrowDown"].includes(e.code)) e.preventDefault();
+  if ((state === "title" || state === "over") && (e.code === "Space" || e.code === "Enter")) start();
+});
 addEventListener("keyup", e => { key[e.code] = false; });
 const hold = (id, k) => { const b = document.getElementById(id);
-  const on = e => { e.preventDefault(); key[k] = true; b.classList.add("on"); if (state !== "play") newGame(); };
+  const on = e => { e.preventDefault(); key[k] = true; b.classList.add("on"); if (state === "title" || state === "over") start(); };
   const off = e => { e.preventDefault(); key[k] = false; b.classList.remove("on"); };
   b.addEventListener("pointerdown", on); b.addEventListener("pointerup", off); b.addEventListener("pointercancel", off); b.addEventListener("pointerleave", off); };
 hold("bl", "ArrowLeft"); hold("br", "ArrowRight"); hold("fire", "Space");
-cv.addEventListener("pointerdown", () => { if (state !== "play") newGame(); });
+cv.addEventListener("pointerdown", () => { if (state === "title" || state === "over") start(); });
+function start() { if (nameOpen() || (state === "over" && overT < 60)) return; newGame(); }
+// ---------- ayudas ----------
+function boom(x, y, c, n = 16, sp = 1.6) { for (let i = 0; i < n; i++) { const a = Math.random() * 6.28, v = Math.random() * sp + 0.3; booms.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, c: Array.isArray(c) ? c[i % c.length] : c, t: 0, life: 24 }); } }
+function popText(s, x, y, c = "#fff") { texts.push({ s, x, y, c, t: 0 }); }
+const mult = () => combo >= 8 ? 4 : combo >= 5 ? 3 : combo >= 3 ? 2 : 1;
+function addScore(base, x, y, chain = true) {
+  if (chain) { combo = comboT > 0 ? Math.min(combo + 1, 9) : 1; comboT = 75; }
+  const m = chain ? mult() : 1, pts = base * m; score += pts; popText(m > 1 ? pts + " x" + m : String(pts), x, y, m > 1 ? "#ffd400" : "#fff");
+  if (score >= nextLifeAt) { lives++; nextLifeAt += 15000; popText("¡VIDA EXTRA!", Wd / 2, Hd / 2 + 20, "#3bdc5a"); jingle([784, 988, 1175, 1568], 0.07); }
+}
+function maybeDrop(x, y) {
+  const r = Math.random();
+  const k = r < 0.012 ? "life" : r < 0.045 ? "double" : r < 0.07 ? "rapid" : r < 0.09 ? "shield" : null;
+  if (k) drops.push({ k, x, y, t: 0 });
+}
+const DROP = { double: ["D", "#4ad3ff"], rapid: ["R", "#ff9a1f"], shield: ["S", "#3bdc5a"], life: ["+", "#ff5fa8"], spread: ["*", "#ffe11f"] };
+function takeDrop(k) {
+  if (k === "double") { pw.double = 720; popText("DOBLE DISPARO", Wd / 2, Hd - 50, "#4ad3ff"); }
+  if (k === "rapid") { pw.rapid = 600; popText("DISPARO RÁPIDO", Wd / 2, Hd - 50, "#ff9a1f"); }
+  if (k === "shield") { pw.shield = true; popText("ESCUDO", Wd / 2, Hd - 50, "#3bdc5a"); }
+  if (k === "life") { lives++; popText("+1 VIDA", Wd / 2, Hd - 50, "#ff5fa8"); }
+  if (k === "spread") { pw.spread = 720; popText("¡DISPARO ARCOÍRIS!", Wd / 2, Hd - 50, "#ffe11f"); }
+  jingle([660, 880, 1320], 0.06);
+}
+function hitShip() {
+  if (pw.shield) { pw.shield = false; ship.inv = 60; boom(ship.x + 4, ship.y + 4, "#3bdc5a", 20); beep(400, .2, "triangle", .06, 300); return; }
+  lives--; ship.dead = 90; shake = 18; boom(ship.x + 4, ship.y + 4, ["#ff3b3b", "#ffd400", "#fff"], 34); beep(90, .6, "sawtooth", .07, -60);
+  bombs = []; pw.double = pw.rapid = pw.spread = 0; combo = 0;
+  foes.forEach(f => { if (f.mode === "dive") { f.mode = "enter"; f.y = -12; } });
+}
 // ---------- juego ----------
 let fireCd = 0;
 function update() {
-  t++;
-  for (const s of stars) { s.y += s.s * (state === "play" ? 1.4 : 0.6); if (s.y > Hd) { s.y = 0; s.x = Math.random() * Wd; } }
-  booms = booms.filter(b => ++b.t < 24);
-  if (state !== "play") return;
-  if (waveMsg) waveMsg--;
-  // nave
-  if (ship.dead) { if (--ship.dead === 0) { if (lives > 0) { ship.x = Wd / 2 - 4; ship.inv = 120; } else { state = "over"; if (score > best) { best = score; try { localStorage.setItem("gaviotas-best", best); } catch (e) {} } } } }
-  else {
-    const sp = 1.9; if (key.ArrowLeft || key.KeyA) ship.x -= sp; if (key.ArrowRight || key.KeyD) ship.x += sp;
+  t++; if (shake) shake--;
+  for (const s of stars) { s.y += s.s * (state === "play" ? (boss ? 2.4 : 1.4) : 0.6); if (s.y > Hd) { s.y = 0; s.x = Math.random() * Wd; } }
+  booms = booms.filter(b => ++b.t < b.life); texts = texts.filter(x => ++x.t < 60);
+  if (state === "title") { titleT++; return; }
+  if (state === "over") { overT++; return; }
+  if (waveMsg) waveMsg--; if (comboT) comboT--; else combo = 0;
+  ["double", "rapid", "spread"].forEach(k => { if (pw[k]) pw[k]--; });
+  if (ship.dead) {
+    if (--ship.dead === 0) {
+      if (lives > 0) { ship.x = Wd / 2 - 4; ship.inv = 120; }
+      else { state = "over"; overT = 0; if (qualifies(score)) askName(); }
+    }
+  } else {
+    const sp = 2; if (key.ArrowLeft || key.KeyA) ship.x -= sp; if (key.ArrowRight || key.KeyD) ship.x += sp;
     ship.x = Math.max(4, Math.min(Wd - 13, ship.x)); if (ship.inv) ship.inv--;
     if (fireCd) fireCd--;
-    if ((key.Space || key.ArrowUp) && !fireCd && shots.length < 3) { shots.push({ x: ship.x + 4, y: ship.y - 2 }); fireCd = 12; beep(880, .05, "square", .03, 600); }
+    const cap = (pw.rapid ? 8 : 4) * (pw.spread ? 5 : pw.double ? 2 : 1);
+    if ((key.Space || key.ArrowUp) && !fireCd && shots.length < cap) {
+      const sx = ship.x + 4, sy = ship.y - 2;
+      if (pw.spread) [-0.9, -0.45, 0, 0.45, 0.9].forEach((vx, i) => shots.push({ x: sx, y: sy, vx, c: RAINBOW[i + 1] }));
+      else if (pw.double) shots.push({ x: sx - 3, y: sy, vx: 0 }, { x: sx + 3, y: sy, vx: 0 });
+      else shots.push({ x: sx, y: sy, vx: 0 });
+      fireCd = pw.rapid ? 6 : 12; beep(880, .05, "square", .03, 600);
+    }
   }
-  shots.forEach(s => s.y -= 5); shots = shots.filter(s => s.y > -6);
-  // formación que se mece
+  shots.forEach(s => { s.y -= 5; s.x += s.vx || 0; }); shots = shots.filter(s => s.y > -6 && s.x > -4 && s.x < Wd + 4);
   sway = Math.sin(t / 60) * 14;
-  const speed = 1 + wave * 0.12;
-  const diving = foes.filter(f => f.mode === "dive").length;
-  if (foes.length && t % Math.max(40, 110 - wave * 10) === 0 && diving < 2 + Math.min(wave, 4)) {
-    const cand = foes.filter(f => f.mode === "form"); if (cand.length) { const f = cand[Math.random() * cand.length | 0]; f.mode = "dive"; f.t = 0; f.dir = f.x < Wd / 2 ? 1 : -1; f.sx = f.x; f.sy = f.y; beep(300, .25, "sawtooth", .03, -200); }
+  const speed = 1 + wave * 0.1;
+  if (!boss) {
+    const diving = foes.filter(f => f.mode === "dive").length;
+    if (foes.length && t % Math.max(36, 110 - wave * 10) === 0 && diving < 2 + Math.min(wave, 5)) {
+      const cand = foes.filter(f => f.mode === "form"); if (cand.length) { const f = cand[Math.random() * cand.length | 0]; f.mode = "dive"; f.t = 0; f.dir = f.x < Wd / 2 ? 1 : -1; f.sx = f.x; f.sy = f.y; beep(300, .25, "sawtooth", .03, -200); }
+    }
+    if (t % Math.max(46, 140 - wave * 12) === 0 && foes.length) { const f = foes[Math.random() * foes.length | 0]; if (f.mode === "form") bombs.push({ x: f.x + 4, y: f.y + 6, vx: 0, vy: 2.2 + wave * 0.1 }); }
   }
   for (const f of foes) {
     f.t++;
     const tx = f.hx + sway, ty = f.hy + Math.sin(t / 30 + f.ph) * 1.5;
     if (f.mode === "enter") { f.x += (tx - f.x) * 0.05 * speed; f.y += (ty - f.y) * 0.05 * speed; if (Math.abs(f.x - tx) < 1 && Math.abs(f.y - ty) < 1) f.mode = "form"; }
     else if (f.mode === "form") { f.x = tx; f.y = ty; }
-    else if (f.mode === "dive") {
-      // picada en curva hacia la nave, como una gaviota que baja al mar
+    else {
       const k = f.t / 70;
       f.x = f.sx + f.dir * Math.sin(k * 3.2) * 50 + (ship.x - f.sx) * Math.min(1, k * 0.6);
       f.y = f.sy + f.t * 1.6 * speed;
-      if (f.t % 45 === 20 && Math.random() < 0.7) bombs.push({ x: f.x + 4, y: f.y + 6, vx: (ship.x - f.x) / 140 });
-      if (f.y > Hd + 10) { f.mode = "enter"; f.y = -12; f.x = tx; }
+      if (f.t % 45 === 20 && Math.random() < 0.7) bombs.push({ x: f.x + 4, y: f.y + 6, vx: (ship.x - f.x) / 140, vy: 2.2 + wave * 0.1 });
+      if (f.y > Hd + 10) { if (f.mode === "minion") f.dead = true; else { f.mode = "enter"; f.y = -12; f.x = tx; } }
     }
   }
-  if (t % Math.max(50, 140 - wave * 12) === 0 && foes.length) { const f = foes[Math.random() * foes.length | 0]; if (f.mode === "form") bombs.push({ x: f.x + 4, y: f.y + 6, vx: 0 }); }
-  bombs.forEach(b => { b.y += 2.2 + wave * 0.1; b.x += b.vx; }); bombs = bombs.filter(b => b.y < Hd);
-  // choques
-  for (const s of shots) for (const f of foes) if (!s.hit && Math.abs(s.x - (f.x + 4.5)) < 6 && Math.abs(s.y - (f.y + 3)) < 5) {
-    s.hit = true; if (--f.hp <= 0) { f.dead = true; score += f.k === "boss" ? (f.mode === "dive" ? 400 : 150) : f.k === "bat" ? (f.mode === "dive" ? 160 : 80) : (f.mode === "dive" ? 100 : 50); boom(f.x + 4, f.y + 3, COL[f.k][0]); beep(180, .18, "square", .05, -120); }
-    else beep(520, .06);
+  updateBoss(); updateUni();
+  bombs.forEach(b => { b.y += b.vy; b.x += b.vx; }); bombs = bombs.filter(b => b.y < Hd + 4 && b.y > -10 && b.x > -6 && b.x < Wd + 6);
+  drops.forEach(d => { d.y += 0.9; d.t++; }); drops = drops.filter(d => d.y < Hd);
+  for (const s of shots) {
+    for (const f of foes) if (!s.hit && !f.dead && Math.abs(s.x - (f.x + 4.5)) < 6 && Math.abs(s.y - (f.y + 3)) < 5) {
+      s.hit = true;
+      if (--f.hp <= 0) {
+        f.dead = true; boom(f.x + 4, f.y + 3, COL[f.k][0]); beep(180, .18, "square", .05, -120);
+        addScore(f.k === "boss" ? (f.mode === "dive" ? 400 : 150) : f.k === "bat" ? (f.mode === "dive" ? 160 : 80) : (f.mode === "form" ? 50 : 100), f.x + 4, f.y);
+        maybeDrop(f.x + 4, f.y + 4);
+      } else beep(520, .06);
+    }
+    if (!s.hit && uni && Math.abs(s.x - (uni.x + 8)) < 9 && Math.abs(s.y - (uni.y + 5)) < 6) {
+      s.hit = true; uni.hp--; uni.flash = 6; beep(1200, .05, "triangle", .05);
+      if (uni.hp <= 0) { boom(uni.x + 8, uni.y + 5, RAINBOW, 40, 2.2); addScore(1000, uni.x + 8, uni.y, false); drops.push({ k: "spread", x: uni.x + 8, y: uni.y + 5, t: 0 }); jingle([1046, 1318, 1568, 2093], 0.07); uni = null; }
+    }
+    if (!s.hit && boss && boss.phase !== "enter" && s.x > boss.x && s.x < boss.x + boss.w && s.y > boss.y && s.y < boss.y + boss.h) {
+      s.hit = true; boss.hp--; boss.flash = 3; score += 10;
+      if (boss.hp <= 0) killBoss(); else if (t % 3 === 0) beep(260, .04, "square", .03);
+    }
   }
   shots = shots.filter(s => !s.hit); foes = foes.filter(f => !f.dead);
-  if (!ship.dead && !ship.inv) {
-    const hit = bombs.some(b => Math.abs(b.x - (ship.x + 4.5)) < 5 && Math.abs(b.y - (ship.y + 4)) < 5) || foes.some(f => Math.abs(f.x - ship.x) < 8 && Math.abs(f.y - ship.y) < 7);
-    if (hit) { lives--; ship.dead = 90; boom(ship.x + 4, ship.y + 4, "#ff3b3b", 30); beep(90, .6, "sawtooth", .07, -60); bombs = []; foes.forEach(f => { if (f.mode === "dive") { f.mode = "enter"; f.y = -12; } }); }
+  if (!ship.dead) {
+    for (const d of drops) if (!d.got && Math.abs(d.x - (ship.x + 4.5)) < 7 && Math.abs(d.y - (ship.y + 4)) < 7) { d.got = true; takeDrop(d.k); }
+    drops = drops.filter(d => !d.got);
+    if (!ship.inv) {
+      const hit = bombs.some(b => Math.abs(b.x - (ship.x + 4.5)) < 5 && Math.abs(b.y - (ship.y + 4)) < 5) || foes.some(f => Math.abs(f.x - ship.x) < 8 && Math.abs(f.y - ship.y) < 7)
+        || (boss && boss.phase === "swoop" && ship.x + 8 > boss.x && ship.x < boss.x + boss.w && ship.y + 6 > boss.y && ship.y < boss.y + boss.h);
+      if (hit) hitShip();
+    }
   }
-  if (!foes.length) nextWave();
+  if (!foes.length && !boss && !waveMsg) nextWave();
 }
-function boom(x, y, c, n = 16) { for (let i = 0; i < n; i++) { const a = Math.random() * 6.28, v = Math.random() * 1.6 + 0.3; booms.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, c, t: 0 }); } }
-function text(s, x, y, c = "#fff", size = 8, align = "center") { g.fillStyle = c; g.font = `bold ${size}px ui-monospace, Consolas, monospace`; g.textAlign = align; g.fillText(s, x, y); }
+function killBoss() {
+  const b = boss;
+  boom(b.x + b.w / 2, b.y + b.h / 2, b.kind === "gaviota" ? ["#fff", "#ff9a1f", "#ff2b2b"] : ["#ff5fa8", "#fff", "#b0307a"], 80, 3);
+  for (let i = 0; i < 6; i++) setTimeout(() => boom(b.x + Math.random() * b.w, b.y + Math.random() * b.h, "#ffd400", 14), i * 90);
+  shake = 30; addScore(5000 * b.lvl, b.x + b.w / 2, b.y, false);
+  popText("¡JEFE DERROTADO!", Wd / 2, Hd / 2, "#ffd400"); jingle([523, 659, 784, 1046, 784, 1046, 1318], 0.1);
+  drops.push({ k: "life", x: b.x + b.w / 2, y: b.y + b.h, t: 0 });
+  boss = null; foes = []; bombs = []; waveMsg = 90;
+}
+function updateBoss() {
+  if (!boss) return;
+  const b = boss; b.t++; if (b.flash) b.flash--;
+  const rage = b.hp < b.max / 2;
+  if (b.phase === "enter") { b.y += 0.8; if (b.y >= 34) { b.phase = "fight"; b.t = 0; } return; }
+  if (b.kind === "gaviota") {
+    if (b.phase === "fight") {
+      b.x = Wd / 2 - b.w / 2 + Math.sin(b.t / 50) * 70; b.y = 34 + Math.sin(b.t / 23) * 6;
+      if (b.t % (rage ? 50 : 75) === 0) {        // abanico de plumas
+        const n = rage ? 7 : 5; for (let i = 0; i < n; i++) { const a = Math.PI / 2 + (i - (n - 1) / 2) * 0.22; bombs.push({ x: b.x + b.w / 2, y: b.y + b.h, vx: Math.cos(a) * 1.8, vy: Math.sin(a) * 1.8, c: "#fff" }); }
+        beep(500, .12, "triangle", .04, -200);
+      }
+      if (b.t % (rage ? 260 : 380) === 0) { b.phase = "swoop"; b.t = 0; beep(200, .5, "sawtooth", .05, 300); }
+      if (b.t % 200 === 100 && foes.length < 6) for (let i = 0; i < 3; i++) foes.push({ k: "gull", x: b.x + 10 + i * 12, y: b.y + 10, sx: b.x + 10 + i * 12, sy: b.y + 10, mode: "minion", t: 0, dir: i % 2 ? 1 : -1, hp: 1, ph: 0, hx: 0, hy: 0 });
+    } else {                                      // picada sobre la nave
+      const k = b.t / 90; b.x += ((ship.x - b.w / 2 + 4) - b.x) * 0.03; b.y = 34 + Math.sin(Math.min(1, k) * Math.PI) * 190;
+      if (b.t > 90) { b.phase = "fight"; b.t = 1; }
+    }
+  } else {
+    b.x = Wd / 2 - b.w / 2 + Math.sin(b.t / 70) * 60; b.y = 34 + Math.sin(b.t / 31) * 10;
+    b.ang += rage ? 0.13 : 0.09;
+    if (b.t % (rage ? 6 : 9) === 0) {             // espiral de tinta
+      const arms = rage ? 3 : 2; for (let i = 0; i < arms; i++) { const a = b.ang + i * (Math.PI * 2 / arms); bombs.push({ x: b.x + b.w / 2, y: b.y + b.h - 4, vx: Math.cos(a) * 1.3, vy: Math.abs(Math.sin(a)) * 1.3 + 0.6, c: "#9b5bff" }); }
+    }
+    if (b.t % 120 === 60) {                       // chorro de tinta apuntado
+      for (let i = -1; i <= 1; i++) { const dx = ship.x + 4 - (b.x + b.w / 2), dy = ship.y - (b.y + b.h), m = Math.hypot(dx, dy) || 1; bombs.push({ x: b.x + b.w / 2, y: b.y + b.h, vx: dx / m * 2.4 + i * 0.3, vy: dy / m * 2.4, c: "#444", big: true }); }
+      beep(140, .2, "sawtooth", .05, -60);
+    }
+  }
+}
+function updateUni() {
+  if (uni) {
+    uni.t++; if (uni.flash) uni.flash--;
+    uni.x += uni.vx; uni.y = uni.by + Math.sin(uni.t / 14) * 8;
+    if (uni.t % 2 === 0) booms.push({ x: uni.x + (uni.vx > 0 ? 0 : 16), y: uni.y + 6 + (Math.random() * 3 | 0), vx: -uni.vx * 0.2, vy: 0.2, c: RAINBOW[(uni.t >> 1) % 6], t: 0, life: 30 });
+    if (uni.t % 8 === 0) beep(1500 + Math.random() * 600, .03, "triangle", .015);
+    if (uni.x < -30 || uni.x > Wd + 30) uni = null;
+    return;
+  }
+  if (--uniTimer <= 0) {
+    const fromLeft = Math.random() < 0.5;
+    uni = { x: fromLeft ? -20 : Wd + 4, vx: fromLeft ? 1.1 : -1.1, by: boss ? 120 : 26 + Math.random() * 20, y: 0, t: 0, hp: 4, flash: 0 };
+    uniTimer = 1200 + Math.random() * 900; jingle([1318, 1568, 2093], 0.06);
+  }
+}
+function txt(s, x, y, c = "#fff", size = 8, align = "center") { g.fillStyle = c; g.font = `bold ${size}px ui-monospace, Consolas, monospace`; g.textAlign = align; g.fillText(s, x, y); }
+const flipRows = rows => rows.map(r => [...r].reverse().join(""));
 function draw() {
-  g.fillStyle = "#03030a"; g.fillRect(0, 0, Wd, Hd);
-  for (const s of stars) { if ((t + s.x) % 40 < 34) { g.fillStyle = s.c; g.fillRect(s.x | 0, s.y | 0, 1, 1); } }
-  // silueta del cerro al fondo (casitas de Valparaíso)
+  g.save();
+  if (shake) g.translate((Math.random() - 0.5) * shake * 0.3, (Math.random() - 0.5) * shake * 0.3);
+  g.fillStyle = boss && boss.hp < boss.max / 2 && (t >> 3) % 2 ? "#0d0306" : "#03030a"; g.fillRect(-4, -4, Wd + 8, Hd + 8);
+  for (const s of stars) { if ((t + s.x) % 40 < 34) { g.fillStyle = s.c; g.fillRect(s.x | 0, s.y | 0, 1, boss ? 3 : 1); } }
   g.fillStyle = "#0c1230"; for (let i = 0; i < 14; i++) { const h = 8 + ((i * 37) % 13); g.fillRect(i * 16, Hd - 10 - h, 14, h + 10); }
   g.fillStyle = "#ffcf5a"; for (let i = 0; i < 14; i++) if ((i * 7 + (t >> 6)) % 3) g.fillRect(i * 16 + 4, Hd - 14 - ((i * 37) % 13) / 2, 2, 2);
-  booms.forEach(b => { b.x += b.vx; b.y += b.vy; g.fillStyle = b.c; g.globalAlpha = 1 - b.t / 24; g.fillRect(b.x | 0, b.y | 0, 2, 2); g.globalAlpha = 1; });
+  booms.forEach(b => { b.x += b.vx; b.y += b.vy; g.fillStyle = b.c; g.globalAlpha = 1 - b.t / b.life; g.fillRect(b.x | 0, b.y | 0, 2, 2); g.globalAlpha = 1; });
   if (state === "play" || state === "over") {
     const fr = (t >> 4) & 1;
     for (const f of foes) { const s = f.k === "gull" ? SPR.gull[fr] : f.k === "bat" ? SPR.bat[fr] : SPR.boss[fr]; drawSpr(s, f.x - (s[0].length - 9) / 2, f.y, f.hp > 1 || f.k !== "boss" ? COL[f.k] : ["#ff6bd6", "#ffd400", "#fff"]); }
-    g.fillStyle = "#ffef5a"; shots.forEach(s => g.fillRect(s.x | 0, s.y | 0, 1, 4));
-    g.fillStyle = "#ff5a5a"; bombs.forEach(b => { g.fillRect(b.x | 0, b.y | 0, 2, 3); });
-    if (state === "play" && !ship.dead && !(ship.inv && (t >> 2) & 1)) drawSpr(SPR.ship, ship.x, ship.y, COL.ship);
-    text("PUNTAJE", 8, 10, "#ff5a5a", 7, "left"); text(String(score).padStart(6, "0"), 8, 19, "#fff", 8, "left");
-    text("RÉCORD", Wd - 8, 10, "#ff5a5a", 7, "right"); text(String(Math.max(best, score)).padStart(6, "0"), Wd - 8, 19, "#fff", 8, "right");
-    for (let i = 0; i < lives - (ship && ship.dead ? 0 : 1); i++) drawSpr(SPR.ship, 6 + i * 11, Hd - 10, COL.ship);
-    text("OLA " + wave, Wd - 6, Hd - 3, "#4ad3ff", 7, "right");
-    if (waveMsg && state === "play") text("OLA " + wave, Wd / 2, Hd / 2, "#4ad3ff", 12);
+    if (boss) {
+      const b = boss;
+      if (b.kind === "gaviota") drawSpr(fr ? SPR.gaviotonA : SPR.gaviotonB, b.x, b.y, COL.gavioton, 2, b.flash > 0);
+      else drawSpr(fr ? SPR.pulpoA : SPR.pulpoB, b.x, b.y, COL.pulpo, 2, b.flash > 0);
+      g.fillStyle = "#333"; g.fillRect(40, 26, 144, 4); g.fillStyle = b.hp < b.max / 3 ? "#ff3b3b" : b.hp < b.max * 2 / 3 ? "#ffd400" : "#3bdc5a"; g.fillRect(40, 26, 144 * b.hp / b.max, 4);
+      txt(b.name, Wd / 2, 24, "#fff", 6);
+    }
+    if (uni) { const s = SPR.uni[(t >> 3) & 1]; drawSpr(uni.vx > 0 ? s : flipRows(s), uni.x, uni.y, COL.uni, 1, uni.flash > 0); }
+    shots.forEach(s => { g.fillStyle = s.c || "#ffef5a"; g.fillRect(s.x | 0, s.y | 0, 1, 4); });
+    bombs.forEach(b => { g.fillStyle = b.c || "#ff5a5a"; g.fillRect(b.x | 0, b.y | 0, b.big ? 3 : 2, 3); });
+    drops.forEach(d => { const [l, c] = DROP[d.k]; g.fillStyle = c; g.fillRect((d.x - 4) | 0, (d.y - 4) | 0, 9, 9); g.fillStyle = "#000"; g.fillRect((d.x - 3) | 0, (d.y - 3) | 0, 7, 7); txt(l, d.x + 0.5, d.y + 3, c, 7); });
+    if (state === "play" && !ship.dead && !(ship.inv && (t >> 2) & 1)) {
+      drawSpr(SPR.ship, ship.x, ship.y, pw.spread ? [RAINBOW[(t >> 2) % 6], "#ff3b3b", "#fff"] : COL.ship);
+      if (pw.shield) { g.strokeStyle = (t >> 3) & 1 ? "#3bdc5a" : "#9cffb0"; g.beginPath(); g.arc(ship.x + 4.5, ship.y + 4, 8, 0, 6.3); g.stroke(); }
+    }
+    texts.forEach(x => { g.globalAlpha = 1 - x.t / 60; txt(x.s, x.x, x.y - x.t * 0.3, x.c, 7); g.globalAlpha = 1; });
+    txt("PUNTAJE", 8, 10, "#ff5a5a", 7, "left"); txt(String(score).padStart(6, "0"), 8, 19, "#fff", 8, "left");
+    txt("RÉCORD", Wd - 8, 10, "#ff5a5a", 7, "right"); txt(String(Math.max(best(), score)).padStart(6, "0"), Wd - 8, 19, "#fff", 8, "right");
+    if (combo >= 3) txt("COMBO x" + mult(), Wd / 2, 12, "#ffd400", 7);
+    for (let i = 0; i < Math.min(6, lives - (ship && ship.dead ? 0 : 1)); i++) drawSpr(SPR.ship, 6 + i * 11, Hd - 10, COL.ship);
+    let px = 90; [["double", "D", "#4ad3ff"], ["rapid", "R", "#ff9a1f"], ["spread", "*", "#ffe11f"]].forEach(([k, l, c]) => { if (pw[k]) { txt(l, px, Hd - 3, c, 7); px += 10; } });
+    if (pw.shield) txt("S", px, Hd - 3, "#3bdc5a", 7);
+    txt((isBossWave(wave) ? "JEFE " : "OLA ") + wave, Wd - 6, Hd - 3, "#4ad3ff", 7, "right");
+    if (waveMsg && state === "play") {
+      if (boss && boss.phase === "enter") { if ((t >> 3) & 1) txt("¡ATENCIÓN! LLEGA EL JEFE", Wd / 2, Hd / 2, "#ff3b3b", 9); }
+      else if (!boss && foes.length) txt("OLA " + wave, Wd / 2, Hd / 2, "#4ad3ff", 12);
+    }
   }
-  if (state === "title") {
-    text("GAVIOTAS", Wd / 2, 92, "#ffd400", 20); text("DEL ESPACIO", Wd / 2, 114, "#ff5a5a", 14);
-    drawSpr(SPR.boss[(t >> 4) & 1], Wd / 2 - 40, 140, COL.boss); text("400", Wd / 2 - 20, 146, "#fff", 7, "left");
-    drawSpr(SPR.bat[(t >> 4) & 1], Wd / 2 - 39, 156, COL.bat); text("160", Wd / 2 - 20, 162, "#fff", 7, "left");
-    drawSpr(SPR.gull[(t >> 4) & 1], Wd / 2 - 39, 172, COL.gull); text("100", Wd / 2 - 20, 178, "#fff", 7, "left");
-    if ((t >> 5) & 1) text(matchMedia("(pointer: coarse)").matches ? "TOCA PARA JUGAR" : "ESPACIO PARA JUGAR", Wd / 2, 214, "#fff", 9);
-    text("← → MOVER · ESPACIO DISPARA", Wd / 2, 236, "#7a8", 7);
-    text("RÉCORD " + String(best).padStart(6, "0"), Wd / 2, 256, "#ff5a5a", 7);
-    text("HOSTAL OREGON · CERRO PLACERES", Wd / 2, 278, "#556", 6);
-  }
+  if (state === "title") drawTitle();
   if (state === "over") {
-    text("FIN DEL JUEGO", Wd / 2, 130, "#ff5a5a", 14); text("PUNTAJE " + score, Wd / 2, 152, "#fff", 9);
-    if ((t >> 5) & 1) text(matchMedia("(pointer: coarse)").matches ? "TOCA PARA OTRA" : "ESPACIO PARA OTRA", Wd / 2, 180, "#ffd400", 9);
+    txt("FIN DEL JUEGO", Wd / 2, 110, "#ff5a5a", 14); txt("PUNTAJE " + score, Wd / 2, 130, "#fff", 9);
+    drawTable(150);
+    if (overT > 60 && (t >> 5) & 1 && !nameOpen()) txt(matchMedia("(pointer: coarse)").matches ? "TOCA PARA OTRA" : "ESPACIO PARA OTRA", Wd / 2, 270, "#ffd400", 8);
   }
+  g.restore();
 }
-(function loop() { update(); draw(); requestAnimationFrame(loop); })();
+function drawTable(y0) {
+  txt("MEJORES PUNTAJES", Wd / 2, y0, "#ffd400", 8);
+  if (!records.length) { txt("¡SÉ EL PRIMERO!", Wd / 2, y0 + 16, "#9ab", 7); return; }
+  records.slice(0, 10).forEach((r, i) => {
+    const c = i === 0 ? "#ffd400" : i < 3 ? "#4ad3ff" : "#ccd";
+    txt(String(i + 1).padStart(2, " ") + ".", 46, y0 + 14 + i * 10, c, 7, "left");
+    txt(r.n, 66, y0 + 14 + i * 10, c, 7, "left");
+    txt(String(r.s).padStart(6, "0"), 178, y0 + 14 + i * 10, c, 7, "right");
+  });
+}
+function drawTitle() {
+  txt("GAVIOTAS", Wd / 2, 62, "#ffd400", 20); txt("DEL ESPACIO", Wd / 2, 82, "#ff5a5a", 14);
+  if ((titleT >> 8) % 2 === 0) {
+    const fr = (t >> 4) & 1;
+    drawSpr(SPR.boss[fr], 50, 100, COL.boss); txt("150 · 400 EN PICADA", 68, 106, "#fff", 6, "left");
+    drawSpr(SPR.bat[fr], 51, 114, COL.bat); txt("80 · 160", 68, 120, "#fff", 6, "left");
+    drawSpr(SPR.gull[fr], 51, 128, COL.gull); txt("50 · 100", 68, 134, "#fff", 6, "left");
+    drawSpr(SPR.uni[fr], 47, 142, COL.uni); txt("UNICORNIO 1000 + ARCOÍRIS", 68, 150, "#ffe11f", 6, "left");
+    txt("CADA 3 OLAS LLEGA UN JEFE", Wd / 2, 170, "#ff3b3b", 7);
+    txt("PODERES", Wd / 2, 186, "#9ab", 6);
+    [["D", "DOBLE", "#4ad3ff"], ["R", "RÁPIDO", "#ff9a1f"], ["S", "ESCUDO", "#3bdc5a"], ["+", "VIDA", "#ff5fa8"]].forEach(([l, n, c], i) => txt(l + " " + n, 24 + i * 50, 197, c, 6, "left"));
+  } else drawTable(100);
+  if ((t >> 5) & 1) txt(matchMedia("(pointer: coarse)").matches ? "TOCA PARA JUGAR" : "ESPACIO PARA JUGAR", Wd / 2, 226, "#fff", 9);
+  txt("← → MOVER · ESPACIO DISPARA", Wd / 2, 246, "#7a8", 7);
+  txt("HOSTAL OREGON · CERRO PLACERES", Wd / 2, 278, "#556", 6);
+}
+// ---------- nombre para la tabla ----------
+function askName() {
+  const box = document.getElementById("nameBox"), inp = document.getElementById("nameIn");
+  document.getElementById("nameScore").textContent = score + " puntos";
+  try { inp.value = localStorage.getItem("gaviotas-nombre") || ""; } catch (e) { inp.value = ""; }
+  box.hidden = false; Object.keys(key).forEach(k => key[k] = false); setTimeout(() => inp.focus(), 50);
+}
+document.getElementById("nameForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const inp = document.getElementById("nameIn");
+  const n = (inp.value || "").toUpperCase().replace(/[^A-ZÁÉÍÓÚÑÜ0-9 ]/g, "").trim().slice(0, 8) || "ANÓNIMO";
+  try { localStorage.setItem("gaviotas-nombre", n); } catch (er) {}
+  records.push({ n, s: score, d: Date.now() }); records.sort((a, b) => b.s - a.s); records = records.slice(0, 10); saveRec(records);
+  document.getElementById("nameBox").hidden = true; overT = 30; inp.blur(); window.focus();
+});
+// para probar: ?prueba=jefe empieza en la ola del jefe, ?prueba=unicornio hace aparecer uno pronto
+window.__juego = () => ({ state, score, wave, lives, foes: foes.length, boss: boss && { kind: boss.kind, hp: boss.hp, phase: boss.phase }, uni: uni && Math.round(uni.x), drops: drops.length, pw: { ...pw }, records: records.length });
+const Q = new URLSearchParams(location.search).get("prueba");
+if (Q) setTimeout(() => { newGame(); if (Q === "jefe") { wave = 2; nextWave(); } if (Q === "jefe2") { wave = 5; nextWave(); } if (Q === "unicornio") uniTimer = 30; }, 100);
+// paso fijo de 60 por segundo: el juego corre igual en pantallas de 30, 60 o 120 Hz
+let last = performance.now(), acc = 0;
+(function loop(now) {
+  acc += Math.min(100, (now || performance.now()) - last); last = now || performance.now();
+  while (acc >= 1000 / 60) { update(); acc -= 1000 / 60; }
+  draw(); requestAnimationFrame(loop);
+})(performance.now());
 </script>
 </body>
 </html>
