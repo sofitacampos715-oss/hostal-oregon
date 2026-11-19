@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795046477">
-<script>window.BUILD="1795046477";</script>
+<meta name="build" content="1795059596">
+<script>window.BUILD="1795059596";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -126,6 +126,11 @@ header.top .wrap { display: flex; align-items: center; justify-content: space-be
 .hero-in { position: relative; display: grid; gap: 14px; padding-block: 96px 34px; width: 100%; }
 .hero-seal { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-hero); box-shadow: 0 6px 22px rgba(0,0,0,.45); }
 .hero .eyebrow { color: rgba(255,255,255,.82); }
+.wx { display: inline-flex; width: fit-content; justify-self: start; align-self: flex-start; align-items: center; gap: 8px; margin: 2px 0 6px; padding: 5px 12px 5px 8px; border-radius: 99px; background: rgba(10,16,22,.45); border: 1px solid rgba(255,255,255,.22); color: #fff; font: 600 .82rem/1.2 var(--f-body); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.wx[hidden] { display: none; }
+.wx b { font: 800 1rem/1 var(--f-display); }
+.wx .ico { font-size: 1.15rem; line-height: 1; }
+.wx small { opacity: .8; font-weight: 500; }
 .hero h1 { font-size: clamp(2.2rem, 7.4vw, 4rem); font-weight: 800; letter-spacing: -.02em; max-width: 15ch; text-shadow: 0 2px 20px rgba(0,0,0,.35); }
 body[data-house="pocuro"] .hero h1 { font-weight: 600; letter-spacing: -.01em; }
 .hero h1 em { font-style: normal; color: var(--accent-hero); }
@@ -303,7 +308,7 @@ legend small { font-weight: 400; color: var(--muted); }
 .empty { padding: 18px; color: var(--muted); }
 
 /* Recorrido virtual (fotos 360 reales, Photo Sphere Viewer) */
-.tour { position: fixed; inset: 0; z-index: 60; background: #05090d; color: #eef3f6; overflow: hidden; --tf: "Baloo 2", "Trebuchet MS", system-ui, sans-serif; --tacc: #ffc62e; --tink: #231a00; }
+.tour { position: fixed; inset: 0; z-index: 60; background: #05090d; color: #eef3f6; overflow: hidden; overflow: clip; --tf: "Baloo 2", "Trebuchet MS", system-ui, sans-serif; --tacc: #ffc62e; --tink: #231a00; }
 .tour[data-house="pocuro"] { --tf: "Fraunces", Georgia, "Times New Roman", serif; --tacc: #e9c58a; --tink: #2a1d10; }
 .tour-stage { position: absolute; inset: 0; }
 .tour-stage .psv-container { background: #05090d; }
@@ -396,6 +401,28 @@ legend small { font-weight: 400; color: var(--muted); }
 .keys-pin svg.keys { width: 100px; height: auto; display: block; }
 .keys-pin .key-sway { transform-box: fill-box; transform-origin: 50% 0; animation: key-sway 3.2s ease-in-out infinite; }
 .keys-pin:hover { transform: scale(1.08); }
+#canal { position: fixed; inset: 0; overflow: clip; z-index: 140; background: radial-gradient(ellipse at center, #1c1a17, #000 75%); display: grid; place-items: center; padding: calc(56px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px)); }
+#canal[hidden] { display: none; }
+.cn-tv { width: min(100%, 980px); display: grid; gap: 10px; padding: 16px 16px 12px; border-radius: 26px; background: linear-gradient(#3a3631, #1d1b18); box-shadow: 0 0 0 3px #4a453e, 0 24px 70px rgba(0,0,0,.7), inset 0 2px 0 rgba(255,255,255,.08); }
+.cn-screen { position: relative; aspect-ratio: 16 / 10; max-height: calc(100dvh - 190px); width: 100%; border-radius: 16px; overflow: hidden; background: #000; box-shadow: inset 0 0 40px rgba(0,0,0,.9); }
+.cn-body, .cn-body iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+.cn-noise { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; z-index: 2; }
+.cn-noise[hidden] { display: none; }
+.cn-screen::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 3; border-radius: 16px; background: radial-gradient(ellipse at center, transparent 70%, rgba(0,0,0,.35)); }
+.cn-osd { position: absolute; top: 12px; left: 14px; z-index: 4; font: 700 1rem/1 var(--f-mono); color: #4dff7a; text-shadow: 0 0 6px #1aff5a, 0 2px 0 #000; opacity: 0; pointer-events: none; }
+.cn-osd.on { animation: cn-osd 2.6s ease forwards; }
+@keyframes cn-osd { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
+.cn-foto { position: absolute; inset: 0; overflow: hidden; background: #f3efe7; }
+.cn-foto img { width: 100%; display: block; animation: cn-pan 14s ease-in-out infinite alternate; }
+@keyframes cn-pan { from { transform: translateY(0); } to { transform: translateY(-12%); } }
+.cn-visit { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); background: #16212c; color: #fff; border-radius: 99px; padding: 10px 18px; font: 700 .95rem var(--f-body); text-decoration: none; box-shadow: 0 8px 22px rgba(0,0,0,.35); white-space: nowrap; }
+.cn-panel { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.cn-brand { font: 800 .8rem var(--f-mono); letter-spacing: .14em; color: #c9b98f; margin-right: auto; }
+.cn-btn { border: 1px solid #5a544b; background: #2a2723; color: #eee; border-radius: 10px; padding: 8px 12px; font: 700 .85rem var(--f-mono); text-decoration: none; cursor: pointer; }
+.cn-btn:hover { background: #3a3631; }
+.cn-dots { display: inline-flex; gap: 6px; }
+.cn-dots i { width: 8px; height: 8px; border-radius: 50%; background: #5a544b; }
+.cn-dots i.on { background: #4dff7a; box-shadow: 0 0 6px #1aff5a; }
 #arcade { position: absolute; inset: 0; z-index: 140; background: radial-gradient(ellipse at center, #1a1a1a, #000 75%); display: grid; place-items: center; padding: calc(56px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px)); }
 #arcade[hidden] { display: none; }
 .arc-tv { width: min(100%, 560px); height: 100%; max-height: 760px; border-radius: 22px; padding: 14px; background: linear-gradient(#2b2b2b, #111); box-shadow: 0 0 0 3px #3a3a3a, 0 20px 60px rgba(0,0,0,.7), inset 0 0 18px rgba(0,0,0,.8); }
@@ -1273,6 +1300,7 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
     <div class="wrap hero-in">
       <img class="hero-seal" id="heroSeal" alt="" width="84" height="84">
       <p class="eyebrow" id="heroEyebrow"></p>
+      <p class="wx" id="heroWx" hidden aria-live="polite"></p>
       <h1 id="heroTitle"></h1>
       <p class="lead" id="heroLead" hidden></p>
       <ul class="facts" id="heroFacts"></ul>
@@ -2075,6 +2103,7 @@ function render() {
   $("#rulesList").innerHTML = texts.reglas.map(t => "<li>" + esc(t) + "</li>").join("");
   renderReglamento();
   if (window.mapFocus) window.mapFocus(house);
+  loadWeather();
   const monthly = mode !== "noche";
   $("#mensual").hidden = !monthly;
   $("#waShown").textContent = "+" + CONFIG.whatsapp.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, "$1 $2 $3 $4");
@@ -2191,6 +2220,33 @@ $("#rlBack").addEventListener("click", () => closeList());
 $("#rlChips").addEventListener("click", e => { const b = e.target.closest("[data-range]"); if (b) { rlRange = b.dataset.range; drawList(); } });
 $$(".rl-sort button").forEach(b => b.addEventListener("click", () => { rlSort = b.dataset.sort; drawList(); }));
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#roomList").hidden) closeList(); });
+
+// El tiempo en Valparaíso (Open-Meteo, sin clave): se muestra en la cabecera y se actualiza cada 3 horas
+const WX_CODES = [[0, "☀️", "Despejado"], [1, "🌤️", "Casi despejado"], [2, "⛅", "Parcial"], [3, "☁️", "Nublado"], [45, "🌫️", "Neblina"], [48, "🌫️", "Neblina"],
+  [51, "🌦️", "Llovizna"], [53, "🌦️", "Llovizna"], [55, "🌦️", "Llovizna"], [61, "🌧️", "Lluvia"], [63, "🌧️", "Lluvia"], [65, "🌧️", "Lluvia fuerte"],
+  [80, "🌦️", "Chubascos"], [81, "🌧️", "Chubascos"], [82, "⛈️", "Chubascos"], [95, "⛈️", "Tormenta"]];
+const wxInfo = c => { let r = WX_CODES[0]; for (const w of WX_CODES) if (c >= w[0]) r = w; return r; };
+const WX_TTL = 3 * 3600 * 1000;
+async function loadWeather() {
+  const el = $("#heroWx"), pl = PLACES[house]; if (!el || !pl) return;
+  const keyWx = "wx-" + house;
+  let d = null;
+  try { const c = JSON.parse(localStorage.getItem(keyWx)); if (c && Date.now() - c.at < WX_TTL) d = c.d; } catch (e) {}
+  if (!d) {
+    try {
+      const u = "https://api.open-meteo.com/v1/forecast?latitude=" + pl.lat.toFixed(3) + "&longitude=" + pl.lng.toFixed(3) +
+        "&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&timezone=America%2FSantiago&forecast_days=1";
+      const r = await fetch(u); if (!r.ok) throw 0; d = await r.json();
+      try { localStorage.setItem(keyWx, JSON.stringify({ at: Date.now(), d })); } catch (e) {}
+    } catch (e) { el.hidden = true; return; }
+  }
+  const [, ico, txt] = wxInfo(d.current.weather_code);
+  const night = d.current.is_day === 0 && d.current.weather_code <= 1;
+  el.innerHTML = `<span class="ico" aria-hidden="true">${night ? "🌙" : ico}</span><span>Valparaíso <b>${Math.round(d.current.temperature_2m)}°</b> · ${txt}</span><small>${Math.round(d.daily.temperature_2m_min[0])}° / ${Math.round(d.daily.temperature_2m_max[0])}°</small>`;
+  el.title = "El tiempo ahora en Valparaíso · se actualiza cada 3 horas";
+  el.hidden = false;
+}
+setInterval(loadWeather, WX_TTL);
 
 // La franja 360 se repite a lo ancho y se desplaza una vuelta completa; parte centrada en el punto lindo de la foto
 function setHeroPano() {
@@ -2539,8 +2595,7 @@ const NODES = [
     info: [I("refris", 100, 0, "4 refrigeradores", "La cocina tiene 4 refrigeradores para los arrendatarios."),
            I("casilleros", -60, 5, "Casilleros", "Casilleros metálicos en la cocina.")] },
   { id: "comedor", name: "Comedor", tab: "Comedor", links: [L("patio", -120, -10), L("cocina", -50, -5)],
-    info: [I("tv", 12, 30, "TV de 42 pulgadas", "Televisor LG de 42\" en el comedor."),
-           I("mesas", -25, -25, "Mesas del comedor", "Para comer y conversar con el resto de la casa.")] , arcade: true },
+    info: [I("mesas", -25, -25, "Mesas del comedor", "Para comer y conversar con el resto de la casa.")] , arcade: true },
 
   { id: "patio", name: "Patio techado", tab: "Patio", links: [L("acceso", -4, -5), L("comedor", -60, -8), L("patio-techado", 92, -8), L("terraza", 125, 8)],
     info: [I("mural", 45, 10, "Mural del patio", "Mural pintado en el patio central."),
@@ -2667,13 +2722,55 @@ const CUADRO_MARKERS = () => [
   { id: "cuadro-zona", polygon: CUADRO.map(([y, p]) => [rad(y), rad(p)]), svgStyle: { fill: "rgba(255,255,255,0.001)" },
     data: { vivo: true } }
 ];
-// Comedor de Placeres: la PlayStation (y la tele) abren un juego retro
+// Comedor de Placeres: la PlayStation (y la tele del fondo) abren un juego retro; la tele del brazo abre "Canal Oregón"
 const ARCADE_MARKERS = () => [
+  { id: "tv-canal", polygon: [[1, 46], [9, 46], [13, 30], [12, 22], [6, 13.5], [4, 14], [1, 30]].map(([y, p]) => [rad(y), rad(p)]),
+    svgStyle: { fill: "rgba(255,255,255,0.001)" }, tooltip: { content: "📺 Encender la tele", position: "right center" }, data: { canal: true } },
   { id: "arcade-ps", polygon: [[120, -5.3], [130, -5.3], [130, -13.8], [120, -13.8]].map(([y, p]) => [rad(y), rad(p)]),
     svgStyle: { fill: "rgba(255,255,255,0.001)" }, tooltip: { content: "🎮 Jugar", position: "top center" }, data: { arcade: true } },
   { id: "arcade-tv", polygon: [[115, 10], [127, 10], [127, 1.8], [115, 1.8]].map(([y, p]) => [rad(y), rad(p)]),
     svgStyle: { fill: "rgba(255,255,255,0.001)" }, tooltip: { content: "🎮 Jugar", position: "top center" }, data: { arcade: true } }
 ];
+// ---------- Canal Oregón: tele del comedor con canales para los estudiantes ----------
+const CANALES = [
+  { n: 1, nombre: "Universidad Santa María", tipo: "web", url: "https://usm.cl", abrir: "https://usm.cl" },
+  { n: 2, nombre: "YouTube · USM", tipo: "web", url: "https://www.youtube-nocookie.com/embed/videoseries?list=UUr5rEvayXIC0YnJxDAWuWtQ&rel=0", abrir: "https://www.youtube.com/@USMChile" }
+];
+let canalActual = 0;
+function openCanal() {
+  let ov = document.getElementById("canal");
+  if (!ov) {
+    ov = document.createElement("div"); ov.id = "canal"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-label", "Canal Oregón");
+    ov.innerHTML = `<div class="cn-tv">
+        <div class="cn-screen"><div class="cn-body"></div><canvas class="cn-noise" width="160" height="100"></canvas><div class="cn-osd"></div></div>
+        <div class="cn-panel">
+          <span class="cn-brand">CANAL OREGÓN</span>
+          <button type="button" class="cn-btn" data-ch="-1" aria-label="Canal anterior">◀ CH</button>
+          <span class="cn-dots"></span>
+          <button type="button" class="cn-btn" data-ch="1" aria-label="Canal siguiente">CH ▶</button>
+          <a class="cn-btn cn-open" target="_blank" rel="noopener">Abrir ↗</a>
+        </div>
+      </div><button type="button" class="x arc-x" aria-label="Apagar la tele">×</button>`;
+    document.getElementById("tour").appendChild(ov);
+    ov.querySelectorAll("[data-ch]").forEach(b => b.onclick = () => tune(canalActual + +b.dataset.ch));
+    ov.querySelector(".arc-x").onclick = () => { ov.hidden = true; ov.querySelector(".cn-body").innerHTML = ""; };
+    ov.addEventListener("keydown", e => { if (e.key === "ArrowRight") tune(canalActual + 1); if (e.key === "ArrowLeft") tune(canalActual - 1); });
+  }
+  ov.hidden = false; tune(canalActual, true);
+}
+function tune(i, encender) {
+  const ov = document.getElementById("canal"); canalActual = (i + CANALES.length) % CANALES.length;
+  const c = CANALES[canalActual], body = ov.querySelector(".cn-body"), noise = ov.querySelector(".cn-noise"), osd = ov.querySelector(".cn-osd");
+  // estática de tele antigua mientras cambia de canal
+  noise.hidden = false; const x = noise.getContext("2d"), img = x.createImageData(160, 100); let k = 0;
+  (function snow() { for (let j = 0; j < img.data.length; j += 4) { const v = Math.random() * 255 | 0; img.data[j] = img.data[j + 1] = img.data[j + 2] = v; img.data[j + 3] = 255; } x.putImageData(img, 0, 0); if (++k < (encender ? 14 : 9)) requestAnimationFrame(snow); else noise.hidden = true; })();
+  body.innerHTML = c.tipo === "web"
+    ? `<iframe src="${c.url}" title="${c.nombre}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-presentation"></iframe>`
+    : `<div class="cn-foto"><img src="${c.img}" alt="Vista de ${c.nombre}"><a class="cn-visit" href="${c.abrir}" target="_blank" rel="noopener">Visitar ${c.nombre} ↗</a></div>`;
+  osd.textContent = "CH " + c.n + " · " + c.nombre; osd.classList.remove("on"); void osd.offsetWidth; osd.classList.add("on");
+  ov.querySelector(".cn-open").href = c.abrir;
+  ov.querySelector(".cn-dots").innerHTML = CANALES.map((_, j) => `<i class="${j === canalActual ? "on" : ""}"></i>`).join("");
+}
 function openArcade() {
   let ov = document.getElementById("arcade");
   if (!ov) {
@@ -2797,6 +2894,7 @@ function build(start) {
   marks.addEventListener("select-marker", ({ marker }) => {
     if (marker.data && marker.data.vivo) { hideCard(); toggleCuadro(); return; }
     if (marker.data && marker.data.arcade) { hideCard(); openArcade(); return; }
+    if (marker.data && marker.data.canal) { hideCard(); openCanal(); return; }
     showCard(marker.data);
   });
   const fade = () => { $("#tourHint").style.opacity = "0"; };

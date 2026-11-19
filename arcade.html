@@ -86,7 +86,7 @@ let records = loadRec();
 const best = () => records.length ? records[0].s : 0;
 const qualifies = s => s > 0 && (records.length < 10 || s > records[records.length - 1].s);
 // ---------- estado ----------
-const stars = Array.from({ length: 70 }, () => ({ x: Math.random() * Wd, y: Math.random() * Hd, s: Math.random() * 0.6 + 0.2, c: ["#fff", "#9cf", "#ff9", "#f9c"][Math.random() * 4 | 0] }));
+const stars = Array.from({ length: 60 }, () => ({ x: Math.random() * Wd, y: Math.random() * Hd, s: Math.random() * 0.6 + 0.2, c: ["#3a4a6a", "#4d5f85", "#6b7aa0", "#2f3b55"][Math.random() * 4 | 0] }));
 let state = "title", score = 0, lives = 3, wave = 0, titleT = 0, overT = 0;
 let ship, shots = [], foes = [], bombs = [], booms = [], drops = [], texts = [], uni = null, boss = null;
 let sway = 0, waveMsg = 0, combo = 0, comboT = 0, nextLifeAt = 10000, shake = 0, uniTimer = 900;
@@ -97,9 +97,20 @@ function newGame() {
   nextWave(); state = "play"; jingle([523, 659, 784, 1046]);
 }
 const isBossWave = w => w % 3 === 0;
+const isChallenge = w => w % 4 === 0 && !isBossWave(w);       // olas 4, 8, 16, 20…
+let chal = null;                                                 // etapa bonus en curso
+// recorridos de la etapa bonus (u de 0 a 1): figuras que cruzan la pantalla sin atacar
+const PATHS = [
+  u => ({ x: -12 + u * 250, y: 40 + Math.sin(u * Math.PI) * 120 + Math.sin(u * Math.PI * 4) * 22 }),                         // ola que baja y sube
+  u => { const a = u * Math.PI * 3.2; return { x: 112 + Math.cos(a) * (90 - u * 50), y: -10 + u * 150 + Math.sin(a) * 40 }; },  // espiral
+  u => { const a = u * Math.PI * 2; return { x: 112 + Math.sin(a) * 95, y: 60 + Math.sin(a * 2) * 45 + u * 40 }; },            // ocho
+  u => ({ x: 236 - u * 250, y: 150 - Math.sin(u * Math.PI) * 110 }),                                                       // arco desde abajo
+  u => { const a = u * Math.PI * 4; return { x: 112 + Math.cos(a) * 60 * (1 - u), y: 30 + u * 120 + Math.sin(a) * 30 }; }      // remolino al centro
+];
 function nextWave() {
-  wave++; shots = []; bombs = []; foes = []; boss = null; sway = 0; waveMsg = 110;
+  wave++; shots = []; bombs = []; foes = []; boss = null; chal = null; sway = 0; waveMsg = 110;
   if (isBossWave(wave)) { spawnBoss(); return; }
+  if (isChallenge(wave)) { chal = { t: 0, hits: 0, total: 40, groups: 0, done: 0 }; waveMsg = 150; jingle([784, 988, 784, 988, 1175, 1568], 0.1); return; }
   const rows = [["boss", 4], ["bat", 8], ["bat", 8], ["gull", 10], ["gull", 10]];
   rows.forEach(([k, n], r) => { for (let i = 0; i < n; i++) {
     const hx = Wd / 2 + (i - (n - 1) / 2) * 18, hy = 40 + r * 16;
@@ -190,7 +201,7 @@ function update() {
   shots.forEach(s => { s.y -= 5; s.x += s.vx || 0; }); shots = shots.filter(s => s.y > -6 && s.x > -4 && s.x < Wd + 4);
   sway = Math.sin(t / 60) * 14;
   const speed = 1 + wave * 0.1;
-  if (!boss) {
+  if (!boss && !chal) {
     const diving = foes.filter(f => f.mode === "dive").length;
     if (foes.length && t % Math.max(36, 110 - wave * 10) === 0 && diving < 2 + Math.min(wave, 5)) {
       const cand = foes.filter(f => f.mode === "form"); if (cand.length) { const f = cand[Math.random() * cand.length | 0]; f.mode = "dive"; f.t = 0; f.dir = f.x < Wd / 2 ? 1 : -1; f.sx = f.x; f.sy = f.y; beep(300, .25, "sawtooth", .03, -200); }
@@ -202,6 +213,12 @@ function update() {
     const tx = f.hx + sway, ty = f.hy + Math.sin(t / 30 + f.ph) * 1.5;
     if (f.mode === "enter") { f.x += (tx - f.x) * 0.05 * speed; f.y += (ty - f.y) * 0.05 * speed; if (Math.abs(f.x - tx) < 1 && Math.abs(f.y - ty) < 1) f.mode = "form"; }
     else if (f.mode === "form") { f.x = tx; f.y = ty; }
+    else if (f.mode === "chal") {
+      const u = (f.t - f.delay) / 230;
+      if (u < 0) { f.x = -50; f.y = -50; continue; }
+      const p = f.path(u); f.x = f.mirror ? Wd - 9 - p.x : p.x; f.y = p.y;
+      if (u > 1) { f.dead = true; f.missed = true; chal.done++; }
+    }
     else {
       const k = f.t / 70;
       f.x = f.sx + f.dir * Math.sin(k * 3.2) * 50 + (ship.x - f.sx) * Math.min(1, k * 0.6);
@@ -210,16 +227,16 @@ function update() {
       if (f.y > Hd + 10) { if (f.mode === "minion") f.dead = true; else { f.mode = "enter"; f.y = -12; f.x = tx; } }
     }
   }
-  updateBoss(); updateUni();
+  updateBoss(); updateUni(); updateChallenge();
   bombs.forEach(b => { b.y += b.vy; b.x += b.vx; }); bombs = bombs.filter(b => b.y < Hd + 4 && b.y > -10 && b.x > -6 && b.x < Wd + 6);
   drops.forEach(d => { d.y += 0.9; d.t++; }); drops = drops.filter(d => d.y < Hd);
   for (const s of shots) {
     for (const f of foes) if (!s.hit && !f.dead && Math.abs(s.x - (f.x + 4.5)) < 6 && Math.abs(s.y - (f.y + 3)) < 5) {
       s.hit = true;
       if (--f.hp <= 0) {
-        f.dead = true; boom(f.x + 4, f.y + 3, COL[f.k][0]); beep(180, .18, "square", .05, -120);
-        addScore(f.k === "boss" ? (f.mode === "dive" ? 400 : 150) : f.k === "bat" ? (f.mode === "dive" ? 160 : 80) : (f.mode === "form" ? 50 : 100), f.x + 4, f.y);
-        maybeDrop(f.x + 4, f.y + 4);
+        f.dead = true; if (f.mode === "chal") { chal.hits++; chal.done++; } boom(f.x + 4, f.y + 3, COL[f.k][0]); beep(180, .18, "square", .05, -120);
+        if (f.mode === "chal") addScore(100, f.x + 4, f.y, false); else addScore(f.k === "boss" ? (f.mode === "dive" ? 400 : 150) : f.k === "bat" ? (f.mode === "dive" ? 160 : 80) : (f.mode === "form" ? 50 : 100), f.x + 4, f.y);
+        if (f.mode !== "chal") maybeDrop(f.x + 4, f.y + 4);
       } else beep(520, .06);
     }
     if (!s.hit && uni && Math.abs(s.x - (uni.x + 8)) < 9 && Math.abs(s.y - (uni.y + 5)) < 6) {
@@ -236,12 +253,27 @@ function update() {
     for (const d of drops) if (!d.got && Math.abs(d.x - (ship.x + 4.5)) < 7 && Math.abs(d.y - (ship.y + 4)) < 7) { d.got = true; takeDrop(d.k); }
     drops = drops.filter(d => !d.got);
     if (!ship.inv) {
-      const hit = bombs.some(b => Math.abs(b.x - (ship.x + 4.5)) < 5 && Math.abs(b.y - (ship.y + 4)) < 5) || foes.some(f => Math.abs(f.x - ship.x) < 8 && Math.abs(f.y - ship.y) < 7)
+      const hit = bombs.some(b => Math.abs(b.x + 0.5 - (ship.x + 4.5)) < 5 && Math.abs(b.y + 2 - (ship.y + 4)) < 5) || foes.some(f => f.mode !== "chal" && Math.abs(f.x - ship.x) < 8 && Math.abs(f.y - ship.y) < 7)
         || (boss && boss.phase === "swoop" && ship.x + 8 > boss.x && ship.x < boss.x + boss.w && ship.y + 6 > boss.y && ship.y < boss.y + boss.h);
       if (hit) hitShip();
     }
   }
-  if (!foes.length && !boss && !waveMsg) nextWave();
+  if (!foes.length && !boss && !chal && !waveMsg) nextWave();
+}
+function updateChallenge() {
+  if (!chal) return;
+  chal.t++;
+  if (chal.result) { if (--chal.result === 0) { chal = null; waveMsg = 0; nextWave(); } return; }
+  // 5 grupos de 8, cada uno con su figura y su tipo de nave
+  if (chal.groups < 5 && chal.t > 120 && (chal.t - 120) % 170 === 0) {
+    const gi = chal.groups++, kinds = ["gull", "bat", "boss", "bat", "gull"];
+    for (let i = 0; i < 8; i++) foes.push({ k: kinds[gi], mode: "chal", path: PATHS[gi], mirror: i % 2 === 1 && gi !== 1 && gi !== 4, delay: (i >> 1) * 12 + (gi === 1 || gi === 4 ? i * 4 : 0), t: 0, hp: 1, ph: 0, x: -50, y: -50, hx: 0, hy: 0 });
+  }
+  if (chal.groups === 5 && chal.done >= chal.total && !foes.length) {
+    const perfect = chal.hits === chal.total, bonus = perfect ? 10000 : chal.hits * 100;
+    score += bonus; chal.bonus = bonus; chal.perfect = perfect; chal.result = 220;
+    jingle(perfect ? [1046, 1318, 1568, 2093, 1568, 2093] : [784, 988, 1175], 0.09);
+  }
 }
 function killBoss() {
   const b = boss;
@@ -297,13 +329,24 @@ function updateUni() {
     uniTimer = 1200 + Math.random() * 900; jingle([1318, 1568, 2093], 0.06);
   }
 }
+// balas enemigas: grandes, con borde oscuro, núcleo brillante y parpadeo (nunca se confunden con las estrellas)
+function drawBomb(b) {
+  const x = Math.round(b.x) - 1, y = Math.round(b.y) - 1, on = (t >> 2) & 1;
+  const kind = b.c === "#fff" ? "pluma" : b.c === "#9b5bff" ? "tinta" : b.big ? "chorro" : "bala";
+  const body = { pluma: "#ffb347", tinta: "#c06bff", chorro: "#7a7a7a", bala: "#ff3b3b" }[kind];
+  const core = { pluma: "#fff7d0", tinta: "#f3d9ff", chorro: "#e0e0e0", bala: "#ffe14d" }[kind];
+  g.fillStyle = "#000"; g.fillRect(x - 1, y - 1, 5, 7);
+  g.fillStyle = body; g.fillRect(x, y, 3, 5);
+  g.fillStyle = on ? core : body; g.fillRect(x + 1, y + 1, 1, 3);
+  g.globalAlpha = 0.35; g.fillStyle = body; g.fillRect(x - 1, y + 5, 5, 2); g.globalAlpha = 1;   // estela
+}
 function txt(s, x, y, c = "#fff", size = 8, align = "center") { g.fillStyle = c; g.font = `bold ${size}px ui-monospace, Consolas, monospace`; g.textAlign = align; g.fillText(s, x, y); }
 const flipRows = rows => rows.map(r => [...r].reverse().join(""));
 function draw() {
   g.save();
   if (shake) g.translate((Math.random() - 0.5) * shake * 0.3, (Math.random() - 0.5) * shake * 0.3);
   g.fillStyle = boss && boss.hp < boss.max / 2 && (t >> 3) % 2 ? "#0d0306" : "#03030a"; g.fillRect(-4, -4, Wd + 8, Hd + 8);
-  for (const s of stars) { if ((t + s.x) % 40 < 34) { g.fillStyle = s.c; g.fillRect(s.x | 0, s.y | 0, 1, boss ? 3 : 1); } }
+  for (const s of stars) { if ((t + s.x) % 40 < 34) { g.fillStyle = s.c; g.fillRect(s.x | 0, s.y | 0, 1, boss ? 2 : 1); } }
   g.fillStyle = "#0c1230"; for (let i = 0; i < 14; i++) { const h = 8 + ((i * 37) % 13); g.fillRect(i * 16, Hd - 10 - h, 14, h + 10); }
   g.fillStyle = "#ffcf5a"; for (let i = 0; i < 14; i++) if ((i * 7 + (t >> 6)) % 3) g.fillRect(i * 16 + 4, Hd - 14 - ((i * 37) % 13) / 2, 2, 2);
   booms.forEach(b => { b.x += b.vx; b.y += b.vy; g.fillStyle = b.c; g.globalAlpha = 1 - b.t / b.life; g.fillRect(b.x | 0, b.y | 0, 2, 2); g.globalAlpha = 1; });
@@ -319,7 +362,7 @@ function draw() {
     }
     if (uni) { const s = SPR.uni[(t >> 3) & 1]; drawSpr(uni.vx > 0 ? s : flipRows(s), uni.x, uni.y, COL.uni, 1, uni.flash > 0); }
     shots.forEach(s => { g.fillStyle = s.c || "#ffef5a"; g.fillRect(s.x | 0, s.y | 0, 1, 4); });
-    bombs.forEach(b => { g.fillStyle = b.c || "#ff5a5a"; g.fillRect(b.x | 0, b.y | 0, b.big ? 3 : 2, 3); });
+    bombs.forEach(drawBomb);
     drops.forEach(d => { const [l, c] = DROP[d.k]; g.fillStyle = c; g.fillRect((d.x - 4) | 0, (d.y - 4) | 0, 9, 9); g.fillStyle = "#000"; g.fillRect((d.x - 3) | 0, (d.y - 3) | 0, 7, 7); txt(l, d.x + 0.5, d.y + 3, c, 7); });
     if (state === "play" && !ship.dead && !(ship.inv && (t >> 2) & 1)) {
       drawSpr(SPR.ship, ship.x, ship.y, pw.spread ? [RAINBOW[(t >> 2) % 6], "#ff3b3b", "#fff"] : COL.ship);
@@ -332,9 +375,16 @@ function draw() {
     for (let i = 0; i < Math.min(6, lives - (ship && ship.dead ? 0 : 1)); i++) drawSpr(SPR.ship, 6 + i * 11, Hd - 10, COL.ship);
     let px = 90; [["double", "D", "#4ad3ff"], ["rapid", "R", "#ff9a1f"], ["spread", "*", "#ffe11f"]].forEach(([k, l, c]) => { if (pw[k]) { txt(l, px, Hd - 3, c, 7); px += 10; } });
     if (pw.shield) txt("S", px, Hd - 3, "#3bdc5a", 7);
-    txt((isBossWave(wave) ? "JEFE " : "OLA ") + wave, Wd - 6, Hd - 3, "#4ad3ff", 7, "right");
+    txt((isBossWave(wave) ? "JEFE " : isChallenge(wave) ? "BONUS " : "OLA ") + wave, Wd - 6, Hd - 3, "#4ad3ff", 7, "right");
+    if (chal && !chal.result) txt("ACIERTOS " + chal.hits + " / " + chal.total, Wd / 2, 30, "#ffd400", 7);
+    if (chal && chal.result) {
+      txt(chal.perfect ? "¡PERFECTO!" : "ETAPA BONUS", Wd / 2, 110, chal.perfect ? RAINBOW[(t >> 2) % 6] : "#ffd400", chal.perfect ? 16 : 12);
+      txt("ACIERTOS  " + chal.hits + " / " + chal.total, Wd / 2, 134, "#fff", 9);
+      txt("BONUS  " + chal.bonus, Wd / 2, 152, "#4ad3ff", 10);
+    }
     if (waveMsg && state === "play") {
       if (boss && boss.phase === "enter") { if ((t >> 3) & 1) txt("¡ATENCIÓN! LLEGA EL JEFE", Wd / 2, Hd / 2, "#ff3b3b", 9); }
+      else if (chal && !chal.result) { txt("ETAPA BONUS", Wd / 2, Hd / 2 - 8, "#ffd400", 14); txt("¡CAZA A TODAS! NO DISPARAN", Wd / 2, Hd / 2 + 10, "#fff", 7); }
       else if (!boss && foes.length) txt("OLA " + wave, Wd / 2, Hd / 2, "#4ad3ff", 12);
     }
   }
@@ -364,7 +414,7 @@ function drawTitle() {
     drawSpr(SPR.bat[fr], 51, 114, COL.bat); txt("80 · 160", 68, 120, "#fff", 6, "left");
     drawSpr(SPR.gull[fr], 51, 128, COL.gull); txt("50 · 100", 68, 134, "#fff", 6, "left");
     drawSpr(SPR.uni[fr], 47, 142, COL.uni); txt("UNICORNIO 1000 + ARCOÍRIS", 68, 150, "#ffe11f", 6, "left");
-    txt("CADA 3 OLAS LLEGA UN JEFE", Wd / 2, 170, "#ff3b3b", 7);
+    txt("CADA 3 OLAS UN JEFE · ETAPAS BONUS", Wd / 2, 170, "#ff3b3b", 7);
     txt("PODERES", Wd / 2, 186, "#9ab", 6);
     [["D", "DOBLE", "#4ad3ff"], ["R", "RÁPIDO", "#ff9a1f"], ["S", "ESCUDO", "#3bdc5a"], ["+", "VIDA", "#ff5fa8"]].forEach(([l, n, c], i) => txt(l + " " + n, 24 + i * 50, 197, c, 6, "left"));
   } else drawTable(100);
@@ -388,9 +438,10 @@ document.getElementById("nameForm").addEventListener("submit", e => {
   document.getElementById("nameBox").hidden = true; overT = 30; inp.blur(); window.focus();
 });
 // para probar: ?prueba=jefe empieza en la ola del jefe, ?prueba=unicornio hace aparecer uno pronto
-window.__juego = () => ({ state, score, wave, lives, foes: foes.length, boss: boss && { kind: boss.kind, hp: boss.hp, phase: boss.phase }, uni: uni && Math.round(uni.x), drops: drops.length, pw: { ...pw }, records: records.length });
+window.__juego = () => ({ state, score, wave, lives, foes: foes.length, chal: chal && { hits: chal.hits, done: chal.done, groups: chal.groups, result: chal.result || 0 }, boss: boss && { kind: boss.kind, hp: boss.hp, phase: boss.phase }, uni: uni && Math.round(uni.x), drops: drops.length, pw: { ...pw }, records: records.length });
 const Q = new URLSearchParams(location.search).get("prueba");
-if (Q) setTimeout(() => { newGame(); if (Q === "jefe") { wave = 2; nextWave(); } if (Q === "jefe2") { wave = 5; nextWave(); } if (Q === "unicornio") uniTimer = 30; }, 100);
+if (Q) window.__avanza = (n, fuego) => { for (let i = 0; i < n; i++) { if (fuego !== undefined) key.Space = fuego; update(); } draw(); return window.__juego(); };
+if (Q) setTimeout(() => { newGame(); if (Q === "jefe") { wave = 2; nextWave(); } if (Q === "bonus") { wave = 3; nextWave(); } if (Q === "jefe2") { wave = 5; nextWave(); } if (Q === "unicornio") uniTimer = 30; }, 100);
 // paso fijo de 60 por segundo: el juego corre igual en pantallas de 30, 60 o 120 Hz
 let last = performance.now(), acc = 0;
 (function loop(now) {
