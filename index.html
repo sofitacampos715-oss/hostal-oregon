@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795207418">
-<script>window.BUILD="1795207418";</script>
+<meta name="build" content="1795209480">
+<script>window.BUILD="1795209480";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -1850,7 +1850,7 @@ const HOUSES = {
 };
 
 // Piezas que ya tienen foto 360 real: código de la pieza -> foto del recorrido
-const ROOM_TOURS = { "PO-21": { house: "pocuro", node: "pieza-21" }, "PO-02": { house: "pocuro", node: "pieza-2" }, "PO-09": { house: "pocuro", node: "pieza-9" }, "PO-10": { house: "pocuro", node: "pieza-10" }, "PO-04": { house: "pocuro", node: "pieza-4" }, "PO-03": { house: "pocuro", node: "pieza-3" }, "PO-08": { house: "pocuro", node: "pieza-8" }, "PO-23": { house: "pocuro", node: "pieza-23" }, "PO-25": { house: "pocuro", node: "pieza-25" }, "PL-23": { house: "placeres", node: "pieza-mar" }, "PL-01": { house: "placeres", node: "pieza-1" }, "PL-03": { house: "placeres", node: "pieza-3" }, "PL-02": { house: "placeres", node: "pieza-2" }, "PL-04": { house: "placeres", node: "pieza-4" }, "PL-08": { house: "placeres", node: "pieza-8" }, "PL-09": { house: "placeres", node: "pieza-9" }, "PL-05": { house: "placeres", node: "pieza-5" }, "PL-06": { house: "placeres", node: "pieza-6" }, "PL-10": { house: "placeres", node: "pieza-10" }, "PL-13": { house: "placeres", node: "pieza-13" }, "PL-14": { house: "placeres", node: "pieza-14" }, "PL-15": { house: "placeres", node: "pieza-15" }, "PL-17": { house: "placeres", node: "pieza-17" }, "PL-18": { house: "placeres", node: "pieza-18" }, "PL-20": { house: "placeres", node: "pieza-20" }, "PL-21": { house: "placeres", node: "pieza-21" }, "PL-24": { house: "placeres", node: "pieza-24" } };
+const ROOM_TOURS = { "PO-21": { house: "pocuro", node: "pieza-21" }, "PO-02": { house: "pocuro", node: "pieza-2" }, "PO-09": { house: "pocuro", node: "pieza-9" }, "PO-10": { house: "pocuro", node: "pieza-10" }, "PO-04": { house: "pocuro", node: "pieza-4" }, "PO-03": { house: "pocuro", node: "pieza-3" }, "PO-08": { house: "pocuro", node: "pieza-8" }, "PO-06": { house: "pocuro", node: "pieza-6" }, "PO-05": { house: "pocuro", node: "pieza-5" }, "PO-22": { house: "pocuro", node: "pieza-22" }, "PO-24": { house: "pocuro", node: "pieza-24" }, "PO-27": { house: "pocuro", node: "pieza-27" }, "PO-23": { house: "pocuro", node: "pieza-23" }, "PO-25": { house: "pocuro", node: "pieza-25" }, "PL-23": { house: "placeres", node: "pieza-mar" }, "PL-01": { house: "placeres", node: "pieza-1" }, "PL-03": { house: "placeres", node: "pieza-3" }, "PL-02": { house: "placeres", node: "pieza-2" }, "PL-04": { house: "placeres", node: "pieza-4" }, "PL-08": { house: "placeres", node: "pieza-8" }, "PL-09": { house: "placeres", node: "pieza-9" }, "PL-05": { house: "placeres", node: "pieza-5" }, "PL-06": { house: "placeres", node: "pieza-6" }, "PL-10": { house: "placeres", node: "pieza-10" }, "PL-13": { house: "placeres", node: "pieza-13" }, "PL-14": { house: "placeres", node: "pieza-14" }, "PL-15": { house: "placeres", node: "pieza-15" }, "PL-17": { house: "placeres", node: "pieza-17" }, "PL-18": { house: "placeres", node: "pieza-18" }, "PL-20": { house: "placeres", node: "pieza-20" }, "PL-21": { house: "placeres", node: "pieza-21" }, "PL-24": { house: "placeres", node: "pieza-24" } };
 
 const DEFAULT_ROOMS = [
   // Casa Placeres: precios mensuales reales (estudiantes), noviembre 2026. Disponibilidad: por confirmar.
@@ -1884,19 +1884,19 @@ const DEFAULT_ROOMS = [
   { code: "PO-02", house: "pocuro", name: "Habitación 2", specs: ["Baño privado", "TV", "Escritorio"], price: 260000, status: "consultar", from: "", wall: "#d9e2dc" },
   { code: "PO-03", house: "pocuro", name: "Habitación 3", specs: ["Ventana", "Escritorio", "Ropero"], price: 240000, status: "consultar", from: "", wall: "#dde2ea" },
   { code: "PO-04", house: "pocuro", name: "Habitación 4", specs: ["TV", "Escritorio", "Ropero"], price: 250000, status: "consultar", from: "", wall: "#d6dde3" },
-  { code: "PO-05", house: "pocuro", name: "Habitación 5", specs: [], price: 260000, status: "consultar", from: "", wall: "#dfe4d5" },
-  { code: "PO-06", house: "pocuro", name: "Habitación 6", specs: [], price: 265000, status: "consultar", from: "", wall: "#e6dccd" },
+  { code: "PO-05", house: "pocuro", name: "Habitación 5", specs: ["Escritorio", "Ropero", "Alfombra"], price: 260000, status: "consultar", from: "", wall: "#dfe4d5" },
+  { code: "PO-06", house: "pocuro", name: "Habitación 6", specs: ["Piso de madera", "Escritorio", "Ropero"], price: 265000, status: "consultar", from: "", wall: "#e6dccd" },
   { code: "PO-07", house: "pocuro", name: "Habitación 7", specs: [], price: 230000, status: "libre", from: "", wall: "#d3e0e2" },
   { code: "PO-08", house: "pocuro", name: "Habitación 8", specs: ["Piso de madera", "Escritorio", "Ropero"], price: 265000, status: "consultar", from: "", wall: "#e4ddd3" },
   { code: "PO-09", house: "pocuro", name: "Habitación 9", specs: ["Ventana", "Escritorio", "Ropero"], price: 280000, status: "consultar", from: "", wall: "#d9e2dc" },
   { code: "PO-10", house: "pocuro", name: "Habitación 10", specs: ["Dos camas", "Escritorio", "Ropero"], price: 280000, status: "consultar", from: "", wall: "#dde2ea" },
   { code: "PO-21", house: "pocuro", name: "Habitación con balcón a la calle", specs: ["Balcón a la calle", "Cama 2 plazas", "Escritorio y TV"], price: 280000, status: "consultar", from: "", wall: "#dde2ea" },
-  { code: "PO-22", house: "pocuro", name: "Habitación 22", specs: [], price: 300000, status: "consultar", from: "", wall: "#dfe4d5" },
+  { code: "PO-22", house: "pocuro", name: "Habitación 22", specs: ["Balcón a la calle", "Cama 2 plazas", "Escritorio y TV"], price: 300000, status: "consultar", from: "", wall: "#dfe4d5" },
   { code: "PO-23", house: "pocuro", name: "Habitación 23", specs: ["Baño privado", "TV", "Escritorio"], price: 275000, status: "consultar", from: "", wall: "#e6dccd" },
-  { code: "PO-24", house: "pocuro", name: "Habitación 24", specs: [], price: 260000, status: "consultar", from: "", wall: "#d3e0e2" },
+  { code: "PO-24", house: "pocuro", name: "Habitación 24", specs: ["Baño privado", "TV", "Escritorio"], price: 260000, status: "consultar", from: "", wall: "#d3e0e2" },
   { code: "PO-25", house: "pocuro", name: "Habitación 25", specs: ["Cama 2 plazas", "Escritorio", "TV"], price: 285000, status: "consultar", from: "", wall: "#e4ddd3" },
   { code: "PO-26", house: "pocuro", name: "Habitación 26", specs: [], price: 260000, status: "consultar", from: "", wall: "#d9e2dc" },
-  { code: "PO-27", house: "pocuro", name: "Habitación 27", specs: [], price: 300000, status: "consultar", from: "", wall: "#dde2ea" },
+  { code: "PO-27", house: "pocuro", name: "Habitación 27", specs: ["Baño privado", "TV", "Escritorio"], price: 300000, status: "consultar", from: "", wall: "#dde2ea" },
   { code: "PO-28", house: "pocuro", name: "Habitación 28", specs: [], price: 285000, status: "consultar", from: "", wall: "#d6dde3" }
 ];
 
@@ -2788,7 +2788,7 @@ const POCURO_NODES = [
            K(40, -18)] },
   { id: "recepcion", name: "Recepción", tab: "Entrada", links: [L("entrada", -150, -28), L("pasillo-balcon", 58, -6), L("pasillo", -115, -6), L("pieza-2", -128, -6, "Habitación 2")],
     info: [K(-74, -15)] },
-  { id: "pasillo", name: "Pasillo del primer piso", tab: "Pasillos", links: [L("entrada", 178, -6), L("casilleros", 4, -2), L("pieza-3", -150, -6, "Habitación 3"), L("pieza-4", 150, -6, "Habitación 4")],
+  { id: "pasillo", name: "Pasillo del primer piso", tab: "Pasillos", links: [L("entrada", 178, -6), L("casilleros", 4, -2), L("pieza-3", -150, -6, "Habitación 3"), L("pieza-4", 150, -6, "Habitación 4"), L("pieza-6", 22, -6, "Habitación 6"), L("pieza-5", -38, -6, "Habitación 5")],
     info: [I("silencio", -75, 8, "Tranquilidad", "Se pide mantener silencio en los pasillos: hay gente estudiando.")] },
   { id: "casilleros", name: "Lockers y lavandería", tab: "Lavandería", links: [L("pasillo", -150, -32), L("comedor", -97, -8), L("lavanderia", 140, -12)],
     info: [I("casilleros", 60, 5, "Casilleros", "Casilleros para guardar tus cosas.")] },
@@ -2800,9 +2800,9 @@ const POCURO_NODES = [
     info: [I("cocinas", 22, -15, "Dos cocinas", "Dos cocinas con horno y campana."),
            I("lavaplatos", 62, -14, "Lavaplatos", "Lavaplatos con mueble."),
            I("micro", 115, -10, "Microondas y horno", "Microondas y horno eléctrico, junto a la ventana hacia el comedor.")] },
-  { id: "colibri", name: "Pasillo del colibrí", tab: "Pasillos", links: [L("cocina", 0, -3), L("pasillo-balcon", 178, -5), L("pieza-25", -146, -6, "Habitación 25")],
+  { id: "colibri", name: "Pasillo del colibrí", tab: "Pasillos", links: [L("cocina", 0, -3), L("pasillo-balcon", 178, -5), L("pieza-25", -146, -6, "Habitación 25"), L("pieza-27", -26, -6, "Habitación 27")],
     info: [I("picaflor", -95, 10, "Mural del colibrí", "Pasillo con techo de vidrio y un mural de colibrí.")] },
-  { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("pieza-21", 16, -6, "Habitación 21"), L("colibri", 165, -5), L("entrada", -105, -22), L("pieza-23", 149, -6, "Habitación 23")], info: [] },
+  { id: "pasillo-balcon", name: "Pasillo al balcón", tab: "Balcón", links: [L("balcon", -3, -3), L("pieza-21", 16, -6, "Habitación 21"), L("colibri", 165, -5), L("entrada", -105, -22), L("pieza-23", 149, -6, "Habitación 23"), L("pieza-22", -32, -6, "Habitación 22"), L("pieza-24", -147, -6, "Habitación 24")], info: [] },
   { id: "pieza-21", name: "Habitación 21 · ventana a la calle", tab: "Balcón", face: 0, pan: { yaw: 150, pitch: -10, delay: 2200 }, links: [L("pasillo-balcon", -66, -8, "Pasillo al balcón")],
     info: [I("ventana", 0, 12, "Ventana a la calle", "Puerta-ventana de madera con balconcito de fierro forjado, mirando a la calle."), F(152, -20, "PO-21")] },
   { id: "pieza-2", name: "Habitación 2", tab: "Entrada", face: 0, pan: { yaw: -30, pitch: -14, delay: 2200 }, links: [L("entrada", -170, -8, "Hall de entrada"), L("bano-2", 58, -8, "Baño privado")],
@@ -2833,6 +2833,32 @@ const POCURO_NODES = [
            I("ropero", 30, 0, "Ropero", "Ropero para guardar tu ropa."),
            I("escritorio", -100, -22, "Escritorio", "Escritorio con repisas."),
            I("piso", 120, -45, "Piso de madera", "Piso flotante de madera."), F(178, -26, "PO-08")] },
+  { id: "pieza-6", name: "Habitación 6", tab: "Pasillos", face: 0, pan: { yaw: -175, pitch: -14, delay: 2200 }, links: [L("pasillo", 30, -8, "Pasillo del primer piso")],
+    info: [I("ventana", -5, 10, "Ventana", "Ventana con cortinas."),
+           I("ropero", -30, 0, "Ropero", "Ropero para guardar tu ropa."),
+           I("escritorio", 100, -22, "Escritorio", "Escritorio con repisas."),
+           I("piso", -120, -45, "Piso de madera", "Piso flotante de madera."), F(-178, -26, "PO-06")] },
+  { id: "pieza-5", name: "Habitación 5", tab: "Pasillos", face: 0, pan: { yaw: 165, pitch: -14, delay: 2200 }, links: [L("pasillo", -32, -8, "Pasillo del primer piso")],
+    info: [I("ventana", 8, 12, "Ventana", "Ventana con cortina."),
+           I("escritorio", 22, -22, "Escritorio", "Escritorio con silla."),
+           I("ropero", 75, 0, "Ropero", "Ropero grande de dos puertas."),
+           I("alfombra", -60, -50, "Alfombra", "Piso alfombrado."), F(165, -26, "PO-05")] },
+  { id: "pieza-22", name: "Habitación 22 · ventana a la calle", tab: "Balcón", face: 0, pan: { yaw: -150, pitch: -10, delay: 2200 }, links: [L("pasillo-balcon", 66, -8, "Pasillo al balcón")],
+    info: [I("ventana", 0, 12, "Ventana a la calle", "Puerta-ventana de madera con balconcito de fierro forjado, mirando a la calle."), F(-152, -20, "PO-22")] },
+  { id: "pieza-24", name: "Habitación 24", tab: "Balcón", face: 0, pan: { yaw: 10, pitch: -14, delay: 2200 }, links: [L("pasillo-balcon", 178, -8, "Pasillo al balcón"), L("bano-24", 80, -8, "Baño privado")],
+    info: [I("tv", -112, 10, "TV", "Televisor en la pared."),
+           I("escritorio", -135, -22, "Escritorio", "Escritorio con silla."),
+           I("ropero", 160, 0, "Ropero", "Ropero para guardar tu ropa."),
+           I("piso", -40, -45, "Piso de madera", "Piso flotante de madera."), F(8, -26, "PO-24")] },
+  { id: "bano-24", name: "Baño privado de la habitación 24", tab: "Balcón", links: [L("pieza-24", 45, -8, "Habitación 24")],
+    info: [I("ducha", 150, 0, "Baño privado", "Baño solo para la habitación 24, con ducha de vidrio, lavamanos y espejo.")] },
+  { id: "pieza-27", name: "Habitación 27", tab: "Balcón", face: 0, pan: { yaw: -10, pitch: -14, delay: 2200 }, links: [L("colibri", -178, -8, "Pasillo del colibrí"), L("bano-27", -80, -8, "Baño privado")],
+    info: [I("tv", 112, 10, "TV", "Televisor en la pared."),
+           I("escritorio", 135, -22, "Escritorio", "Escritorio con silla."),
+           I("ropero", -160, 0, "Ropero", "Ropero para guardar tu ropa."),
+           I("piso", 40, -45, "Piso de madera", "Piso flotante de madera."), F(-8, -26, "PO-27")] },
+  { id: "bano-27", name: "Baño privado de la habitación 27", tab: "Balcón", links: [L("pieza-27", -45, -8, "Habitación 27")],
+    info: [I("ducha", -150, 0, "Baño privado", "Baño solo para la habitación 27, con ducha de vidrio, lavamanos y espejo.")] },
   { id: "pieza-23", name: "Habitación 23", tab: "Balcón", face: 0, pan: { yaw: -10, pitch: -14, delay: 2200 }, links: [L("pasillo-balcon", -178, -8, "Pasillo al balcón"), L("bano-23", -80, -8, "Baño privado")],
     info: [I("tv", 112, 10, "TV", "Televisor en la pared."),
            I("escritorio", 135, -22, "Escritorio", "Escritorio con silla."),
