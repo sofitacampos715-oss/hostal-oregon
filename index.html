@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795210198">
-<script>window.BUILD="1795210198";</script>
+<meta name="build" content="1795210575">
+<script>window.BUILD="1795210575";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -1312,8 +1312,8 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
   <div class="houses">
     <span class="houses-lbl" id="housesLbl">Nuestras 2 casas</span>
     <div class="switch" role="group" aria-labelledby="housesLbl">
-      <button type="button" data-house="placeres" aria-pressed="true"><i class="hdot" aria-hidden="true"></i><span><small>Casa</small>Placeres</span></button>
-      <button type="button" data-house="pocuro" aria-pressed="false"><i class="hdot" aria-hidden="true"></i><span><small>Casa</small>Pocuro</span></button>
+      <button type="button" data-house="placeres" aria-pressed="true"><i class="hdot" aria-hidden="true"></i><span><small>Hostal</small>Placeres</span></button>
+      <button type="button" data-house="pocuro" aria-pressed="false"><i class="hdot" aria-hidden="true"></i><span><small>Hostal</small>Pocuro</span></button>
     </div>
   </div>
   <button type="button" class="theme-btn" id="themeBtn">
@@ -1802,14 +1802,14 @@ window.REGLAMENTO = REGLAMENTO; window.ICONS_LIBRO = ICONS.libro; window.reglaSe
 
 // Ubicación de cada casa: GPS de las fotos 360 (precisión ±30 m)
 const PLACES = {
-  placeres: { lat: -33.04000, lng: -71.59139, label: "Casa Placeres", area: "Conquista 624 · Cerro Placeres", color: "#1f7a4d" },
-  pocuro: { lat: -33.05361, lng: -71.60694, label: "Casa Pocuro", area: "Pocuro 1052 · Cerro La Cruz", color: "#8a5a2b" }
+  placeres: { lat: -33.04000, lng: -71.59139, label: "Hostal Placeres", area: "Conquista 624 · Cerro Placeres", color: "#1f7a4d" },
+  pocuro: { lat: -33.05361, lng: -71.60694, label: "Hostal Pocuro", area: "Pocuro 1052 · Cerro La Cruz", color: "#8a5a2b" }
 };
 const MAP_REFS = [{ lat: -33.03518, lng: -71.59527, label: "USM Casa Central" }];
 
 const HOUSES = {
   placeres: {
-    id: "placeres", name: "Casa Placeres", code: "PL",
+    id: "placeres", name: "Hostal Placeres", code: "PL",
     eyebrow: "Cerro Placeres · Cerca de la Santa María",
     title: "A pasos de la universidad, <em>a un mundo de comodidad</em>",
     lead: "Piezas amobladas para estudiantes que vienen de fuera de Valparaíso. Internet, luz, agua y gas incluidos. Ven a conocerla antes de decidir.",
@@ -1829,7 +1829,7 @@ const HOUSES = {
     }
   },
   pocuro: {
-    id: "pocuro", name: "Casa Pocuro", code: "PO",
+    id: "pocuro", name: "Hostal Pocuro", code: "PO",
     eyebrow: "Sector Pocuro · Cerca de Enfermería UV",
     title: "A pasos de la universidad, <em>a un mundo de comodidad</em>",
     lead: "Piezas amplias con baño privado para estudiantes y profesionales, en una casa antigua con techos de vidrio y muebles de época.",
@@ -1893,7 +1893,7 @@ const DEFAULT_ROOMS = [
   { code: "PO-22", house: "pocuro", name: "Habitación 22", specs: ["Balcón a la calle", "Cama 2 plazas", "Escritorio y TV"], price: 300000, status: "consultar", from: "", wall: "#dfe4d5" },
   { code: "PO-23", house: "pocuro", name: "Habitación 23", specs: ["Baño privado", "TV", "Escritorio"], price: 275000, status: "consultar", from: "", wall: "#e6dccd" },
   { code: "PO-24", house: "pocuro", name: "Habitación 24", specs: ["Baño privado", "TV", "Escritorio"], price: 260000, status: "consultar", from: "", wall: "#d3e0e2" },
-  { code: "PO-25", house: "pocuro", name: "Habitación 25", specs: ["Cama 2 plazas", "Escritorio", "TV"], price: 285000, status: "consultar", from: "", wall: "#e4ddd3" },
+  { code: "PO-25", house: "pocuro", name: "Habitación 25", specs: ["Baño privado", "TV", "Escritorio"], price: 285000, status: "consultar", from: "", wall: "#e4ddd3" },
   { code: "PO-26", house: "pocuro", name: "Habitación 26", specs: [], price: 260000, status: "consultar", from: "", wall: "#d9e2dc" },
   { code: "PO-27", house: "pocuro", name: "Habitación 27", specs: ["Baño privado", "TV", "Escritorio"], price: 300000, status: "consultar", from: "", wall: "#dde2ea" },
   { code: "PO-28", house: "pocuro", name: "Habitación 28", specs: [], price: 285000, status: "consultar", from: "", wall: "#d6dde3" }
@@ -2205,7 +2205,7 @@ function drawList() {
   const all = rooms.filter(r => r.house === house);
   const counts = Object.fromEntries(RANGES.map(([k, , f]) => [k, all.filter(r => f(r.price)).length]));
   if (!counts[rlRange]) rlRange = "todas";
-  $("#rlHouse").textContent = HOUSES[house].name || (house === "pocuro" ? "Casa Pocuro" : "Casa Placeres");
+  $("#rlHouse").textContent = HOUSES[house].name || (house === "pocuro" ? "Hostal Pocuro" : "Hostal Placeres");
   $("#rlChips").innerHTML = RANGES.filter(([k]) => counts[k]).map(([k, t]) => `<button type="button" data-range="${k}" aria-pressed="${k === rlRange}">${t} <span aria-hidden="true">· ${counts[k]}</span></button>`).join("");
   $$(".rl-sort button").forEach(b => b.setAttribute("aria-pressed", b.dataset.sort === rlSort));
   const f = RANGES.find(([k]) => k === rlRange)[2];
@@ -2865,11 +2865,13 @@ const POCURO_NODES = [
            I("piso", 40, -45, "Piso de madera", "Piso flotante de madera."), F(-8, -26, "PO-23")] },
   { id: "bano-23", name: "Baño privado de la habitación 23", tab: "Balcón", links: [L("pieza-23", -45, -8, "Habitación 23")],
     info: [I("ducha", -150, 0, "Baño privado", "Baño solo para la habitación 23, con ducha de vidrio, lavamanos y espejo.")] },
-  { id: "pieza-25", name: "Habitación 25", tab: "Pasillos", face: 0, pan: { yaw: 5, pitch: -14, delay: 2200 }, links: [L("colibri", -165, -8, "Pasillo del colibrí")],
-    info: [I("tv", 50, 12, "TV", "Televisor en la pared."),
-           I("escritorio", 62, -22, "Escritorio", "Escritorio amplio para computador."),
-           I("ropero", 122, 0, "Ropero", "Ropero grande de puertas correderas."),
-           I("comoda", -75, -22, "Cómoda", "Cómoda con cajones."), F(8, -26, "PO-25")] },
+  { id: "pieza-25", name: "Habitación 25", tab: "Pasillos", face: 0, pan: { yaw: 10, pitch: -14, delay: 2200 }, links: [L("colibri", 178, -8, "Pasillo del colibrí"), L("bano-25", 80, -8, "Baño privado")],
+    info: [I("tv", -112, 10, "TV", "Televisor en la pared."),
+           I("escritorio", -135, -22, "Escritorio", "Escritorio con silla."),
+           I("ropero", 160, 0, "Ropero", "Ropero para guardar tu ropa."),
+           I("piso", -40, -45, "Piso de madera", "Piso flotante de madera."), F(8, -26, "PO-25")] },
+  { id: "bano-25", name: "Baño privado de la habitación 25", tab: "Pasillos", links: [L("pieza-25", 45, -8, "Habitación 25")],
+    info: [I("ducha", 150, 0, "Baño privado", "Baño solo para la habitación 25, con ducha de vidrio, lavamanos y espejo.")] },
   { id: "balcon", name: "Balcón a la calle", tab: "Balcón", links: [L("pasillo-balcon", 160, -5), L("pieza-21", 133, -8, "Habitación 21")],
     info: [I("vista", 0, 10, "Vista a la calle", "Balcón con vista al barrio de Pocuro.")] },
   { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("casilleros", 100, -8)],
@@ -2900,8 +2902,8 @@ addRule(POCURO_NODES, "lavanderia", R("lavanderia", -80, 3, "Uso de la lavander�
 addRule(POCURO_NODES, "casilleros", R("convivencia", -60, 10, "Convivencia", [["sustancias", [0, 1, 2, 3, 4]], ["respeto"], ["instalaciones", [0, 1, 2]]]));
 
 const TOURS = {
-  placeres: { name: "Casa Placeres", dir: "recorrido/placeres/", start: "plaza", tabs: TABS, nodes: NODES },
-  pocuro: { name: "Casa Pocuro", dir: "recorrido/pocuro/", start: POCURO_START, tabs: POCURO_TABS, nodes: POCURO_NODES }
+  placeres: { name: "Hostal Placeres", dir: "recorrido/placeres/", start: "plaza", tabs: TABS, nodes: NODES },
+  pocuro: { name: "Hostal Pocuro", dir: "recorrido/pocuro/", start: POCURO_START, tabs: POCURO_TABS, nodes: POCURO_NODES }
 };
 
 const $ = s => document.querySelector(s);
