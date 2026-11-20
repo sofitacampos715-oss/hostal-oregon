@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795188780">
-<script>window.BUILD="1795188780";</script>
+<meta name="build" content="1795190991">
+<script>window.BUILD="1795190991";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -2623,7 +2623,7 @@ const NODES = [
   { id: "jardin", name: "Jardín", tab: "Afuera", links: [L("hall", 107, -4, "Entrar"), L("calle", 63, -9, "Salir a la calle"), L("antejardin", 82, -22, "Antejardín"), L("acceso", -161, -12)], info: [] },
   { id: "acceso", name: "Acceso al patio", tab: "Afuera", links: [L("patio", -20, -5), L("jardin", -100, -15)], info: [] },
 
-  { id: "hall", name: "Hall de entrada", tab: "Entrada", links: [L("antejardin", 5, -5), L("sala", 160, -34), L("hall-2", -112, -5, "Subir al 2º piso"), L("pieza-1", -40, -6, "Habitación 1"), L("pieza-2", 50, -6, "Habitación 2")],
+  { id: "hall", name: "Hall de entrada", tab: "Entrada", links: [L("antejardin", 5, -5), L("sala", 152, -10), L("hall-2", -112, -5, "Subir al 2º piso"), L("pieza-1", -40, -6, "Habitación 1"), L("pieza-2", 50, -6, "Habitación 2")],
     info: [I("hall", 0, 18, "Hall de entrada", "Desde aquí se llega a las piezas del primer piso y a la escalera."),
            K(-62, -18, true)] },
   { id: "sala", name: "Sala del primer piso", tab: "Entrada", links: [L("hall", -114, -10), L("patio", 92, -8), L("pieza-3", -57, -6, "Habitación 3"), L("pieza-4", -6, -6, "Habitación 4")], info: [] },
@@ -2652,13 +2652,13 @@ const NODES = [
   { id: "comedor", name: "Comedor", tab: "Comedor", links: [L("patio", -120, -10), L("cocina", -50, -5)],
     info: [I("mesas", -25, -25, "Mesas del comedor", "Para comer y conversar con el resto de la casa.")] , arcade: true },
 
-  { id: "patio", name: "Patio techado", tab: "Patio", links: [L("acceso", -4, -5), L("comedor", -60, -8), L("patio-techado", 92, -8), L("terraza", 125, 8), L("pieza-21", -175, -6, "Habitación 21")],
+  { id: "patio", name: "Patio techado", tab: "Patio", links: [L("acceso", -4, -5), L("comedor", -18, -8), L("patio-techado", 92, -8), L("terraza", 125, 8), L("pieza-21", -175, -6, "Habitación 21")],
     info: [I("mural", 45, 10, "Mural del patio", "Mural pintado en el patio central."),
            I("seguridad", 148, 0, "Seguridad", "Extintores, red húmeda y red seca.")] },
   { id: "patio-techado", name: "Patio interior", tab: "Patio", links: [L("patio", -25, -8), L("patio-servicio", 140, -10)], info: [], vivo: true },
   { id: "patio-servicio", name: "Patio de servicio", tab: "Patio", links: [L("patio-techado", -165, -10), L("lavanderia", -61, -10), L("calefones", -12, -12), L("pasillo-banos", 92, -8)],
     info: [I("agua", 15, 32, "Agua", "Estanque de agua con hidropack.")] },
-  { id: "calefones", name: "Sala de calefones", tab: "Patio", links: [L("patio-servicio", 178, -10)],
+  { id: "calefones", name: "Sala de calefones", tab: "Patio", links: [L("patio-servicio", 172, -10)],
     info: [I("calefones", 25, 10, "Agua caliente", "Batería de 8 calefones y 2 termos de 200 litros.")] },
   { id: "pasillo-banos", name: "Pasillo de los baños", tab: "Patio", links: [L("patio-servicio", 92, -10), L("despensa", -95, -5), L("pieza-18", -31, -6, "Habitación 18")],
     info: [I("banos1", -150, 5, "Baños compartidos", "Baños para las piezas que no tienen baño privado."),
@@ -2667,15 +2667,15 @@ const NODES = [
     info: [I("despensa", 142, 8, "Despensa", "Despensa de la casa.")] },
   { id: "pasillo-atras", name: "Pasillo del primer piso", tab: "Patio", links: [L("despensa", 60, -5), L("pieza-20", 119, -6, "Habitación 20")], info: [] },
 
-  { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("patio-servicio", 178, -10)],
+  { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("patio-servicio", 170, -10)],
     info: [I("lavadoras", -105, -20, "Lavadoras", "Lavadoras y lavadero. La casa también tiene lavadora y secadora Maytag de 13 kilos, con fichas.")] },
 
-  { id: "pasillo", name: "Pasillo de habitaciones", tab: "2º piso", links: [L("terraza", -8, -2), L("escalera-3", 46, 14), L("hall-2", -28, -16), L("pieza-8", -119, -6, "Habitación 8"), L("pieza-9", -99, -6, "Habitación 9"), L("pieza-5", 88, -6, "Habitación 5"), L("pieza-6", 108, -6, "Habitación 6")], info: [] },
-  { id: "hall-2", name: "Hall del 2º piso", tab: "2º piso", links: [L("pasillo", -175, -8), L("terraza", -5, -6), L("hall", 70, -28, "Bajar al 1er piso"), L("escalera-3", 48, 12), L("pieza-10", -82, -6, "Habitación 10")],
+  { id: "pasillo", name: "Pasillo de habitaciones", tab: "2º piso", links: [L("terraza", -8, -2), L("escalera-3", 46, 14), L("hall-2", -20, -22), L("pieza-8", -119, -6, "Habitación 8"), L("pieza-9", -99, -6, "Habitación 9"), L("pieza-5", 88, -6, "Habitación 5"), L("pieza-6", 108, -6, "Habitación 6")], info: [] },
+  { id: "hall-2", name: "Hall del 2º piso", tab: "2º piso", links: [L("pasillo", -165, -8), L("terraza", -5, -6), L("hall", 70, -28, "Bajar al 1er piso"), L("escalera-3", 48, 12), L("pieza-10", -82, -6, "Habitación 10")],
     info: [I("mesones", -125, -20, "Mesones", "Mesones en el hall del segundo piso.")] },
   { id: "escalera-3", name: "Escalera al 3er piso", tab: "3er piso", links: [L("hall-2", -172, -18, "Bajar al 2º piso"), L("tercero", -115, 8)], info: [] },
   { id: "tercero", name: "Llegada al 3er piso", tab: "3er piso", links: [L("escalera-3", 45, -35), L("pasillo-3", -70, -5)], info: [] },
-  { id: "pasillo-3", name: "Pasillo del 3er piso", tab: "3er piso", links: [L("tercero", -58, -15), L("pieza-mar", -103, -10, "Habitación 23 · vista al mar"), L("pieza-24", -45, -6, "Habitación 24")], info: [] },
+  { id: "pasillo-3", name: "Pasillo del 3er piso", tab: "3er piso", links: [L("tercero", -66, -15), L("pieza-mar", -103, -10, "Habitación 23 · vista al mar"), L("pieza-24", -45, -6, "Habitación 24")], info: [] },
   { id: "pieza-mar", name: "Habitación 23 · vista al mar", tab: "3er piso", face: 0, pan: { yaw: 75, pitch: -12, delay: 2200 }, links: [L("pasillo-3", 140, -8, "Pasillo del 3er piso"), L("bano-23", 163, -8, "Baño privado")],
     info: [I("mar", 3, 12, "Vista al mar", "Ventana mirando al mar, entre palmeras y techos del cerro."),
            I("iglesia", -112, 10, "Vista a la iglesia", "Segunda ventana, hacia la iglesia y los edificios: luz desde dos lados."),
@@ -2684,11 +2684,11 @@ const NODES = [
     info: [I("bano", 30, 0, "Baño privado", "Baño solo para la habitación 23, con ducha.")] },
 
   { id: "terraza", name: "Pasarela del patio", tab: "Ala del patio", links: [L("patio", -140, -28), L("pasillo", 0, -6), L("pasillo-2", 168, -5), L("ala-12", -168, -5)], info: [] },
-  { id: "pasillo-2", name: "Ala del patio", tab: "Ala del patio", links: [L("terraza", 60, -5), L("ala-14", -45, -5), L("ala-12", 152, -5), L("pieza-13", -136, -6, "Habitación 13")], info: [] },
+  { id: "pasillo-2", name: "Ala del patio", tab: "Ala del patio", links: [L("terraza", 60, -5), L("ala-14", -27, -5), L("ala-12", 152, -5), L("pieza-13", -136, -6, "Habitación 13")], info: [] },
   { id: "ala-12", name: "Pasillo piezas 11 a 13", tab: "Ala del patio", links: [L("terraza", -170, -5), L("pasillo-2", 170, -5), L("pieza-13", 135, -6, "Habitación 13")], info: [] },
   { id: "ala-14", name: "Pasillo piezas 14 y 15", tab: "Ala del patio", links: [L("pasillo-2", 125, -5), L("ala-16", -60, -5), L("pieza-14", -152, -6, "Habitación 14"), L("pieza-15", -101, -6, "Habitación 15")], info: [] },
   { id: "ala-16", name: "Pasillo pieza 16", tab: "Ala del patio", links: [L("ala-14", 12, -5), L("ventana", -88, -5)], info: [] },
-  { id: "ventana", name: "Ventana del pasillo", tab: "Ala del patio", links: [L("ala-16", -135, -5), L("pieza-17", -56, -6, "Habitación 17")],
+  { id: "ventana", name: "Ventana del pasillo", tab: "Ala del patio", links: [L("ala-16", -135, -12), L("pieza-17", -56, -6, "Habitación 17")],
     info: [I("vista", 35, 5, "Vista", "Vista al cerro desde el pasillo.")] },
 
   { id: "pieza-2", name: "Habitación 2", tab: "Entrada", face: 0, pan: { yaw: 30, pitch: -14, delay: 2200 }, links: [L("hall", -118, -8, "Hall de entrada")],
@@ -2696,12 +2696,12 @@ const NODES = [
            I("escritorio", 12, -16, "Escritorio", "Escritorio con silla junto a la ventana."),
            I("ropero", -165, 0, "Ropero y cómoda", "Ropero y cómoda con cajones para tu ropa."),
            F(57, -26, "PL-02")] },
-  { id: "pieza-4", name: "Habitación 4", tab: "Entrada", face: 0, pan: { yaw: 20, pitch: -14, delay: 2200 }, links: [L("sala", 140, -8, "Sala del primer piso"), L("bano-4", 122, -8, "Baño privado")],
+  { id: "pieza-4", name: "Habitación 4", tab: "Entrada", face: 0, pan: { yaw: 20, pitch: -14, delay: 2200 }, links: [L("sala", 140, -8, "Sala del primer piso"), L("bano-4", 127, -14, "Baño privado")],
     info: [I("ventana", -85, 10, "Ventana", "Ventana grande con cortinas de lino y visillo."),
            I("escritorio", -75, -28, "Escritorio", "Escritorio junto a la ventana."),
            I("ropero", -38, 0, "Ropero", "Ropero con cajones para guardar tu ropa."),
            F(48, -26, "PL-04")] },
-  { id: "bano-4", name: "Baño privado de la habitación 4", tab: "Entrada", links: [L("pieza-4", 173, -8, "Habitación 4")],
+  { id: "bano-4", name: "Baño privado de la habitación 4", tab: "Entrada", links: [L("pieza-4", -174, -8, "Habitación 4")],
     info: [I("bano", 110, 0, "Baño privado", "Baño solo para la habitación 4, con ducha y ventana.")] },
   { id: "pieza-8", name: "Habitación 8", tab: "2º piso", face: 0, pan: { yaw: 150, pitch: -14, delay: 2200 }, links: [L("pasillo", 37, -8, "Pasillo de habitaciones")],
     info: [I("ventana", -165, 8, "Ventana", "Ventana con vista a los árboles."),
@@ -2715,11 +2715,11 @@ const NODES = [
            I("diarios", 95, 5, "Diarios murales", "Dos diarios murales para tus apuntes."),
            I("ropero", 18, 0, "Ropero", "Ropero para guardar tu ropa."),
            F(-150, -36, "PL-06")] },
-  { id: "pieza-9", name: "Habitación 9", tab: "2º piso", face: 0, pan: { yaw: -130, pitch: -14, delay: 2200 }, links: [L("pasillo", -95, -8, "Pasillo de habitaciones")],
+  { id: "pieza-9", name: "Habitación 9", tab: "2º piso", face: 0, pan: { yaw: -130, pitch: -14, delay: 2200 }, links: [L("pasillo", -74, -8, "Pasillo de habitaciones")],
     info: [I("ventana", 55, 8, "Ventana", "Ventana con vista a los árboles."),
            I("escritorio", 85, -22, "Escritorio", "Escritorio amplio con cajones."),
            F(-122, -34, "PL-09")] },
-  { id: "pieza-5", name: "Habitación 5", tab: "2º piso", face: 0, pan: { yaw: 130, pitch: -14, delay: 2200 }, links: [L("pasillo", 95, -8, "Pasillo de habitaciones")],
+  { id: "pieza-5", name: "Habitación 5", tab: "2º piso", face: 0, pan: { yaw: 130, pitch: -14, delay: 2200 }, links: [L("pasillo", 74, -8, "Pasillo de habitaciones")],
     info: [I("ventana", -55, 8, "Ventana", "Ventana con vista a los árboles."),
            I("escritorio", -85, -22, "Escritorio", "Escritorio amplio con cajones."),
            F(122, -34, "PL-05")] },
@@ -2790,13 +2790,13 @@ const POCURO_NODES = [
     info: [K(-74, -15)] },
   { id: "pasillo", name: "Pasillo del primer piso", tab: "Pasillos", links: [L("entrada", 178, -6), L("casilleros", 4, -2)],
     info: [I("silencio", -75, 8, "Tranquilidad", "Se pide mantener silencio en los pasillos: hay gente estudiando.")] },
-  { id: "casilleros", name: "Lockers y lavandería", tab: "Lavandería", links: [L("pasillo", -150, -32), L("comedor", -122, -6), L("lavanderia", 140, -12)],
+  { id: "casilleros", name: "Lockers y lavandería", tab: "Lavandería", links: [L("pasillo", -150, -32), L("comedor", -97, -8), L("lavanderia", 140, -12)],
     info: [I("casilleros", 60, 5, "Casilleros", "Casilleros para guardar tus cosas.")] },
-  { id: "comedor", name: "Comedor", tab: "Comedor", links: [L("casilleros", -78, -6), L("pasillo", -42, -22), L("cocina", -162, -8)],
+  { id: "comedor", name: "Comedor", tab: "Comedor", links: [L("casilleros", -70, -6), L("pasillo", -42, -22), L("cocina", -162, -8)],
     info: [I("refris", 90, 0, "4 refrigeradores", "Refrigeradores en el comedor para los arrendatarios."),
            I("tv", 42, 8, "TV", "Televisor en el comedor."),
            I("mural", -20, 14, "Mural", "Mural pintado en el comedor.")] },
-  { id: "cocina", name: "Cocina", tab: "Cocina", links: [L("comedor", 178, -8), L("colibri", -145, -8)],
+  { id: "cocina", name: "Cocina", tab: "Cocina", links: [L("comedor", -177, -8), L("colibri", -145, -8)],
     info: [I("cocinas", 22, -15, "Dos cocinas", "Dos cocinas con horno y campana."),
            I("lavaplatos", 62, -14, "Lavaplatos", "Lavaplatos con mueble."),
            I("micro", 115, -10, "Microondas y horno", "Microondas y horno eléctrico, junto a la ventana hacia el comedor.")] },
