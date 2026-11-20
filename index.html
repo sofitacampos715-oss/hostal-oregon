@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795142922">
-<script>window.BUILD="1795142922";</script>
+<meta name="build" content="1795188780">
+<script>window.BUILD="1795188780";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -1850,7 +1850,7 @@ const HOUSES = {
 };
 
 // Piezas que ya tienen foto 360 real: código de la pieza -> foto del recorrido
-const ROOM_TOURS = { "PO-21": { house: "pocuro", node: "pieza-21" }, "PL-23": { house: "placeres", node: "pieza-mar" }, "PL-01": { house: "placeres", node: "pieza-1" }, "PL-03": { house: "placeres", node: "pieza-3" }, "PL-02": { house: "placeres", node: "pieza-2" }, "PL-04": { house: "placeres", node: "pieza-4" }, "PL-08": { house: "placeres", node: "pieza-8" }, "PL-09": { house: "placeres", node: "pieza-9" }, "PL-10": { house: "placeres", node: "pieza-10" }, "PL-13": { house: "placeres", node: "pieza-13" }, "PL-14": { house: "placeres", node: "pieza-14" }, "PL-15": { house: "placeres", node: "pieza-15" }, "PL-17": { house: "placeres", node: "pieza-17" }, "PL-18": { house: "placeres", node: "pieza-18" }, "PL-20": { house: "placeres", node: "pieza-20" }, "PL-21": { house: "placeres", node: "pieza-21" }, "PL-24": { house: "placeres", node: "pieza-24" } };
+const ROOM_TOURS = { "PO-21": { house: "pocuro", node: "pieza-21" }, "PL-23": { house: "placeres", node: "pieza-mar" }, "PL-01": { house: "placeres", node: "pieza-1" }, "PL-03": { house: "placeres", node: "pieza-3" }, "PL-02": { house: "placeres", node: "pieza-2" }, "PL-04": { house: "placeres", node: "pieza-4" }, "PL-08": { house: "placeres", node: "pieza-8" }, "PL-09": { house: "placeres", node: "pieza-9" }, "PL-05": { house: "placeres", node: "pieza-5" }, "PL-06": { house: "placeres", node: "pieza-6" }, "PL-10": { house: "placeres", node: "pieza-10" }, "PL-13": { house: "placeres", node: "pieza-13" }, "PL-14": { house: "placeres", node: "pieza-14" }, "PL-15": { house: "placeres", node: "pieza-15" }, "PL-17": { house: "placeres", node: "pieza-17" }, "PL-18": { house: "placeres", node: "pieza-18" }, "PL-20": { house: "placeres", node: "pieza-20" }, "PL-21": { house: "placeres", node: "pieza-21" }, "PL-24": { house: "placeres", node: "pieza-24" } };
 
 const DEFAULT_ROOMS = [
   // Casa Placeres: precios mensuales reales (estudiantes), noviembre 2026. Disponibilidad: por confirmar.
@@ -1858,8 +1858,8 @@ const DEFAULT_ROOMS = [
   { code: "PL-02", house: "placeres", name: "Habitación 2", specs: ["Ventana a la calle", "Escritorio", "Ropero"], price: 285000, status: "consultar", from: "", wall: "#dfe4d5" },
   { code: "PL-03", house: "placeres", name: "Habitación 3", specs: ["Baño privado", "Escritorio", "Ropero"], price: 230000, status: "consultar", from: "", wall: "#e6dccd" },
   { code: "PL-04", house: "placeres", name: "Habitación 4", specs: ["Baño privado", "Escritorio", "Ropero"], price: 260000, status: "consultar", from: "", wall: "#d3e0e2" },
-  { code: "PL-05", house: "placeres", name: "Habitación 5", specs: [], price: 230000, status: "consultar", from: "", wall: "#e4ddd3" },
-  { code: "PL-06", house: "placeres", name: "Habitación 6", specs: [], price: 200000, status: "consultar", from: "", wall: "#d9e2dc" },
+  { code: "PL-05", house: "placeres", name: "Habitación 5", specs: ["Ventana a los árboles", "Escritorio amplio"], price: 230000, status: "consultar", from: "", wall: "#e4ddd3" },
+  { code: "PL-06", house: "placeres", name: "Habitación 6", specs: ["Ventana a los árboles", "Escritorio", "Ropero"], price: 200000, status: "consultar", from: "", wall: "#d9e2dc" },
   { code: "PL-07", house: "placeres", name: "Habitación 7", specs: [], price: 235000, status: "consultar", from: "", wall: "#dde2ea" },
   { code: "PL-08", house: "placeres", name: "Habitación 8", specs: ["Ventana a los árboles", "Escritorio", "Ropero"], price: 210000, status: "consultar", from: "", wall: "#d6dde3" },
   { code: "PL-09", house: "placeres", name: "Habitación 9", specs: ["Ventana a los árboles", "Escritorio amplio"], price: 230000, status: "consultar", from: "", wall: "#dfe4d5" },
@@ -2670,7 +2670,7 @@ const NODES = [
   { id: "lavanderia", name: "Lavandería", tab: "Lavandería", links: [L("patio-servicio", 178, -10)],
     info: [I("lavadoras", -105, -20, "Lavadoras", "Lavadoras y lavadero. La casa también tiene lavadora y secadora Maytag de 13 kilos, con fichas.")] },
 
-  { id: "pasillo", name: "Pasillo de habitaciones", tab: "2º piso", links: [L("terraza", -8, -2), L("escalera-3", 46, 14), L("hall-2", -28, -16), L("pieza-8", -119, -6, "Habitación 8"), L("pieza-9", -99, -6, "Habitación 9")], info: [] },
+  { id: "pasillo", name: "Pasillo de habitaciones", tab: "2º piso", links: [L("terraza", -8, -2), L("escalera-3", 46, 14), L("hall-2", -28, -16), L("pieza-8", -119, -6, "Habitación 8"), L("pieza-9", -99, -6, "Habitación 9"), L("pieza-5", 88, -6, "Habitación 5"), L("pieza-6", 108, -6, "Habitación 6")], info: [] },
   { id: "hall-2", name: "Hall del 2º piso", tab: "2º piso", links: [L("pasillo", -175, -8), L("terraza", -5, -6), L("hall", 70, -28, "Bajar al 1er piso"), L("escalera-3", 48, 12), L("pieza-10", -82, -6, "Habitación 10")],
     info: [I("mesones", -125, -20, "Mesones", "Mesones en el hall del segundo piso.")] },
   { id: "escalera-3", name: "Escalera al 3er piso", tab: "3er piso", links: [L("hall-2", -172, -18, "Bajar al 2º piso"), L("tercero", -115, 8)], info: [] },
@@ -2708,11 +2708,21 @@ const NODES = [
            I("escritorio", -158, -20, "Escritorio", "Escritorio con repisa y lámpara."),
            I("diarios", -95, 5, "Diarios murales", "Dos diarios murales para tus apuntes."),
            I("ropero", -18, 0, "Ropero", "Ropero para guardar tu ropa."),
-           F(140, -26, "PL-08")] },
+           F(150, -36, "PL-08")] },
+  { id: "pieza-6", name: "Habitación 6", tab: "2º piso", face: 0, pan: { yaw: -150, pitch: -14, delay: 2200 }, links: [L("pasillo", -37, -8, "Pasillo de habitaciones")],
+    info: [I("ventana", 165, 8, "Ventana", "Ventana con vista a los árboles."),
+           I("escritorio", 158, -20, "Escritorio", "Escritorio con repisa y lámpara."),
+           I("diarios", 95, 5, "Diarios murales", "Dos diarios murales para tus apuntes."),
+           I("ropero", 18, 0, "Ropero", "Ropero para guardar tu ropa."),
+           F(-150, -36, "PL-06")] },
   { id: "pieza-9", name: "Habitación 9", tab: "2º piso", face: 0, pan: { yaw: -130, pitch: -14, delay: 2200 }, links: [L("pasillo", -95, -8, "Pasillo de habitaciones")],
     info: [I("ventana", 55, 8, "Ventana", "Ventana con vista a los árboles."),
            I("escritorio", 85, -22, "Escritorio", "Escritorio amplio con cajones."),
            F(-122, -34, "PL-09")] },
+  { id: "pieza-5", name: "Habitación 5", tab: "2º piso", face: 0, pan: { yaw: 130, pitch: -14, delay: 2200 }, links: [L("pasillo", 95, -8, "Pasillo de habitaciones")],
+    info: [I("ventana", -55, 8, "Ventana", "Ventana con vista a los árboles."),
+           I("escritorio", -85, -22, "Escritorio", "Escritorio amplio con cajones."),
+           F(122, -34, "PL-05")] },
   { id: "pieza-10", name: "Habitación 10", tab: "2º piso", face: 0, pan: { yaw: -60, pitch: -14, delay: 2200 }, links: [L("hall-2", -168, -8, "Hall del 2º piso"), L("bano-10", 73, -8, "Baño privado")],
     info: [I("tragaluz", -25, 38, "Tragaluz", "Luz natural desde el techo."),
            I("escritorio", -40, -15, "Espacio de estudio", "Espacio amplio para escritorio y computador."),
