@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795209480">
-<script>window.BUILD="1795209480";</script>
+<meta name="build" content="1795210198">
+<script>window.BUILD="1795210198";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -406,7 +406,7 @@ legend small { font-weight: 400; color: var(--muted); }
 .hs.hs-rule svg { width: 15px; height: 15px; }
 .folder-pin { display: grid; justify-items: center; gap: 4px; cursor: pointer; transform-origin: 50% 100%; animation: fold-bob 1.9s ease-in-out infinite; filter: drop-shadow(0 8px 12px rgba(0,0,0,.5)); }
 .folder-pin svg { width: 112px; height: auto; display: block; }
-.folder-pin svg.phone { width: 140px; overflow: visible; }
+.folder-pin svg.phone { width: 70px; overflow: visible; }
 .folder-pin .body { transform-box: fill-box; transform-origin: 50% 100%; animation: phone-body 1.6s ease-in-out infinite; }
 .folder-pin .handset { transform-box: fill-box; transform-origin: 50% 100%; animation: phone-ring 1.6s ease-in-out infinite; }
 @keyframes phone-body { 0%, 40%, 100% { transform: translateX(0); } 5%, 15%, 25% { transform: translateX(-1.5px); } 10%, 20%, 30% { transform: translateX(1.5px); } }
@@ -1886,7 +1886,6 @@ const DEFAULT_ROOMS = [
   { code: "PO-04", house: "pocuro", name: "Habitación 4", specs: ["TV", "Escritorio", "Ropero"], price: 250000, status: "consultar", from: "", wall: "#d6dde3" },
   { code: "PO-05", house: "pocuro", name: "Habitación 5", specs: ["Escritorio", "Ropero", "Alfombra"], price: 260000, status: "consultar", from: "", wall: "#dfe4d5" },
   { code: "PO-06", house: "pocuro", name: "Habitación 6", specs: ["Piso de madera", "Escritorio", "Ropero"], price: 265000, status: "consultar", from: "", wall: "#e6dccd" },
-  { code: "PO-07", house: "pocuro", name: "Habitación 7", specs: [], price: 230000, status: "libre", from: "", wall: "#d3e0e2" },
   { code: "PO-08", house: "pocuro", name: "Habitación 8", specs: ["Piso de madera", "Escritorio", "Ropero"], price: 265000, status: "consultar", from: "", wall: "#e4ddd3" },
   { code: "PO-09", house: "pocuro", name: "Habitación 9", specs: ["Ventana", "Escritorio", "Ropero"], price: 280000, status: "consultar", from: "", wall: "#d9e2dc" },
   { code: "PO-10", house: "pocuro", name: "Habitación 10", specs: ["Dos camas", "Escritorio", "Ropero"], price: 280000, status: "consultar", from: "", wall: "#dde2ea" },
@@ -2585,22 +2584,22 @@ const PHONE_SVG = `<svg class="phone" viewBox="-6 0 152 112" aria-hidden="true">
   <g class="ring ring-l" fill="none" stroke-linecap="round"><path d="M14 22 Q6 33 14 44"/><path d="M3 14 Q-8 33 3 52"/></g>
   <g class="ring ring-r" fill="none" stroke-linecap="round"><path d="M126 22 Q134 33 126 44"/><path d="M137 14 Q148 33 137 52"/></g>
   <g class="body">
-    <path d="M30 60 Q34 47 50 45 L90 45 Q106 47 110 60 L119 98 Q120 106 111 106 L29 106 Q20 106 21 98 Z" fill="#c8342b" stroke="#3b0d08" stroke-width="3" stroke-linejoin="round"/>
-    <path d="M38 58 Q42 51 52 50 L70 50" fill="none" stroke="#f08a7e" stroke-width="3" stroke-linecap="round"/>
-    <rect x="40" y="36" width="9" height="12" rx="2" fill="#8f1f18" stroke="#3b0d08" stroke-width="2.5"/>
-    <rect x="91" y="36" width="9" height="12" rx="2" fill="#8f1f18" stroke="#3b0d08" stroke-width="2.5"/>
-    <circle cx="70" cy="76" r="20" fill="#f6ead2" stroke="#3b0d08" stroke-width="3"/>
-    <circle cx="58.3" cy="82.8" r="3.1" fill="#3b0d08"/><circle cx="56.5" cy="76.0" r="3.1" fill="#3b0d08"/><circle cx="58.3" cy="69.2" r="3.1" fill="#3b0d08"/><circle cx="63.2" cy="64.3" r="3.1" fill="#3b0d08"/><circle cx="70.0" cy="62.5" r="3.1" fill="#3b0d08"/><circle cx="76.8" cy="64.3" r="3.1" fill="#3b0d08"/><circle cx="81.7" cy="69.2" r="3.1" fill="#3b0d08"/><circle cx="83.5" cy="76.0" r="3.1" fill="#3b0d08"/><circle cx="81.7" cy="82.8" r="3.1" fill="#3b0d08"/><circle cx="76.8" cy="87.7" r="3.1" fill="#3b0d08"/>
-    <circle cx="70" cy="76" r="6.5" fill="#c8342b" stroke="#3b0d08" stroke-width="2"/>
-    <path d="M84 62 L89 57" stroke="#3b0d08" stroke-width="3" stroke-linecap="round"/>
+    <path d="M30 60 Q34 47 50 45 L90 45 Q106 47 110 60 L119 98 Q120 106 111 106 L29 106 Q20 106 21 98 Z" fill="#2a6fd1" stroke="#0e2547" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M38 58 Q42 51 52 50 L70 50" fill="none" stroke="#9cc4f5" stroke-width="3" stroke-linecap="round"/>
+    <rect x="40" y="36" width="9" height="12" rx="2" fill="#1c4f99" stroke="#0e2547" stroke-width="2.5"/>
+    <rect x="91" y="36" width="9" height="12" rx="2" fill="#1c4f99" stroke="#0e2547" stroke-width="2.5"/>
+    <circle cx="70" cy="76" r="20" fill="#f6ead2" stroke="#0e2547" stroke-width="3"/>
+    <circle cx="58.3" cy="82.8" r="3.1" fill="#0e2547"/><circle cx="56.5" cy="76.0" r="3.1" fill="#0e2547"/><circle cx="58.3" cy="69.2" r="3.1" fill="#0e2547"/><circle cx="63.2" cy="64.3" r="3.1" fill="#0e2547"/><circle cx="70.0" cy="62.5" r="3.1" fill="#0e2547"/><circle cx="76.8" cy="64.3" r="3.1" fill="#0e2547"/><circle cx="81.7" cy="69.2" r="3.1" fill="#0e2547"/><circle cx="83.5" cy="76.0" r="3.1" fill="#0e2547"/><circle cx="81.7" cy="82.8" r="3.1" fill="#0e2547"/><circle cx="76.8" cy="87.7" r="3.1" fill="#0e2547"/>
+    <circle cx="70" cy="76" r="6.5" fill="#2a6fd1" stroke="#0e2547" stroke-width="2"/>
+    <path d="M84 62 L89 57" stroke="#0e2547" stroke-width="3" stroke-linecap="round"/>
   </g>
   <g class="handset">
-    <path d="M30 30 Q70 16 110 30" fill="none" stroke="#3b0d08" stroke-width="15" stroke-linecap="round"/>
-    <path d="M30 30 Q70 16 110 30" fill="none" stroke="#c8342b" stroke-width="9" stroke-linecap="round"/>
-    <path d="M48 23 Q60 19 72 19" fill="none" stroke="#f08a7e" stroke-width="3" stroke-linecap="round"/>
-    <path d="M14 30 Q15 22 26 22 L40 23 Q47 24 46 31 L44 38 Q42 43 34 43 L22 43 Q13 43 14 36 Z" fill="#c8342b" stroke="#3b0d08" stroke-width="3" stroke-linejoin="round"/>
-    <path d="M126 30 Q125 22 114 22 L100 23 Q93 24 94 31 L96 38 Q98 43 106 43 L118 43 Q127 43 126 36 Z" fill="#c8342b" stroke="#3b0d08" stroke-width="3" stroke-linejoin="round"/>
-    <path d="M20 28 Q24 25 32 25" fill="none" stroke="#f08a7e" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M30 30 Q70 16 110 30" fill="none" stroke="#0e2547" stroke-width="15" stroke-linecap="round"/>
+    <path d="M30 30 Q70 16 110 30" fill="none" stroke="#2fa35f" stroke-width="9" stroke-linecap="round"/>
+    <path d="M48 23 Q60 19 72 19" fill="none" stroke="#a6e6bf" stroke-width="3" stroke-linecap="round"/>
+    <path d="M14 30 Q15 22 26 22 L40 23 Q47 24 46 31 L44 38 Q42 43 34 43 L22 43 Q13 43 14 36 Z" fill="#2fa35f" stroke="#0e2547" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M126 30 Q125 22 114 22 L100 23 Q93 24 94 31 L96 38 Q98 43 106 43 L118 43 Q127 43 126 36 Z" fill="#2fa35f" stroke="#0e2547" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M20 28 Q24 25 32 25" fill="none" stroke="#a6e6bf" stroke-width="2.5" stroke-linecap="round"/>
   </g>
 </svg>`;
 const FOLDER_SVG = (code) => `<svg viewBox="0 0 120 92" aria-hidden="true">
@@ -2788,7 +2787,7 @@ const POCURO_NODES = [
            K(40, -18)] },
   { id: "recepcion", name: "Recepción", tab: "Entrada", links: [L("entrada", -150, -28), L("pasillo-balcon", 58, -6), L("pasillo", -115, -6), L("pieza-2", -128, -6, "Habitación 2")],
     info: [K(-74, -15)] },
-  { id: "pasillo", name: "Pasillo del primer piso", tab: "Pasillos", links: [L("entrada", 178, -6), L("casilleros", 4, -2), L("pieza-3", -150, -6, "Habitación 3"), L("pieza-4", 150, -6, "Habitación 4"), L("pieza-6", 22, -6, "Habitación 6"), L("pieza-5", -38, -6, "Habitación 5")],
+  { id: "pasillo", name: "Pasillo del primer piso", tab: "Pasillos", links: [L("entrada", 178, -6), L("casilleros", 4, -2), L("pieza-3", -150, -6, "Habitación 3"), L("pieza-4", 150, -6, "Habitación 4"), L("pieza-6", 28, -6, "Habitación 6"), L("pieza-5", -38, -6, "Habitación 5"), L("pieza-8", 16.5, -6, "Habitación 8"), L("pieza-10", -14.6, -6, "Habitación 10"), L("pieza-9", -7, -14, "Habitación 9")],
     info: [I("silencio", -75, 8, "Tranquilidad", "Se pide mantener silencio en los pasillos: hay gente estudiando.")] },
   { id: "casilleros", name: "Lockers y lavandería", tab: "Lavandería", links: [L("pasillo", -150, -32), L("comedor", -97, -8), L("lavanderia", 140, -12)],
     info: [I("casilleros", 60, 5, "Casilleros", "Casilleros para guardar tus cosas.")] },
@@ -2811,7 +2810,7 @@ const POCURO_NODES = [
            I("ventana", 152, 8, "Ventana", "Ventana con cortinas."), F(-42, -26, "PO-02")] },
   { id: "bano-2", name: "Baño privado de la habitación 2", tab: "Entrada", links: [L("pieza-2", -160, -8, "Habitación 2")],
     info: [I("bano", -55, 0, "Baño privado", "Baño solo para la habitación 2, con ducha, lavamanos y espejo.")] },
-  { id: "pieza-9", name: "Habitación 9", tab: "Comedor", face: 0, pan: { yaw: 25, pitch: -14, delay: 2200 }, links: [L("comedor", -128, -8, "Comedor")],
+  { id: "pieza-9", name: "Habitación 9", tab: "Pasillos", face: 0, pan: { yaw: 25, pitch: -14, delay: 2200 }, links: [L("pasillo", -128, -8, "Pasillo del primer piso")],
     info: [I("ventana", -170, 8, "Ventana", "Ventana con cortina."),
            I("escritorio", 168, -22, "Escritorio", "Escritorio con silla."),
            I("ropero", 140, 0, "Ropero", "Ropero para guardar tu ropa."), F(18, -26, "PO-09")] },
