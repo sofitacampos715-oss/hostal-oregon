@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795218943">
-<script>window.BUILD="1795218943";</script>
+<meta name="build" content="1795292427">
+<script>window.BUILD="1795292427";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -224,6 +224,13 @@ section.block { padding-block: 40px 8px; }
 .rl-chips button, .rl-sort button { border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 99px; padding: 7px 12px; font: 600 .85rem var(--f-body); cursor: pointer; }
 .rl-chips button[aria-pressed="true"], .rl-sort button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .rl-sort { margin-left: auto; }
+.rl-chips[hidden], .rl-sort[hidden] { display: none; }
+.price-ask, .rl-ask { display: inline-flex; align-items: center; gap: 6px; font: 700 .9rem var(--f-body); color: #1c7a47; text-decoration: none; border-bottom: 1.5px solid currentColor; padding-bottom: 1px; white-space: nowrap; }
+.price-ask { margin: 6px 0 10px; font-size: 1rem; }
+.price-ask:hover, .rl-ask:hover { color: #14603a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .price-ask, :root:not([data-theme="light"]) .rl-ask { color: #7fd6a3; } }
+:root[data-theme="dark"] .price-ask, :root[data-theme="dark"] .rl-ask { color: #7fd6a3; }
+.price-ask::before, .rl-ask::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #2fa35f; }
 .rl-sort span { align-self: center; font-size: .8rem; color: var(--muted); margin-right: 2px; }
 .rl-list { list-style: none; margin: 0; padding: 4px max(18px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); overflow: auto; overscroll-behavior: contain; }
 .rl-row { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
@@ -1363,8 +1370,8 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
       <div class="rl-top"><div><p class="eyebrow" id="rlHouse"></p><h2 id="rlTitle">Todas las habitaciones</h2><p class="rl-count" id="rlCount"></p></div>
         <button type="button" class="x" id="rlClose" aria-label="Cerrar lista">×</button></div>
       <div class="rl-tools">
-        <div class="rl-chips" id="rlChips" role="group" aria-label="Filtrar por precio"></div>
-        <div class="rl-sort" role="group" aria-label="Ordenar"><span>Ordenar:</span><button type="button" data-sort="precio" aria-pressed="true">Precio</button><button type="button" data-sort="numero" aria-pressed="false">Número</button></div>
+        <div class="rl-chips" id="rlChips" role="group" aria-label="Filtrar por precio" hidden></div>
+        <div class="rl-sort" role="group" aria-label="Ordenar" hidden><span>Ordenar:</span><button type="button" data-sort="precio" aria-pressed="true">Precio</button><button type="button" data-sort="numero" aria-pressed="false">Número</button></div>
       </div>
     </div>
     <ul class="rl-list" id="rlList"></ul>
@@ -1950,6 +1957,11 @@ function statusInfo(r) {
   if (r.status === "consultar") return { cls: "ask", text: "Consultar disponibilidad" };
   return { cls: "busy", text: "Arrendada" };
 }
+function askValor(r, cls) {
+  const n = r.code.replace(/^[A-Z]+-0*/, ""), h = HOUSES[r.house] ? HOUSES[r.house].name : "";
+  const msg = "Hola, me interesa la habitación " + n + " (" + r.code + ")" + (h ? " de " + h : "") + ". ¿Cuál es su valor y está disponible?";
+  return `<a class="${cls}" href="https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Consultar valor</a>`;
+}
 function priceText(r) {
   return mode === "noche" && r.night ? money(r.night) + "/noche" : money(r.price) + "/mes";
 }
@@ -2123,8 +2135,8 @@ function render() {
   const known = list.some(r => r.status !== "consultar");
   const minP = Math.min(...list.map(r => r.price).filter(Boolean));
   const unknown = list.some(r => r.status === "consultar");
-  $("#availText").textContent = !known ? list.length + " piezas · desde " + money(minP) + " al mes"
-    : unknown ? (free ? free + (free > 1 ? " disponibles hoy" : " disponible hoy") + " · " : "") + list.length + " piezas desde " + money(minP) + " al mes"
+  $("#availText").textContent = !known ? list.length + " piezas · desde " + money(minP) + " al mes, gastos incluidos"
+    : unknown ? (free ? free + (free > 1 ? " disponibles hoy" : " disponible hoy") + " · " : "") + list.length + " piezas desde " + money(minP) + " al mes, gastos incluidos"
     : free + " de " + list.length + " piezas disponibles hoy";
   $("#availSub").textContent = soon ? soon + (soon > 1 ? " se liberan" : " se libera") + " pronto" : "";
   $("#reqList").innerHTML = texts.requisitos.map(t => "<li>" + esc(t) + "</li>").join("");
@@ -2152,7 +2164,7 @@ function render() {
       <div class="room-body">
         <h3>${esc(r.name)}</h3>
         <ul class="specs">${r.specs.map(x => "<li>" + esc(x) + "</li>").join("")}</ul>
-        <div class="price">${priceText(r).replace(/\/(mes|noche)/, " <small>/$1" + "" + "</small>")}</div>
+        ${askValor(r, "price-ask")}
         <div class="room-actions">
           ${busy
             ? `<button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="espera">Avísame si se libera</button>`
@@ -2198,7 +2210,7 @@ function featuredRooms(list) {
   return out.sort((a, b) => ord[a.status] - ord[b.status] || (ROOM_TOURS[b.code] ? 1 : 0) - (ROOM_TOURS[a.code] ? 1 : 0) || a.price - b.price);
 }
 const RANGES = [["todas", "Todas", () => true], ["baja", "Hasta $230.000", p => p <= 230000], ["media", "$231.000 a $270.000", p => p > 230000 && p <= 270000], ["alta", "Más de $270.000", p => p > 270000]];
-let rlRange = "todas", rlSort = "precio";
+let rlRange = "todas", rlSort = "numero";
 const roomNum = c => c.replace(/^[A-Z]+-0*/, "");
 function drawList() {
   const all = rooms.filter(r => r.house === house);
@@ -2219,7 +2231,7 @@ function drawList() {
       <span class="rl-num" aria-hidden="true">${esc(n)}</span>
       <span class="rl-info"><b>Habitación ${esc(n)}${named ? " · " + esc(named) : ""}</b>
         <span class="meta"><span class="pill ${s.cls}">${esc(s.text)}</span>${ROOM_TOURS[r.code] ? `<button type="button" class="rl-360" data-tour="${r.code}">↻ Ver en 360°</button>` : ""}${r.specs.length ? "<span>" + esc(r.specs.slice(0, 3).join(" · ")) + "</span>" : ""}</span></span>
-      <span class="rl-side"><span class="rl-price">${priceText(r).replace(/\/(mes|noche)/, " <small>/$1</small>")}</span>
+      <span class="rl-side">${askValor(r, "rl-ask")}
         ${busy ? `<button class="btn btn-ghost btn-sm" type="button" data-consult="${r.code}" data-intent="espera">Avísame</button>`
           : mode === "noche" ? `<button class="btn btn-main btn-sm" type="button" data-consult="${r.code}" data-intent="reservar">Consultar fechas</button>`
           : `<button class="btn btn-main btn-sm" type="button" data-consult="${r.code}" data-intent="visita">Quiero verla</button>`}</span>
@@ -2361,7 +2373,7 @@ function whenText(s) {
   return { marzo: "Marzo", mes: "Este mes", nose: "Aún no sé" }[s.when] || "";
 }
 function buildMsg(s) {
-  const d = `*${s.r.code}* (${s.r.name}, ${priceText(s.r)}) en ${s.h.name}`;
+  const d = `*${s.r.code}* (${s.r.name}) en ${s.h.name}`;
   const L = [];
   L.push({
     visita: `Hola, quiero *ir a ver* la pieza ${d}.`,
