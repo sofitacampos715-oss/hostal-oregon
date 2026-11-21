@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Piezas amobladas para estudiantes en Cerro Placeres y Pocuro, Valparaíso. Gastos incluidos. Agenda tu visita por WhatsApp.">
-<meta name="build" content="1795292427">
-<script>window.BUILD="1795292427";</script>
+<meta name="build" content="1795292888">
+<script>window.BUILD="1795292888";</script>
 <script>
 /* Si el navegador abrió una copia vieja de la página, se recarga sola con la versión publicada más nueva. */
 (function () {
@@ -276,6 +276,8 @@ section.block { padding-block: 40px 8px; }
 .avatar { flex: none; width: 76px; height: 76px; border-radius: 50%; background: var(--sunk); border: 2px dashed var(--line); display: grid; place-items: center; font-size: .7rem; color: var(--muted); text-align: center; }
 
 footer { margin-top: 48px; border-top: 1px solid var(--line); }
+footer #waShown a { color: inherit; }
+.wa-alt { display: block; margin-top: 8px; text-align: center; font: 600 .9rem var(--f-body); color: var(--muted); text-decoration: underline; }
 footer .wrap { padding-block: 22px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; color: var(--muted); font-size: .9rem; }
 
 .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--surface); border-top: 1px solid var(--line); padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
@@ -1512,6 +1514,7 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
 
     <div class="send-row">
       <a class="btn btn-wa" id="sendWa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+      <a class="wa-alt" id="sendWa2" href="#" target="_blank" rel="noopener"></a>
       <p class="note">Se abre WhatsApp con el mensaje listo. Solo tienes que tocar enviar.</p>
     </div>
   </form>
@@ -1551,7 +1554,8 @@ section.block .steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 
 
 <script>
 const CONFIG = {
-  whatsapp: "56995433659"
+  whatsapp: "56995433659",
+  whatsapp2: "56965358266"
 };
 
 const DEFAULT_TEXTS = {
@@ -1957,6 +1961,7 @@ function statusInfo(r) {
   if (r.status === "consultar") return { cls: "ask", text: "Consultar disponibilidad" };
   return { cls: "busy", text: "Arrendada" };
 }
+const fmtTel = n => "+" + n.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, "$1 $2 $3 $4");
 function askValor(r, cls) {
   const n = r.code.replace(/^[A-Z]+-0*/, ""), h = HOUSES[r.house] ? HOUSES[r.house].name : "";
   const msg = "Hola, me interesa la habitación " + n + " (" + r.code + ")" + (h ? " de " + h : "") + ". ¿Cuál es su valor y está disponible?";
@@ -2146,7 +2151,7 @@ function render() {
   loadWeather();
   const monthly = mode !== "noche";
   $("#mensual").hidden = !monthly;
-  $("#waShown").textContent = "+" + CONFIG.whatsapp.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, "$1 $2 $3 $4");
+  $("#waShown").innerHTML = [CONFIG.whatsapp, CONFIG.whatsapp2].filter(Boolean).map(n => `<a href="https://wa.me/${n}" target="_blank" rel="noopener">${fmtTel(n)}</a>`).join(" · ");
 
   const featured = featuredRooms(list);
   $("#roomsMore").hidden = featured.length >= list.length;
@@ -2406,6 +2411,8 @@ function sync() {
   const text = buildMsg(s);
   $("#msgPreview").textContent = text;
   $("#sendWa").href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(text);
+  $("#sendWa2").href = "https://wa.me/" + CONFIG.whatsapp2 + "?text=" + encodeURIComponent(text);
+  $("#sendWa2").textContent = "o enviarlo al " + fmtTel(CONFIG.whatsapp2);
   $("#sendWa").textContent = { visita: "Pedir visita por WhatsApp", video: "Pedir videollamada por WhatsApp", duda: "Enviar consulta por WhatsApp", reservar: "Reservar por WhatsApp", espera: "Anotarme por WhatsApp" }[s.intent];
 }
 sheet.addEventListener("change", e => {
@@ -3042,6 +3049,7 @@ function showCard(m) {
     $("#tourCardTitle").textContent = r ? r.name : m.code;
     const msg = "Hola, vi la " + (r ? r.name : "pieza") + " (" + m.code + ") de " + T.name + " en el recorrido 360° de la página y me gustaría agendar una visita. ¿Qué horarios tienen?";
     $("#tourCardText").innerHTML = '<div class="fold-actions"><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/' + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg) + '">Agendar visita por WhatsApp</a>' +
+      '<a class="wa-alt" target="_blank" rel="noopener" href="https://wa.me/' + CONFIG.whatsapp2 + "?text=" + encodeURIComponent(msg) + '">o escribir al ' + fmtTel(CONFIG.whatsapp2) + '</a>' +
       '<button type="button" class="btn btn-ghost" data-pick-slot>Elegir día y hora</button></div>';
     card.querySelector("[data-pick-slot]").onclick = () => { closeTour(); const sw = document.querySelector(".switch button[data-house=" + (r ? r.house : "pocuro") + "]"); if (sw && document.body.dataset.house !== sw.dataset.house) sw.click(); openSheet(m.code, "visita"); };
     card.hidden = false; card.scrollTop = 0; return;
